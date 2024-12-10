@@ -7,4 +7,13 @@ layout:
 - go.kubebuilder.io/v4
 projectName: databend-operator
 repo: databendlabs.io/databend-operator
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: databendlabs.io
+  kind: Warehouse
+  path: databendlabs.io/databend-operator/api/v1alpha1
+  version: v1alpha1
 version: "3"
