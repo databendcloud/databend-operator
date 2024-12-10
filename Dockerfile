@@ -12,9 +12,7 @@ COPY go.sum go.sum
 RUN go mod download
 
 # Copy the go source
-COPY cmd/main.go cmd/main.go
-COPY api/ api/
-COPY internal/ internal/
+COPY cmd/ cmd/
 
 # Build
 # the GOARCH has not a default value to allow the binary be built according to the host where the command
@@ -23,9 +21,8 @@ COPY internal/ internal/
 # by leaving it empty we can ensure that the container and binary shipped on it will have the same platform.
 RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -a -o manager cmd/main.go
 
-# Use distroless as minimal base image to package the manager binary
-# Refer to https://github.com/GoogleContainerTools/distroless for more details
-FROM gcr.io/distroless/static:nonroot
+# Use alpine as minimal base image to package the manager binary
+FROM alpine:3.18.0
 WORKDIR /
 COPY --from=builder /workspace/manager .
 USER 65532:65532

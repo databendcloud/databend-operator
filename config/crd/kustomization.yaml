@@ -3,6 +3,7 @@
 # It should be run by config/default
 resources:
 - bases/databendlabs.io_warehouses.yaml
+- bases/databendlabs.io_tenants.yaml
 # +kubebuilder:scaffold:crdkustomizeresource
 
 patches:

@@ -16,4 +16,12 @@ resources:
   kind: Warehouse
   path: databendlabs.io/databend-operator/api/v1alpha1
   version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: databendlabs.io
+  kind: Tenant
+  path: databendlabs.io/databend-operator/api/v1alpha1
+  version: v1alpha1
 version: "3"
