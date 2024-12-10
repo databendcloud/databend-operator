@@ -36,7 +36,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
 	databendv1alpha1 "databendlabs.io/databend-operator/pkg/api/v1alpha1"
-	"databendlabs.io/databend-operator/pkg/controller"
+	tenant "databendlabs.io/databend-operator/pkg/controller/tenant"
+	warehouse "databendlabs.io/databend-operator/pkg/controller/warehouse"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -142,14 +143,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&controller.WarehouseReconciler{
+	if err = (&warehouse.WarehouseReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Warehouse")
 		os.Exit(1)
 	}
-	if err = (&controller.TenantReconciler{
+	if err = (&tenant.TenantReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
