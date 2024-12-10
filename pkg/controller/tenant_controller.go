@@ -24,7 +24,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	databendlabsiov1alpha1 "databendlabs.io/databend-operator/api/v1alpha1"
+	databendv1alpha1 "databendlabs.io/databend-operator/pkg/api/v1alpha1"
 )
 
 // TenantReconciler reconciles a Tenant object
@@ -57,7 +57,7 @@ func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 // SetupWithManager sets up the controller with the Manager.
 func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&databendlabsiov1alpha1.Tenant{}).
+		For(&databendv1alpha1.Tenant{}).
 		Named("tenant").
 		Complete(r)
 }
