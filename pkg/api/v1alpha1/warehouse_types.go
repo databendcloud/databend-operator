@@ -17,25 +17,78 @@ limitations under the License.
 package v1alpha1
 
 import (
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
+type DiskCacheSpec struct {
+    Enabled      bool   `json:"enabled,omitempty"`
+    MaxBytes     int    `json:"size,omitempty"`
+    Path         string `json:"path,omitempty"`
+    StorageClass string `json:"storageClass,omitempty"`
+}
+
+type LogSpec struct {
+    File    FileLogSpec `json:"file,omitempty"`
+    Stderr  FileLogSpec `json:"stderr,omitempty"`
+    Query   OTLPLogSpec `json:"query,omitempty"`
+    Profile OTLPLogSpec `json:"profile,omitempty"`
+}
+
+type FileLogSpec struct {
+    Enabled   bool   `json:"enabled,omitempty"`
+    Level     string `json:"level,omitempty"`
+    Directory string `json:"directory,omitempty"`
+}
+
+type OTLPLogSpec struct {
+    Enabled  bool   `json:"enabled,omitempty"`
+    Endpoint string `json:"endpoint,omitempty"`
+    Protocol string `json:"protocol,omitempty"`
+}
+
+type WarehouseServiceSpec struct {
+    Type         string `json:"type,omitempty"`
+    ExternalName string `json:"externalName,omitempty"`
+}
+
+type WarehouseIngressSpec struct {
+    Annotations      map[string]string `json:"annotations,omitempty"`
+    IngressClassName string            `json:"ingressClassName,omitempty"`
+    HostName         string            `json:"hostName,omitempty"`
+}
+
 // WarehouseSpec defines the desired state of Warehouse.
 type WarehouseSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	Replicas             int    `json:"replicas,omitempty"`
+	AutoSuspendAfterSecs int    `json:"autoSuspendAfterSecs,omitempty"`
+    QueryImage           string `json:"queryImage,omitempty"`
+    
+    Cache DiskCacheSpec `json:"diskCacheSize,omitempty"`
+    Log   LogSpec       `json:"log,omitempty"`
+    
+    PodResource corev1.ResourceRequirements `json:"resourcesPerNode,omitempty"`
+    
+    Tenant         corev1.LocalObjectReference `json:"tenant,omitempty"`
+    PodTolerations []corev1.Toleration         `json:"tolerations,omitempty"`
+    NodeSelector   map[string]string           `json:"nodeSelector,omitempty"`
+    
+    Service WarehouseServiceSpec `json:"service,omitempty"`
+    Ingress WarehouseIngressSpec `json:"ingress,omitempty"`
+    
+    PodLabels map[string]string `json:"labels,omitempty"`
+    
+    Settings map[string]string `json:"settings,omitempty"`
 
-	// Foo is an example field of Warehouse. Edit warehouse_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
 }
 
 // WarehouseStatus defines the observed state of Warehouse.
 type WarehouseStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+    ReadyReplicas int              `json:"readyReplicas,omitempty"`
+	Conditions    metav1.Condition `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true
