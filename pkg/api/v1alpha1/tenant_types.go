@@ -144,6 +144,7 @@ type TenantStatus struct {
 // +genclient
 // +k8s:openapi-gen=true
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
 // Tenant is the Schema for the tenants API.
 type Tenant struct {
 	metav1.TypeMeta   `json:",inline"`

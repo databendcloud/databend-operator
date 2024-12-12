@@ -25,74 +25,147 @@ import (
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
 type DiskCacheSpec struct {
-    Enabled      bool   `json:"enabled,omitempty"`
-    MaxBytes     int    `json:"size,omitempty"`
-    Path         string `json:"path,omitempty"`
+    // Whether to enable cache in disk.
+    // +kubebuilder:default=false
+    Enabled bool `json:"enabled,omitempty"`
+
+    // Max bytes of cache in disk.
+    MaxBytes int `json:"size,omitempty"`
+
+    // Path to cache directory in disk.
+    // If not set, default to /var/lib/databend/cache.
+    Path string `json:"path,omitempty"`
+
+    // Provide storage class to allocate disk cache automatically.
     StorageClass string `json:"storageClass,omitempty"`
 }
 
 type LogSpec struct {
-    File    FileLogSpec `json:"file,omitempty"`
-    Stderr  FileLogSpec `json:"stderr,omitempty"`
-    Query   OTLPLogSpec `json:"query,omitempty"`
+    // Specifications for logging in files.
+    File FileLogSpec `json:"file,omitempty"`
+
+    // Specifications for stderr logging.
+    Stderr FileLogSpec `json:"stderr,omitempty"`
+
+    // Specifications for query logging.
+    Query OTLPLogSpec `json:"query,omitempty"`
+
+    // Specifications for profile logging.
     Profile OTLPLogSpec `json:"profile,omitempty"`
 }
 
 type FileLogSpec struct {
-    Enabled   bool   `json:"enabled,omitempty"`
-    Level     string `json:"level,omitempty"`
+    // Whether to enable file logging.
+    // +kubebuilder:default=false
+    Enabled bool `json:"enabled,omitempty"`
+
+    // Log level. 
+    Level string `json:"level,omitempty"`
+
+    // Path to log directory.
     Directory string `json:"directory,omitempty"`
 }
 
 type OTLPLogSpec struct {
+    // Whether to enable OTLP logging.
+    // +kubebuilder:default=false
     Enabled  bool   `json:"enabled,omitempty"`
-    Endpoint string `json:"endpoint,omitempty"`
+
+    // OpenTelemetry Protocol
+    // +kubebuilder:default="http"
     Protocol string `json:"protocol,omitempty"`
+
+    // Endpoint for OpenTelemetry Protocol
+    Endpoint string `json:"endpoint,omitempty"`
 }
 
 type WarehouseServiceSpec struct {
-    Type         string `json:"type,omitempty"`
+    // Type of service [ClusterIP | NodePort | ExternalName | LoadBalance].
+    // +kubebuilder:default="ClusterIP"
+    Type string `json:"type,omitempty"`
+
+    // External name is needed when Type is set to "ExternalName"
     ExternalName string `json:"externalName,omitempty"`
 }
 
 type WarehouseIngressSpec struct {
-    Annotations      map[string]string `json:"annotations,omitempty"`
-    IngressClassName string            `json:"ingressClassName,omitempty"`
-    HostName         string            `json:"hostName,omitempty"`
+    // Annotations for Ingress.
+    Annotations map[string]string `json:"annotations,omitempty"`
+
+    // Name of IngressClass.
+    IngressClassName string `json:"ingressClassName,omitempty"`
+    
+    // Host name of ingress.
+    HostName string `json:"hostName,omitempty"`
 }
 
 // WarehouseSpec defines the desired state of Warehouse.
 type WarehouseSpec struct {
-	Replicas             int    `json:"replicas,omitempty"`
-	AutoSuspendAfterSecs int    `json:"autoSuspendAfterSecs,omitempty"`
-    QueryImage           string `json:"queryImage,omitempty"`
+    // Desired replicas of Query
+    // +kubebuilder:default=1
+	Replicas int `json:"replicas,omitempty"`
+
+    // Time for Query clsuter to suspend when no query requests are received.
+    // +kubebuilder:default=1500
+	AutoSuspendAfterSecs int `json:"autoSuspendAfterSecs,omitempty"`
     
+    // Image for Query.
+    QueryImage string `json:"queryImage,omitempty"`
+
+    // Reference to the Tenant CR, which provides the configuration of storage and Meta cluster.
+    // Warehouse must be created in the Tenant's namespace.
+    Tenant *corev1.LocalObjectReference `json:"tenant,omitempty"`
+    
+    // Configurations of cache in disk.
     Cache DiskCacheSpec `json:"diskCacheSize,omitempty"`
-    Log   LogSpec       `json:"log,omitempty"`
+
+    // Configurations of logging.
+    Log LogSpec `json:"log,omitempty"`
     
+    // Additional labels added to Query pod.
+    PodLabels map[string]string `json:"labels,omitempty"`
+
+    // Resource required for each Query pod.
     PodResource corev1.ResourceRequirements `json:"resourcesPerNode,omitempty"`
     
-    Tenant         corev1.LocalObjectReference `json:"tenant,omitempty"`
-    PodTolerations []corev1.Toleration         `json:"tolerations,omitempty"`
-    NodeSelector   map[string]string           `json:"nodeSelector,omitempty"`
+    // Taint tolerations for Query pod.
+    PodTolerations []corev1.Toleration `json:"tolerations,omitempty"`
     
+    // Node selector for Query pod.
+    NodeSelector map[string]string `json:"nodeSelector,omitempty"`
+    
+    // Service specifications for Query cluster.
     Service WarehouseServiceSpec `json:"service,omitempty"`
+
+    // Ingress specifications for Query cluster.
     Ingress WarehouseIngressSpec `json:"ingress,omitempty"`
     
-    PodLabels map[string]string `json:"labels,omitempty"`
-    
+    // Custom settings that will append to the config file of Query.
     Settings map[string]string `json:"settings,omitempty"`
-
 }
 
 // WarehouseStatus defines the observed state of Warehouse.
 type WarehouseStatus struct {
-    ReadyReplicas int              `json:"readyReplicas,omitempty"`
-	Conditions    metav1.Condition `json:"status,omitempty"`
+    // Number of the ready Query.
+    ReadyReplicas int `json:"readyReplicas,omitempty"`
+	
+    // Conditions for the Tenant.
+	// +listType=map
+	// +listMapKey=type
+	// +patchStrategy=merge
+	// +patchMergeKey=type
+    Conditions []metav1.Condition `json:"status,omitempty" patchStrategy:"merge" patchMergeKey:"type"`
 }
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
+// +kubebuilder:printcolumn:name="Ready",type=number,JSONPath=`.status.readyReplicas`
+// +kubebuilder:printcolumn:name="Replicas",type=number,JSONPath=`.spec.replicas`
+// +kubebuilder:printcolumn:name="State",type=string,JSONPath=`.status.conditions[-1:].type`
+// +kubebuilder:printcolumn:name="Age",type=date,JSONPath=`.metadata.creationTimestamp`
+// +genclient
+// +k8s:openapi-gen=true
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // Warehouse is the Schema for the warehouses API.
 type Warehouse struct {
