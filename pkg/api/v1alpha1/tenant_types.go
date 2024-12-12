@@ -27,7 +27,7 @@ import (
 type UserAuthType string
 
 const (
-	MD5 	   UserAuthType = "md5"
+	MD5        UserAuthType = "md5"
 	NoPassword UserAuthType = "no_password"
 )
 
