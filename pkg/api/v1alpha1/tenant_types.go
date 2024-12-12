@@ -47,7 +47,7 @@ type S3Storage struct {
 	AllowInsecure bool `json:"allowInsecure,omitempty"`
 
 	// Root path of S3.
-	RootPath string `json:"rootPath"`
+	RootPath string `json:"rootPath,omitempty"`
 
 	// Name of S3 bucket.
 	BucketName string `json:"bucketName,omitempty"`
@@ -96,7 +96,7 @@ type MetaAuth struct {
 
 	// Reference to the secret with User and Password to Meta cluster.
 	// Secret can be created in any namespace.
-	PasswordSecretRef corev1.ObjectReference `json:"passwordSecretRef,omitempty"`
+	PasswordSecretRef *corev1.ObjectReference `json:"passwordSecretRef,omitempty"`
 }
 
 type User struct {
@@ -122,17 +122,25 @@ type TenantSpec struct {
 
 	// Built-in users in the warehouse created by this tenant.
 	// If not set, we'll create "admin" user with password "admin".
+	// +listType=map
+	// +listMapKey=name
 	BuiltinUsers []User `json:"builtinUsers,omitempty"`
 }
 
 // TenantStatus defines the observed state of Tenant.
 type TenantStatus struct {
 	// Conditions for the Tenant.
-	Conditions []metav1.Condition `json:"conditions,omitempty"`
+	// +listType=map
+	// +listMapKey=type
+	// +patchStrategy=merge
+	// +patchMergeKey=type
+	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type"`
 }
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
+// +kubebuilder:printcolumn:name="State",type=string,JSONPath=`.status.conditions[-1:].type`
+// +kubebuilder:printcolumn:name="Age",type=date,JSONPath=`.metadata.creationTimestamp`
 // +genclient
 // +k8s:openapi-gen=true
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
