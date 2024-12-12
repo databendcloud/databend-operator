@@ -110,6 +110,10 @@ type User struct {
 
 	// Password encrypted with AuthType.
 	AuthString string `json:"authString,omitempty"`
+
+	// Reference to the secret with AuthString of user.
+	// Secret can be created in any namespace.
+	AuthStringSecretRef *corev1.ObjectReference `json:"authStringSecretRef,omitempty"`
 }
 
 // TenantSpec defines the desired state of Tenant.

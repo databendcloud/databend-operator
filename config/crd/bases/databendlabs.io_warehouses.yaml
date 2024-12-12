@@ -53,9 +53,10 @@ spec:
             description: WarehouseSpec defines the desired state of Warehouse.
             properties:
               autoSuspendAfterSecs:
-                default: 1500
-                description: Time for Query clsuter to suspend when no query requests
-                  are received.
+                default: 0
+                description: |-
+                  Time for Query clsuter to suspend when no query requests are received.
+                  Set to 0 if you don't want Query cluster to be suspended.
                 type: integer
               diskCacheSize:
                 description: Configurations of cache in disk.
