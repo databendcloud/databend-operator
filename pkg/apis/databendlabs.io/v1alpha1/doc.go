@@ -22,4 +22,3 @@ limitations under the License.
 // +groupName=databendlabs.io
 
 package v1alpha1
-
