@@ -33,7 +33,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	databendv1alpha1 "databendlabs.io/databend-operator/pkg/api/v1alpha1"
+	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 	// +kubebuilder:scaffold:imports
 )
 

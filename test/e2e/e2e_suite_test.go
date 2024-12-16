@@ -25,7 +25,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"databendlabs.io/databend-operator/test/utils"
+	"github.com/databendcloud/databend-operator/test/utils"
 )
 
 var (

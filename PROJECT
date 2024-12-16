@@ -2,26 +2,26 @@
 # This file is used to track the info used to scaffold your project
 # and allow the plugins properly work.
 # More info: https://book.kubebuilder.io/reference/project-config.html
-domain: databendlabs.io
+domain: github.com/databendcloud
 layout:
 - go.kubebuilder.io/v4
 projectName: databend-operator
-repo: databendlabs.io/databend-operator
+repo: github.com/databendcloud/databend-operator
 resources:
 - api:
     crdVersion: v1
     namespaced: true
   controller: true
-  domain: databendlabs.io
+  domain: github.com/databendcloud
   kind: Warehouse
-  path: databendlabs.io/databend-operator/api/v1alpha1
+  path: github.com/databendcloud/databend-operator/apis/databend.io/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
     namespaced: true
   controller: true
-  domain: databendlabs.io
+  domain: github.com/databendcloud
   kind: Tenant
-  path: databendlabs.io/databend-operator/api/v1alpha1
+  path: github.com/databendcloud/databend-operator/apis/databend.io/v1alpha1
   version: v1alpha1
 version: "3"
