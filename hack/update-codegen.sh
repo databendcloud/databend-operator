@@ -26,4 +26,4 @@ kube::codegen::gen_client \
   --output-pkg "${DATABEND_OPERATOR_PKG}/pkg/client" \
   --with-watch \
   --with-applyconfig \
-  "${DATABEND_OPERATOR_ROOT}/pkg/api"
+  "${DATABEND_OPERATOR_ROOT}/pkg/apis"
