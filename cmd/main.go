@@ -35,9 +35,9 @@ import (
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
-	databendv1alpha1 "databendlabs.io/databend-operator/pkg/api/v1alpha1"
-	tenant "databendlabs.io/databend-operator/pkg/controller/tenant"
-	warehouse "databendlabs.io/databend-operator/pkg/controller/warehouse"
+	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
+	tenant "github.com/databendcloud/databend-operator/pkg/controller/tenant"
+	warehouse "github.com/databendcloud/databend-operator/pkg/controller/warehouse"
 	// +kubebuilder:scaffold:imports
 )
 

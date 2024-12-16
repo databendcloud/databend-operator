@@ -24,7 +24,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	databendv1alpha1 "databendlabs.io/databend-operator/pkg/api/v1alpha1"
+	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 )
 
 // WarehouseReconciler reconciles a Warehouse object

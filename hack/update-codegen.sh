@@ -9,7 +9,7 @@ set -o pipefail
 
 CURRENT_DIR=$(dirname "${BASH_SOURCE[0]}")
 DATABEND_OPERATOR_ROOT=$(realpath "${CURRENT_DIR}/..")
-DATABEND_OPERATOR_PKG="databendlabs.io/databend-operator"
+DATABEND_OPERATOR_PKG="github.com/databendcloud/databend-operator"
 
 cd "$CURRENT_DIR/.."
 
