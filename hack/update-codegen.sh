@@ -27,3 +27,16 @@ kube::codegen::gen_client \
   --with-watch \
   --with-applyconfig \
   "${DATABEND_OPERATOR_ROOT}/pkg/apis"
+
+# Get the kube-openapi binary.
+OPENAPI_PKG=$(go list -m -mod=readonly -f "{{.Dir}}" k8s.io/kube-openapi)
+echo ">> Using ${OPENAPI_PKG}"
+
+echo "Generating OpenAPI specification for databendlabs.io/v1alpha1"
+go run ${OPENAPI_PKG}/cmd/openapi-gen \
+  --go-header-file "${DATABEND_OPERATOR_ROOT}/hack/boilerplate.go.txt" \
+  --output-pkg "${DATABEND_OPERATOR_PKG}/pkg/apis/databendlabs.io/v1alpha1" \
+  --output-dir "${DATABEND_OPERATOR_ROOT}/pkg/apis/databendlabs.io/v1alpha1" \
+  --output-file "zz_generated.openapi.go" \
+  --report-filename "${DATABEND_OPERATOR_ROOT}/hack/violation_exception_v1alpha1.list" \
+  "${DATABEND_OPERATOR_ROOT}/pkg/apis/databendlabs.io/v1alpha1"
