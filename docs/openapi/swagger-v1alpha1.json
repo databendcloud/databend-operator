@@ -80,7 +80,7 @@
         },
         "passwordSecretRef": {
           "description": "Reference to the secret with User and Password to Meta cluster. Secret can be created in any namespace.",
-          "$ref": "#/definitions/k8s.io.api.core.v1.ObjectReference"
+          "$ref": "#/definitions/v1.ObjectReference"
         },
         "user": {
           "description": "User of Meta cluster.",
@@ -110,7 +110,7 @@
         },
         "passwordSecretRef": {
           "description": "Reference to the secret with User and Password to Meta cluster. Secret can be created in any namespace.",
-          "$ref": "#/definitions/k8s.io.api.core.v1.ObjectReference"
+          "$ref": "#/definitions/v1.ObjectReference"
         },
         "timeoutInSecond": {
           "description": "Timeout seconds of connections to Meta cluster.",
@@ -153,7 +153,7 @@
         },
         "secretRef": {
           "description": "Reference to the secret with SerectKey and AccessKey to S3 storage. Secret can be created in any namespace.",
-          "$ref": "#/definitions/k8s.io.api.core.v1.ObjectReference"
+          "$ref": "#/definitions/v1.ObjectReference"
         }
       }
     },
@@ -190,7 +190,7 @@
         },
         "secretRef": {
           "description": "Reference to the secret with SerectKey and AccessKey to S3 storage. Secret can be created in any namespace.",
-          "$ref": "#/definitions/k8s.io.api.core.v1.ObjectReference"
+          "$ref": "#/definitions/v1.ObjectReference"
         }
       }
     },
@@ -217,7 +217,7 @@
         },
         "metadata": {
           "default": {},
-          "$ref": "#/definitions/k8s.io.apimachinery.pkg.apis.meta.v1.ObjectMeta"
+          "$ref": "#/definitions/v1.ObjectMeta"
         },
         "spec": {
           "default": {},
@@ -253,7 +253,7 @@
         },
         "metadata": {
           "default": {},
-          "$ref": "#/definitions/k8s.io.apimachinery.pkg.apis.meta.v1.ListMeta"
+          "$ref": "#/definitions/v1.ListMeta"
         }
       }
     },
@@ -293,7 +293,7 @@
           "type": "array",
           "items": {
             "default": {},
-            "$ref": "#/definitions/k8s.io.apimachinery.pkg.apis.meta.v1.Condition"
+            "$ref": "#/definitions/v1.Condition"
           },
           "x-kubernetes-list-map-keys": [
             "type"
@@ -313,7 +313,7 @@
         },
         "authStringSecretRef": {
           "description": "Reference to the secret with AuthString of user. Secret can be created in any namespace.",
-          "$ref": "#/definitions/k8s.io.api.core.v1.ObjectReference"
+          "$ref": "#/definitions/v1.ObjectReference"
         },
         "authType": {
           "description": "Authentication type of warehouse password. Currently we support: md5, no_password.",
@@ -339,7 +339,7 @@
         },
         "metadata": {
           "default": {},
-          "$ref": "#/definitions/k8s.io.apimachinery.pkg.apis.meta.v1.ObjectMeta"
+          "$ref": "#/definitions/v1.ObjectMeta"
         },
         "spec": {
           "default": {},
@@ -396,7 +396,7 @@
         },
         "metadata": {
           "default": {},
-          "$ref": "#/definitions/k8s.io.apimachinery.pkg.apis.meta.v1.ListMeta"
+          "$ref": "#/definitions/v1.ListMeta"
         }
       }
     },
@@ -465,7 +465,7 @@
         "resourcesPerNode": {
           "description": "Resource required for each Query pod.",
           "default": {},
-          "$ref": "#/definitions/k8s.io.api.core.v1.ResourceRequirements"
+          "$ref": "#/definitions/v1.ResourceRequirements"
         },
         "service": {
           "description": "Service specifications for Query cluster.",
@@ -482,14 +482,14 @@
         },
         "tenant": {
           "description": "Reference to the Tenant CR, which provides the configuration of storage and Meta cluster. Warehouse must be created in the Tenant's namespace.",
-          "$ref": "#/definitions/k8s.io.api.core.v1.LocalObjectReference"
+          "$ref": "#/definitions/v1.LocalObjectReference"
         },
         "tolerations": {
           "description": "Taint tolerations for Query pod.",
           "type": "array",
           "items": {
             "default": {},
-            "$ref": "#/definitions/k8s.io.api.core.v1.Toleration"
+            "$ref": "#/definitions/v1.Toleration"
           }
         }
       }
@@ -508,7 +508,7 @@
           "type": "array",
           "items": {
             "default": {},
-            "$ref": "#/definitions/k8s.io.apimachinery.pkg.apis.meta.v1.Condition"
+            "$ref": "#/definitions/v1.Condition"
           },
           "x-kubernetes-list-map-keys": [
             "type"
