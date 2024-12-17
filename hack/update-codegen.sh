@@ -29,6 +29,7 @@ kube::codegen::gen_client \
   "${DATABEND_OPERATOR_ROOT}/pkg/apis"
 
 # Get the kube-openapi binary.
+SWAGGER_VERSION="0.1"
 OPENAPI_PKG=$(go list -m -mod=readonly -f "{{.Dir}}" k8s.io/kube-openapi)
 echo ">> Using ${OPENAPI_PKG}"
 
@@ -43,5 +44,5 @@ go run ${OPENAPI_PKG}/cmd/openapi-gen \
   "${DATABEND_OPERATOR_ROOT}/pkg/apis/databendlabs.io/v1alpha1"
 
 # Generating OpenAPI Swagger for Training Operator Databend Operator v1alpha1.
-echo "Generate OpenAPI Swagger for databendlabs.io/v1alpha1"
-go run hack/swagger/main.go > docs/openapi/swagger-v1alpha1.json
+echo "Generating OpenAPI Swagger for databendlabs.io/v1alpha1"
+go run hack/swagger/main.go "v1alpha1-${SWAGGER_VERSION}" "v1alpha1" > docs/openapi/swagger-v1alpha1.json

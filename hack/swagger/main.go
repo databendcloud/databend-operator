@@ -28,10 +28,10 @@ import (
 	"k8s.io/kube-openapi/pkg/validation/spec"
 )
 
-// Generate OpenAPI spec definitions for Katib Resource
+// Generate OpenAPI spec definitions for Databend Operator Resource
 func main() {
 	if len(os.Args) <= 2 {
-		klog.Fatal("Supply Swagger version and Katib Version")
+		klog.Fatal("Supply Swagger version and Databend Operator Version")
 	}
 	version := os.Args[1]
 	if !strings.HasPrefix(version, "v") {
