@@ -1,0 +1,523 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Swagger description for Databend Operator",
+    "title": "Databend Operator",
+    "version": "v1alpha1-0.1"
+  },
+  "paths": {},
+  "definitions": {
+    "v1alpha1.DiskCacheSpec": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Whether to enable cache in disk.",
+          "type": "boolean"
+        },
+        "path": {
+          "description": "Path to cache directory in disk. If not set, default to /var/lib/databend/cache.",
+          "type": "string"
+        },
+        "size": {
+          "description": "Max bytes of cache in disk.",
+          "type": "integer",
+          "format": "int32"
+        },
+        "storageClass": {
+          "description": "Provide storage class to allocate disk cache automatically.",
+          "type": "string"
+        }
+      }
+    },
+    "v1alpha1.FileLogSpec": {
+      "type": "object",
+      "properties": {
+        "directory": {
+          "description": "Path to log directory.",
+          "type": "string"
+        },
+        "enabled": {
+          "description": "Whether to enable file logging.",
+          "type": "boolean"
+        },
+        "level": {
+          "description": "Log level.",
+          "type": "string"
+        }
+      }
+    },
+    "v1alpha1.LogSpec": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "description": "Specifications for logging in files.",
+          "default": {},
+          "$ref": "#/definitions/v1alpha1.FileLogSpec"
+        },
+        "profile": {
+          "description": "Specifications for profile logging.",
+          "default": {},
+          "$ref": "#/definitions/v1alpha1.OTLPLogSpec"
+        },
+        "query": {
+          "description": "Specifications for query logging.",
+          "default": {},
+          "$ref": "#/definitions/v1alpha1.OTLPLogSpec"
+        },
+        "stderr": {
+          "description": "Specifications for stderr logging.",
+          "default": {},
+          "$ref": "#/definitions/v1alpha1.FileLogSpec"
+        }
+      }
+    },
+    "v1alpha1.MetaAuth": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "description": "Password of Meta cluster.",
+          "type": "string"
+        },
+        "passwordSecretRef": {
+          "description": "Reference to the secret with User and Password to Meta cluster. Secret can be created in any namespace.",
+          "$ref": "#/definitions/v1.ObjectReference"
+        },
+        "user": {
+          "description": "User of Meta cluster.",
+          "type": "string"
+        }
+      }
+    },
+    "v1alpha1.MetaConfig": {
+      "type": "object",
+      "properties": {
+        "autoSyncInterval": {
+          "description": "Interval for warehouse to sync data from Meta cluster.",
+          "type": "integer",
+          "format": "int32"
+        },
+        "endpoints": {
+          "description": "Exposed endpoints of Meta cluster (must list all pod endpoints in the Meta cluster).",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "default": ""
+          }
+        },
+        "password": {
+          "description": "Password of Meta cluster.",
+          "type": "string"
+        },
+        "passwordSecretRef": {
+          "description": "Reference to the secret with User and Password to Meta cluster. Secret can be created in any namespace.",
+          "$ref": "#/definitions/v1.ObjectReference"
+        },
+        "timeoutInSecond": {
+          "description": "Timeout seconds of connections to Meta cluster.",
+          "type": "integer",
+          "format": "int32"
+        },
+        "user": {
+          "description": "User of Meta cluster.",
+          "type": "string"
+        }
+      }
+    },
+    "v1alpha1.OTLPLogSpec": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Whether to enable OTLP logging.",
+          "type": "boolean"
+        },
+        "endpoint": {
+          "description": "Endpoint for OpenTelemetry Protocol",
+          "type": "string"
+        },
+        "protocol": {
+          "description": "OpenTelemetry Protocol",
+          "type": "string"
+        }
+      }
+    },
+    "v1alpha1.S3Auth": {
+      "type": "object",
+      "properties": {
+        "accessKey": {
+          "description": "Access Key ID of S3 storage.",
+          "type": "string"
+        },
+        "secretKey": {
+          "description": "Secret Access Key of S3 storage.",
+          "type": "string"
+        },
+        "secretRef": {
+          "description": "Reference to the secret with SerectKey and AccessKey to S3 storage. Secret can be created in any namespace.",
+          "$ref": "#/definitions/v1.ObjectReference"
+        }
+      }
+    },
+    "v1alpha1.S3Storage": {
+      "type": "object",
+      "properties": {
+        "accessKey": {
+          "description": "Access Key ID of S3 storage.",
+          "type": "string"
+        },
+        "allowInsecure": {
+          "description": "Whether to allow insecure connections to S3 storage. If set to true, users can establish HTTP connections to S3 storage. Otherwise, only HTTPS connections are allowed. Default to true.",
+          "type": "boolean"
+        },
+        "bucketName": {
+          "description": "Name of S3 bucket.",
+          "type": "string"
+        },
+        "endpoint": {
+          "description": "Endpoint of S3 storage.",
+          "type": "string"
+        },
+        "region": {
+          "description": "Region of S3 storage.",
+          "type": "string"
+        },
+        "rootPath": {
+          "description": "Root path of S3.",
+          "type": "string"
+        },
+        "secretKey": {
+          "description": "Secret Access Key of S3 storage.",
+          "type": "string"
+        },
+        "secretRef": {
+          "description": "Reference to the secret with SerectKey and AccessKey to S3 storage. Secret can be created in any namespace.",
+          "$ref": "#/definitions/v1.ObjectReference"
+        }
+      }
+    },
+    "v1alpha1.Storage": {
+      "type": "object",
+      "properties": {
+        "s3": {
+          "description": "Specification of S3 storage.",
+          "$ref": "#/definitions/v1alpha1.S3Storage"
+        }
+      }
+    },
+    "v1alpha1.Tenant": {
+      "description": "Tenant is the Schema for the tenants API.",
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+          "type": "string"
+        },
+        "kind": {
+          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+          "type": "string"
+        },
+        "metadata": {
+          "default": {},
+          "$ref": "#/definitions/v1.ObjectMeta"
+        },
+        "spec": {
+          "default": {},
+          "$ref": "#/definitions/v1alpha1.TenantSpec"
+        },
+        "status": {
+          "default": {},
+          "$ref": "#/definitions/v1alpha1.TenantStatus"
+        }
+      }
+    },
+    "v1alpha1.TenantList": {
+      "description": "TenantList contains a list of Tenant.",
+      "type": "object",
+      "required": [
+        "items"
+      ],
+      "properties": {
+        "apiVersion": {
+          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "default": {},
+            "$ref": "#/definitions/v1alpha1.Tenant"
+          }
+        },
+        "kind": {
+          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+          "type": "string"
+        },
+        "metadata": {
+          "default": {},
+          "$ref": "#/definitions/v1.ListMeta"
+        }
+      }
+    },
+    "v1alpha1.TenantSpec": {
+      "description": "TenantSpec defines the desired state of Tenant.",
+      "type": "object",
+      "properties": {
+        "builtinUsers": {
+          "description": "Built-in users in the warehouse created by this tenant. If not set, we'll create \"admin\" user with password \"admin\".",
+          "type": "array",
+          "items": {
+            "default": {},
+            "$ref": "#/definitions/v1alpha1.User"
+          },
+          "x-kubernetes-list-map-keys": [
+            "name"
+          ],
+          "x-kubernetes-list-type": "map"
+        },
+        "meta": {
+          "description": "Configurations to open connections to a Meta cluster.",
+          "default": {},
+          "$ref": "#/definitions/v1alpha1.MetaConfig"
+        },
+        "s3": {
+          "description": "Specification of S3 storage.",
+          "$ref": "#/definitions/v1alpha1.S3Storage"
+        }
+      }
+    },
+    "v1alpha1.TenantStatus": {
+      "description": "TenantStatus defines the observed state of Tenant.",
+      "type": "object",
+      "properties": {
+        "conditions": {
+          "description": "Conditions for the Tenant.",
+          "type": "array",
+          "items": {
+            "default": {},
+            "$ref": "#/definitions/v1.Condition"
+          },
+          "x-kubernetes-list-map-keys": [
+            "type"
+          ],
+          "x-kubernetes-list-type": "map",
+          "x-kubernetes-patch-merge-key": "type",
+          "x-kubernetes-patch-strategy": "merge"
+        }
+      }
+    },
+    "v1alpha1.User": {
+      "type": "object",
+      "properties": {
+        "authString": {
+          "description": "Password encrypted with AuthType.",
+          "type": "string"
+        },
+        "authStringSecretRef": {
+          "description": "Reference to the secret with AuthString of user. Secret can be created in any namespace.",
+          "$ref": "#/definitions/v1.ObjectReference"
+        },
+        "authType": {
+          "description": "Authentication type of warehouse password. Currently we support: md5, no_password.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name of warehouse user.",
+          "type": "string"
+        }
+      }
+    },
+    "v1alpha1.Warehouse": {
+      "description": "Warehouse is the Schema for the warehouses API.",
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+          "type": "string"
+        },
+        "kind": {
+          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+          "type": "string"
+        },
+        "metadata": {
+          "default": {},
+          "$ref": "#/definitions/v1.ObjectMeta"
+        },
+        "spec": {
+          "default": {},
+          "$ref": "#/definitions/v1alpha1.WarehouseSpec"
+        },
+        "status": {
+          "default": {},
+          "$ref": "#/definitions/v1alpha1.WarehouseStatus"
+        }
+      }
+    },
+    "v1alpha1.WarehouseIngressSpec": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "description": "Annotations for Ingress.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "default": ""
+          }
+        },
+        "hostName": {
+          "description": "Host name of ingress.",
+          "type": "string"
+        },
+        "ingressClassName": {
+          "description": "Name of IngressClass.",
+          "type": "string"
+        }
+      }
+    },
+    "v1alpha1.WarehouseList": {
+      "description": "WarehouseList contains a list of Warehouse.",
+      "type": "object",
+      "required": [
+        "items"
+      ],
+      "properties": {
+        "apiVersion": {
+          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "default": {},
+            "$ref": "#/definitions/v1alpha1.Warehouse"
+          }
+        },
+        "kind": {
+          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+          "type": "string"
+        },
+        "metadata": {
+          "default": {},
+          "$ref": "#/definitions/v1.ListMeta"
+        }
+      }
+    },
+    "v1alpha1.WarehouseServiceSpec": {
+      "type": "object",
+      "properties": {
+        "externalName": {
+          "description": "External name is needed when Type is set to \"ExternalName\"",
+          "type": "string"
+        },
+        "type": {
+          "description": "Type of service [ClusterIP | NodePort | ExternalName | LoadBalance].",
+          "type": "string"
+        }
+      }
+    },
+    "v1alpha1.WarehouseSpec": {
+      "description": "WarehouseSpec defines the desired state of Warehouse.",
+      "type": "object",
+      "properties": {
+        "autoSuspendAfterSecs": {
+          "description": "Time for Query clsuter to suspend when no query requests are received. Set to 0 if you don't want Query cluster to be suspended.",
+          "type": "integer",
+          "format": "int32"
+        },
+        "diskCacheSize": {
+          "description": "Configurations of cache in disk.",
+          "default": {},
+          "$ref": "#/definitions/v1alpha1.DiskCacheSpec"
+        },
+        "ingress": {
+          "description": "Ingress specifications for Query cluster.",
+          "default": {},
+          "$ref": "#/definitions/v1alpha1.WarehouseIngressSpec"
+        },
+        "labels": {
+          "description": "Additional labels added to Query pod.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "default": ""
+          }
+        },
+        "log": {
+          "description": "Configurations of logging.",
+          "default": {},
+          "$ref": "#/definitions/v1alpha1.LogSpec"
+        },
+        "nodeSelector": {
+          "description": "Node selector for Query pod.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "default": ""
+          }
+        },
+        "queryImage": {
+          "description": "Image for Query.",
+          "type": "string"
+        },
+        "replicas": {
+          "description": "Desired replicas of Query",
+          "type": "integer",
+          "format": "int32"
+        },
+        "resourcesPerNode": {
+          "description": "Resource required for each Query pod.",
+          "default": {},
+          "$ref": "#/definitions/v1.ResourceRequirements"
+        },
+        "service": {
+          "description": "Service specifications for Query cluster.",
+          "default": {},
+          "$ref": "#/definitions/v1alpha1.WarehouseServiceSpec"
+        },
+        "settings": {
+          "description": "Custom settings that will append to the config file of Query.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "default": ""
+          }
+        },
+        "tenant": {
+          "description": "Reference to the Tenant CR, which provides the configuration of storage and Meta cluster. Warehouse must be created in the Tenant's namespace.",
+          "$ref": "#/definitions/v1.LocalObjectReference"
+        },
+        "tolerations": {
+          "description": "Taint tolerations for Query pod.",
+          "type": "array",
+          "items": {
+            "default": {},
+            "$ref": "#/definitions/v1.Toleration"
+          }
+        }
+      }
+    },
+    "v1alpha1.WarehouseStatus": {
+      "description": "WarehouseStatus defines the observed state of Warehouse.",
+      "type": "object",
+      "properties": {
+        "readyReplicas": {
+          "description": "Number of the ready Query.",
+          "type": "integer",
+          "format": "int32"
+        },
+        "status": {
+          "description": "Conditions for the Tenant.",
+          "type": "array",
+          "items": {
+            "default": {},
+            "$ref": "#/definitions/v1.Condition"
+          },
+          "x-kubernetes-list-map-keys": [
+            "type"
+          ],
+          "x-kubernetes-list-type": "map",
+          "x-kubernetes-patch-merge-key": "type",
+          "x-kubernetes-patch-strategy": "merge"
+        }
+      }
+    }
+  }
+}
