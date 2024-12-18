@@ -20,9 +20,9 @@ import (
 	"context"
 
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/klog/v2"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 )
@@ -47,12 +47,18 @@ type TenantReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.19.1/pkg/reconcile
 func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
-
-	// TODO(user): your logic here
+	var tenant databendv1alpha1.Tenant
+	if err := r.Get(ctx, req.NamespacedName, &tenant); err != nil {
+		return ctrl.Result{}, client.IgnoreNotFound(err)
+	}
+	log := ctrl.LoggerFrom(ctx).WithValues("tenant", klog.KObj(&tenant))
+	ctx = ctrl.LoggerInto(ctx, log)
+	log.V(2).Info("Reconciling Tenant")
 
 	return ctrl.Result{}, nil
 }
+
+func (r *TenantReconciler) ReconcileStorage(ctx context.Context, tenant *databendv1alpha1.Tenant) 
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
