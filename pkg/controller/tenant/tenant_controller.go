@@ -18,13 +18,27 @@ package tenant
 
 import (
 	"context"
+	"errors"
 
+	"k8s.io/apimachinery/pkg/api/equality"
+	"k8s.io/apimachinery/pkg/api/meta"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/klog/v2"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
+	"github.com/databendcloud/databend-operator/pkg/common"
+)
+
+type opState int
+
+const (
+	creationSucceeded opState = iota
+	storageError	  opState = iota
+	metaError	  	  opState = iota
+	builtinUserError  opState = iota
 )
 
 // TenantReconciler reconciles a Tenant object
@@ -37,15 +51,6 @@ type TenantReconciler struct {
 // +kubebuilder:rbac:groups=databendlabs.io,resources=tenants/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=databendlabs.io,resources=tenants/finalizers,verbs=update
 
-// Reconcile is part of the main kubernetes reconciliation loop which aims to
-// move the current state of the cluster closer to the desired state.
-// TODO(user): Modify the Reconcile function to compare the state specified by
-// the Tenant object against the actual cluster state, and then
-// perform operations to make the cluster state reflect the state specified by
-// the user.
-//
-// For more details, check Reconcile and its Result here:
-// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.19.1/pkg/reconcile
 func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	var tenant databendv1alpha1.Tenant
 	if err := r.Get(ctx, req.NamespacedName, &tenant); err != nil {
@@ -55,10 +60,78 @@ func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	ctx = ctrl.LoggerInto(ctx, log)
 	log.V(2).Info("Reconciling Tenant")
 
-	return ctrl.Result{}, nil
+	var err error
+	originStatus := tenant.Status.DeepCopy()
+
+	// Reconcile storage
+	opState, storageErr := r.ReconcileStorage(ctx, &tenant)
+	setCondition(&tenant, opState)
+	err = errors.Join(err, storageErr)
+
+	// Reconcile meta
+	opState, metaErr := r.ReconcileMeta(ctx, &tenant)
+	setCondition(&tenant, opState)
+	err = errors.Join(err, metaErr)
+
+	// Reconcile built-in users
+	opState, userErr := r.ReconcileBuiltinUsers(ctx, &tenant)
+	setCondition(&tenant, opState)
+	err = errors.Join(err, userErr)
+
+	if !equality.Semantic.DeepEqual(&tenant.Status, originStatus) {
+		return ctrl.Result{}, errors.Join(err, r.Status().Update(ctx, &tenant))
+	}
+	return ctrl.Result{}, err
 }
 
-func (r *TenantReconciler) ReconcileStorage(ctx context.Context, tenant *databendv1alpha1.Tenant) 
+func (r *TenantReconciler) ReconcileStorage(ctx context.Context, tenant *databendv1alpha1.Tenant) (opState, error) {
+	return creationSucceeded, nil
+}
+
+func (r *TenantReconciler) ReconcileMeta(ctx context.Context, tenant *databendv1alpha1.Tenant) (opState, error) {
+	return creationSucceeded, nil
+}
+
+func (r *TenantReconciler) ReconcileBuiltinUsers(ctx context.Context, tenant *databendv1alpha1.Tenant) (opState, error) {
+	return creationSucceeded, nil
+}
+
+func setCondition(tenant *databendv1alpha1.Tenant, opState opState) {
+	var newCond metav1.Condition
+	switch opState {
+	case creationSucceeded:
+		newCond = metav1.Condition{
+			Type: databendv1alpha1.TenantCreated,
+			Status: metav1.ConditionTrue,
+			Message: common.TenantCreationSucceededMessage,
+			Reason: databendv1alpha1.TenantCreationSucceededReason,
+		}
+	case storageError:
+		newCond = metav1.Condition{
+			Type: databendv1alpha1.TenantError,
+			Status: metav1.ConditionFalse,
+			Message: common.TenantStorageErrorMessage,
+			Reason: databendv1alpha1.TenantStorageErrorReason,
+		}
+	case metaError:
+		newCond = metav1.Condition{
+			Type: databendv1alpha1.TenantError,
+			Status: metav1.ConditionFalse,
+			Message: common.TenantMetaErrorMessage,
+			Reason: databendv1alpha1.TenantMetaErrorReason,
+		}
+	case builtinUserError:
+		newCond = metav1.Condition{
+			Type: databendv1alpha1.TenantError,
+			Status: metav1.ConditionFalse,
+			Message: common.TenantUserErrorMessage,
+			Reason: databendv1alpha1.TenantUserErrorReason,
+		}
+	default:
+		return
+	}
+	meta.SetStatusCondition(&tenant.Status.Conditions, newCond)
+}
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
