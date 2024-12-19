@@ -31,6 +31,35 @@ const (
 	NoPassword UserAuthType = "no_password"
 )
 
+const (
+	// TenantCreated means that the tenant creation has succeeded.
+	TenantCreated string = "Created"
+
+	// TenantError means that the tenant reaches an error state.
+	TenantError string = "Error"
+)
+
+const (
+	// TenantCreationSucceededReason is the "Created" condition reason.
+	// When the tenant creation succeeded, this is added.
+	TenantCreationSucceededReason = "TenantCreationSucceeded"
+
+	// TenantStorageErrorReason is the "Error" condition reason.
+	// When the tenant has an error storage configurations and reaches an error state,
+	// this is added.
+	TenantStorageErrorReason = "TenantStorageError"
+
+	// TenantMetaErrorReason is the "Error" condition reason.
+	// When the tenant has an error meta configurations and reaches an error state,
+	// this is added.
+	TenantMetaErrorReason = "TenantMetaError"
+
+	// TenantUserErrorReason is the "Error" condition reason.
+	// When the tenant has an error built-in user configurations and reaches an error state,
+	// this is added.
+	TenantUserErrorReason = "TenantUserError"
+)
+
 type Storage struct {
 	// Specification of S3 storage.
 	S3 *S3Storage `json:"s3,omitempty"`
