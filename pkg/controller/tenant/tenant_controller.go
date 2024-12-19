@@ -167,7 +167,7 @@ func (r *TenantReconciler) verifyMeta(ctx context.Context, tenant *databendv1alp
 		if err != nil {
 			return metaError, fmt.Errorf("failed to dial to %s, %w", endpoint, err)
 		}
-		defer conn.Close()
+		_ = conn.Close()
 	}
 
 	// Check secrets
