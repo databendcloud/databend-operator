@@ -20,6 +20,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -48,6 +50,8 @@ const (
 	builtinUserError  opState = iota
 )
 
+const DefaultTimeout = time.Second * 10
+
 // TenantReconciler reconciles a Tenant object
 type TenantReconciler struct {
 	client.Client
@@ -72,6 +76,7 @@ func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	originStatus := tenant.Status.DeepCopy()
 
 	// Verify storage configuration
+	log.V(5).Info("Verifying storage configurations")
 	opState, storageErr := r.verifyStorage(ctx, &tenant)
 	if storageErr != nil {
 		err = errors.Join(err, storageErr)
@@ -80,6 +85,7 @@ func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	setCondition(&tenant, opState)
 
 	// Verify meta configuration
+	log.V(5).Info("Verifying meta configurations")
 	opState, metaErr := r.verifyMeta(ctx, &tenant)
 	if metaErr != nil {
 		err = errors.Join(err, metaErr)
@@ -87,6 +93,7 @@ func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	setCondition(&tenant, opState)
 
 	// Verify built-in users configuration
+	log.V(5).Info("Verifying built-in users configurations")
 	opState, userErr := r.verifyBuiltinUsers(ctx, &tenant)
 	if userErr != nil {
 		err = errors.Join(err, userErr)
@@ -147,6 +154,35 @@ func (r *TenantReconciler) verifyStorage(ctx context.Context, tenant *databendv1
 }
 
 func (r *TenantReconciler) verifyMeta(ctx context.Context, tenant *databendv1alpha1.Tenant) (opState, error) {
+	log := ctrl.LoggerFrom(ctx)
+
+	if len(tenant.Spec.Meta.Endpoints) == 0 {
+		return metaError, fmt.Errorf("missing meta endpoints, at lease 1")
+	}
+
+	// Check meta connections
+	metaConfig := tenant.Spec.Meta
+	for _, endpoint := range metaConfig.Endpoints {
+		conn, err := net.DialTimeout("tcp", endpoint, DefaultTimeout)
+		if err != nil {
+			return metaError, fmt.Errorf("failed to dial to %s, %w", endpoint, err)
+		}
+		_ = conn.Close()
+	}
+
+	// Check secrets
+	if metaConfig.MetaAuth.PasswordSecretRef != nil {
+		log.V(5).Info("Getting meta password from secret")
+		var secret corev1.Secret
+		nn := types.NamespacedName{
+			Namespace: metaConfig.MetaAuth.PasswordSecretRef.Namespace,
+			Name:      metaConfig.MetaAuth.PasswordSecretRef.Name,
+		}
+		if err := r.Get(ctx, nn, &secret, &client.GetOptions{}); err != nil {
+			return storageError, fmt.Errorf("failed to get secret %v", nn)
+		}
+	}
+
 	return creationSucceeded, nil
 }
 
