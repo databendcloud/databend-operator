@@ -182,7 +182,7 @@ func (r *TenantReconciler) verifyMeta(ctx context.Context, tenant *databendv1alp
 			return storageError, fmt.Errorf("failed to get secret %v", nn)
 		}
 	}
-	
+
 	return creationSucceeded, nil
 }
 
