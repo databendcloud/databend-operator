@@ -19,11 +19,18 @@ package tenant
 import (
 	"context"
 	"errors"
+	"fmt"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/klog/v2"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -50,6 +57,7 @@ type TenantReconciler struct {
 // +kubebuilder:rbac:groups=databendlabs.io,resources=tenants,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=databendlabs.io,resources=tenants/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=databendlabs.io,resources=tenants/finalizers,verbs=update
+// +kubebuilder:rbac:groups=core,resources=secrets,verbs=get;list
 
 func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	var tenant databendv1alpha1.Tenant
@@ -63,20 +71,27 @@ func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	var err error
 	originStatus := tenant.Status.DeepCopy()
 
-	// Reconcile storage
-	opState, storageErr := r.ReconcileStorage(ctx, &tenant)
+	// Verify storage configuration
+	opState, storageErr := r.verifyStorage(ctx, &tenant)
+	if storageErr != nil {
+		err = errors.Join(err, storageErr)
+	}
+	log.V(5).Info("Succeeded to verify storage configurations")
 	setCondition(&tenant, opState)
-	err = errors.Join(err, storageErr)
 
-	// Reconcile meta
-	opState, metaErr := r.ReconcileMeta(ctx, &tenant)
+	// Verify meta configuration
+	opState, metaErr := r.verifyMeta(ctx, &tenant)
+	if metaErr != nil {
+		err = errors.Join(err, metaErr)
+	}
 	setCondition(&tenant, opState)
-	err = errors.Join(err, metaErr)
 
-	// Reconcile built-in users
-	opState, userErr := r.ReconcileBuiltinUsers(ctx, &tenant)
+	// Verify built-in users configuration
+	opState, userErr := r.verifyBuiltinUsers(ctx, &tenant)
+	if userErr != nil {
+		err = errors.Join(err, userErr)
+	}
 	setCondition(&tenant, opState)
-	err = errors.Join(err, userErr)
 
 	if !equality.Semantic.DeepEqual(&tenant.Status, originStatus) {
 		return ctrl.Result{}, errors.Join(err, r.Status().Update(ctx, &tenant))
@@ -84,15 +99,58 @@ func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	return ctrl.Result{}, err
 }
 
-func (r *TenantReconciler) ReconcileStorage(ctx context.Context, tenant *databendv1alpha1.Tenant) (opState, error) {
+func (r *TenantReconciler) verifyStorage(ctx context.Context, tenant *databendv1alpha1.Tenant) (opState, error) {
+	log := ctrl.LoggerFrom(ctx)
+
+	if tenant.Spec.Storage.S3 == nil {
+		return storageError, fmt.Errorf("missing S3 configurations")
+	}
+
+	// Get accessKey and secretKey
+	s3Config := tenant.Spec.Storage.S3
+	var accessKey, secretKey string
+	if s3Config.S3Auth.SecretRef != nil {
+		log.V(5).Info("Getting credentials from Secret")
+		var secret corev1.Secret
+		nn := types.NamespacedName{
+			Namespace: s3Config.S3Auth.SecretRef.Namespace,
+			Name: s3Config.S3Auth.SecretRef.Name,
+		}
+		if err := r.Get(ctx, nn, &secret, &client.GetOptions{}); err != nil {
+			return storageError, fmt.Errorf("failed to get secret %v", nn)
+		}
+		accessKey, secretKey = string(secret.Data["accessKey"]), string(secret.Data["secretKey"])
+	} else {
+		accessKey, secretKey = s3Config.AccessKey, s3Config.SecretKey
+	}
+
+	// Test connection to S3
+	sess, err := session.NewSession(&aws.Config{
+		Region:      aws.String(s3Config.Region),
+		Credentials: credentials.NewStaticCredentials(accessKey, secretKey, ""),
+		Endpoint:    aws.String(s3Config.Endpoint),
+	})
+	if err != nil {
+		return storageError, fmt.Errorf("failed to create session: %w", err)
+	}
+
+	// Check bucket 
+	svc := s3.New(sess)
+	_, err = svc.GetBucketLocation(&s3.GetBucketLocationInput{
+		Bucket: aws.String(s3Config.BucketName),
+	})
+	if err != nil {
+		return storageError, fmt.Errorf("failed to connect to S3: %w", err)
+	}
+
 	return creationSucceeded, nil
 }
 
-func (r *TenantReconciler) ReconcileMeta(ctx context.Context, tenant *databendv1alpha1.Tenant) (opState, error) {
+func (r *TenantReconciler) verifyMeta(ctx context.Context, tenant *databendv1alpha1.Tenant) (opState, error) {
 	return creationSucceeded, nil
 }
 
-func (r *TenantReconciler) ReconcileBuiltinUsers(ctx context.Context, tenant *databendv1alpha1.Tenant) (opState, error) {
+func (r *TenantReconciler) verifyBuiltinUsers(ctx context.Context, tenant *databendv1alpha1.Tenant) (opState, error) {
 	return creationSucceeded, nil
 }
 
