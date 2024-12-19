@@ -43,8 +43,8 @@ type opState int
 
 const (
 	creationSucceeded opState = iota
-	storageError	  opState = iota
-	metaError	  	  opState = iota
+	storageError      opState = iota
+	metaError         opState = iota
 	builtinUserError  opState = iota
 )
 
@@ -114,7 +114,7 @@ func (r *TenantReconciler) verifyStorage(ctx context.Context, tenant *databendv1
 		var secret corev1.Secret
 		nn := types.NamespacedName{
 			Namespace: s3Config.S3Auth.SecretRef.Namespace,
-			Name: s3Config.S3Auth.SecretRef.Name,
+			Name:      s3Config.S3Auth.SecretRef.Name,
 		}
 		if err := r.Get(ctx, nn, &secret, &client.GetOptions{}); err != nil {
 			return storageError, fmt.Errorf("failed to get secret %v", nn)
@@ -134,7 +134,7 @@ func (r *TenantReconciler) verifyStorage(ctx context.Context, tenant *databendv1
 		return storageError, fmt.Errorf("failed to create session: %w", err)
 	}
 
-	// Check bucket 
+	// Check bucket
 	svc := s3.New(sess)
 	_, err = svc.GetBucketLocation(&s3.GetBucketLocationInput{
 		Bucket: aws.String(s3Config.BucketName),
@@ -159,31 +159,31 @@ func setCondition(tenant *databendv1alpha1.Tenant, opState opState) {
 	switch opState {
 	case creationSucceeded:
 		newCond = metav1.Condition{
-			Type: databendv1alpha1.TenantCreated,
-			Status: metav1.ConditionTrue,
+			Type:    databendv1alpha1.TenantCreated,
+			Status:  metav1.ConditionTrue,
 			Message: common.TenantCreationSucceededMessage,
-			Reason: databendv1alpha1.TenantCreationSucceededReason,
+			Reason:  databendv1alpha1.TenantCreationSucceededReason,
 		}
 	case storageError:
 		newCond = metav1.Condition{
-			Type: databendv1alpha1.TenantError,
-			Status: metav1.ConditionFalse,
+			Type:    databendv1alpha1.TenantError,
+			Status:  metav1.ConditionFalse,
 			Message: common.TenantStorageErrorMessage,
-			Reason: databendv1alpha1.TenantStorageErrorReason,
+			Reason:  databendv1alpha1.TenantStorageErrorReason,
 		}
 	case metaError:
 		newCond = metav1.Condition{
-			Type: databendv1alpha1.TenantError,
-			Status: metav1.ConditionFalse,
+			Type:    databendv1alpha1.TenantError,
+			Status:  metav1.ConditionFalse,
 			Message: common.TenantMetaErrorMessage,
-			Reason: databendv1alpha1.TenantMetaErrorReason,
+			Reason:  databendv1alpha1.TenantMetaErrorReason,
 		}
 	case builtinUserError:
 		newCond = metav1.Condition{
-			Type: databendv1alpha1.TenantError,
-			Status: metav1.ConditionFalse,
+			Type:    databendv1alpha1.TenantError,
+			Status:  metav1.ConditionFalse,
 			Message: common.TenantUserErrorMessage,
-			Reason: databendv1alpha1.TenantUserErrorReason,
+			Reason:  databendv1alpha1.TenantUserErrorReason,
 		}
 	default:
 		return
