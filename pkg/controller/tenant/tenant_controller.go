@@ -90,6 +90,7 @@ func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	if metaErr != nil {
 		err = errors.Join(err, metaErr)
 	}
+	log.V(5).Info("Succeeded to verify meta configurations")
 	setCondition(&tenant, opState)
 
 	// Verify built-in users configuration
@@ -98,6 +99,7 @@ func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	if userErr != nil {
 		err = errors.Join(err, userErr)
 	}
+	log.V(5).Info("Succeeded to verify built-in users configurations")
 	setCondition(&tenant, opState)
 
 	if !equality.Semantic.DeepEqual(&tenant.Status, originStatus) {
@@ -187,6 +189,27 @@ func (r *TenantReconciler) verifyMeta(ctx context.Context, tenant *databendv1alp
 }
 
 func (r *TenantReconciler) verifyBuiltinUsers(ctx context.Context, tenant *databendv1alpha1.Tenant) (opState, error) {
+	log := ctrl.LoggerFrom(ctx)
+
+	if len(tenant.Spec.BuiltinUsers) == 0 {
+		log.V(5).Info("Use default user")
+		return creationSucceeded, nil
+	}
+
+	// Check secrets
+	for _, user := range tenant.Spec.BuiltinUsers {
+		if user.AuthStringSecretRef != nil {
+			var secret corev1.Secret
+			nn := types.NamespacedName{
+				Namespace: user.AuthStringSecretRef.Namespace,
+				Name:      user.AuthStringSecretRef.Name,
+			}
+			if err := r.Get(ctx, nn, &secret, &client.GetOptions{}); err != nil {
+				return storageError, fmt.Errorf("failed to get secret %v", nn)
+			}
+		}
+	}
+
 	return creationSucceeded, nil
 }
 
