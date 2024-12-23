@@ -534,7 +534,7 @@ func schema_pkg_apis_databendlabsio_v1alpha1_TenantSpec(ref common.ReferenceCall
 							Ref:         ref("github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.MetaConfig"),
 						},
 					},
-					"builtinUsers": {
+					"users": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Built-in users in the warehouse created by this tenant. If not set, we'll create \"admin\" user with password \"admin\".",
 							Type:        []string{"array"},

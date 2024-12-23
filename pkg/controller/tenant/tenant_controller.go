@@ -191,13 +191,13 @@ func (r *TenantReconciler) verifyMeta(ctx context.Context, tenant *databendv1alp
 func (r *TenantReconciler) verifyBuiltinUsers(ctx context.Context, tenant *databendv1alpha1.Tenant) (opState, error) {
 	log := ctrl.LoggerFrom(ctx)
 
-	if len(tenant.Spec.BuiltinUsers) == 0 {
+	if len(tenant.Spec.Users) == 0 {
 		log.V(5).Info("Use default user")
 		return creationSucceeded, nil
 	}
 
 	// Check secrets
-	for _, user := range tenant.Spec.BuiltinUsers {
+	for _, user := range tenant.Spec.Users {
 		if user.AuthStringSecretRef != nil {
 			var secret corev1.Secret
 			nn := types.NamespacedName{

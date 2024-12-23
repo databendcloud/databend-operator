@@ -261,14 +261,6 @@
       "description": "TenantSpec defines the desired state of Tenant.",
       "type": "object",
       "properties": {
-        "builtinUsers": {
-          "description": "Built-in users in the warehouse created by this tenant. If not set, we'll create \"admin\" user with password \"admin\".",
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/v1alpha1.User"
-          }
-        },
         "meta": {
           "description": "Configurations to open connections to a Meta cluster.",
           "default": {},
@@ -277,6 +269,14 @@
         "s3": {
           "description": "Specification of S3 storage.",
           "$ref": "#/definitions/v1alpha1.S3Storage"
+        },
+        "users": {
+          "description": "Built-in users in the warehouse created by this tenant. If not set, we'll create \"admin\" user with password \"admin\".",
+          "type": "array",
+          "items": {
+            "default": {},
+            "$ref": "#/definitions/v1alpha1.User"
+          }
         }
       }
     },
