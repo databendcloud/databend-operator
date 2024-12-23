@@ -155,8 +155,6 @@ type TenantSpec struct {
 
 	// Built-in users in the warehouse created by this tenant.
 	// If not set, we'll create "admin" user with password "admin".
-	// +listType=map
-	// +listMapKey=name
 	BuiltinUsers []User `json:"builtinUsers,omitempty"`
 }
 

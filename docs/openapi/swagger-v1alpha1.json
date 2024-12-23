@@ -267,11 +267,7 @@
           "items": {
             "default": {},
             "$ref": "#/definitions/v1alpha1.User"
-          },
-          "x-kubernetes-list-map-keys": [
-            "name"
-          ],
-          "x-kubernetes-list-type": "map"
+          }
         },
         "meta": {
           "description": "Configurations to open connections to a Meta cluster.",
