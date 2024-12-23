@@ -79,6 +79,7 @@ type S3Storage struct {
 	RootPath string `json:"rootPath,omitempty"`
 
 	// Name of S3 bucket.
+	// +kubebuilder:default="us-east-1"
 	BucketName string `json:"bucketName,omitempty"`
 
 	// Region of S3 storage.
@@ -155,9 +156,7 @@ type TenantSpec struct {
 
 	// Built-in users in the warehouse created by this tenant.
 	// If not set, we'll create "admin" user with password "admin".
-	// +listType=map
-	// +listMapKey=name
-	BuiltinUsers []User `json:"builtinUsers,omitempty"`
+	Users []User `json:"users,omitempty"`
 }
 
 // TenantStatus defines the observed state of Tenant.

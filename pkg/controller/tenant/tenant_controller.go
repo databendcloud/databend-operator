@@ -29,6 +29,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -64,11 +65,16 @@ type TenantReconciler struct {
 // +kubebuilder:rbac:groups=core,resources=secrets,verbs=get;list
 
 func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+	log := ctrl.LoggerFrom(ctx)
+
 	var tenant databendv1alpha1.Tenant
 	if err := r.Get(ctx, req.NamespacedName, &tenant); err != nil {
+		if apierrors.IsNotFound(err) {
+			log.V(2).Info("Tenant has been deleted", "namespacedName", req.NamespacedName)
+		}
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
-	log := ctrl.LoggerFrom(ctx).WithValues("tenant", klog.KObj(&tenant))
+	log = log.WithValues("tenant", klog.KObj(&tenant))
 	ctx = ctrl.LoggerInto(ctx, log)
 	log.V(2).Info("Reconciling Tenant")
 
@@ -138,6 +144,7 @@ func (r *TenantReconciler) verifyStorage(ctx context.Context, tenant *databendv1
 		Region:      aws.String(s3Config.Region),
 		Credentials: credentials.NewStaticCredentials(accessKey, secretKey, ""),
 		Endpoint:    aws.String(s3Config.Endpoint),
+		DisableSSL:  aws.Bool(s3Config.AllowInsecure),
 	})
 	if err != nil {
 		return storageError, fmt.Errorf("failed to create session: %w", err)
@@ -191,13 +198,13 @@ func (r *TenantReconciler) verifyMeta(ctx context.Context, tenant *databendv1alp
 func (r *TenantReconciler) verifyBuiltinUsers(ctx context.Context, tenant *databendv1alpha1.Tenant) (opState, error) {
 	log := ctrl.LoggerFrom(ctx)
 
-	if len(tenant.Spec.BuiltinUsers) == 0 {
+	if len(tenant.Spec.Users) == 0 {
 		log.V(5).Info("Use default user")
 		return creationSucceeded, nil
 	}
 
 	// Check secrets
-	for _, user := range tenant.Spec.BuiltinUsers {
+	for _, user := range tenant.Spec.Users {
 		if user.AuthStringSecretRef != nil {
 			var secret corev1.Secret
 			nn := types.NamespacedName{

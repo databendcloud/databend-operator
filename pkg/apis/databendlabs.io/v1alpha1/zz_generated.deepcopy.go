@@ -251,8 +251,8 @@ func (in *TenantSpec) DeepCopyInto(out *TenantSpec) {
 	*out = *in
 	in.Storage.DeepCopyInto(&out.Storage)
 	in.Meta.DeepCopyInto(&out.Meta)
-	if in.BuiltinUsers != nil {
-		in, out := &in.BuiltinUsers, &out.BuiltinUsers
+	if in.Users != nil {
+		in, out := &in.Users, &out.Users
 		*out = make([]User, len(*in))
 		for i := range *in {
 			(*in)[i].DeepCopyInto(&(*out)[i])

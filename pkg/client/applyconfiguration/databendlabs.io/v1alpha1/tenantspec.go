@@ -22,7 +22,7 @@ package v1alpha1
 type TenantSpecApplyConfiguration struct {
 	StorageApplyConfiguration `json:",inline"`
 	Meta                      *MetaConfigApplyConfiguration `json:"meta,omitempty"`
-	BuiltinUsers              []UserApplyConfiguration      `json:"builtinUsers,omitempty"`
+	Users                     []UserApplyConfiguration      `json:"users,omitempty"`
 }
 
 // TenantSpecApplyConfiguration constructs a declarative configuration of the TenantSpec type for use with
@@ -47,15 +47,15 @@ func (b *TenantSpecApplyConfiguration) WithMeta(value *MetaConfigApplyConfigurat
 	return b
 }
 
-// WithBuiltinUsers adds the given value to the BuiltinUsers field in the declarative configuration
+// WithUsers adds the given value to the Users field in the declarative configuration
 // and returns the receiver, so that objects can be build by chaining "With" function invocations.
-// If called multiple times, values provided by each call will be appended to the BuiltinUsers field.
-func (b *TenantSpecApplyConfiguration) WithBuiltinUsers(values ...*UserApplyConfiguration) *TenantSpecApplyConfiguration {
+// If called multiple times, values provided by each call will be appended to the Users field.
+func (b *TenantSpecApplyConfiguration) WithUsers(values ...*UserApplyConfiguration) *TenantSpecApplyConfiguration {
 	for i := range values {
 		if values[i] == nil {
-			panic("nil value passed to WithBuiltinUsers")
+			panic("nil value passed to WithUsers")
 		}
-		b.BuiltinUsers = append(b.BuiltinUsers, *values[i])
+		b.Users = append(b.Users, *values[i])
 	}
 	return b
 }
