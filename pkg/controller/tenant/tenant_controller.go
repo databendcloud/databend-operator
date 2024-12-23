@@ -144,6 +144,7 @@ func (r *TenantReconciler) verifyStorage(ctx context.Context, tenant *databendv1
 		Region:      aws.String(s3Config.Region),
 		Credentials: credentials.NewStaticCredentials(accessKey, secretKey, ""),
 		Endpoint:    aws.String(s3Config.Endpoint),
+		DisableSSL:  aws.Bool(s3Config.AllowInsecure),
 	})
 	if err != nil {
 		return storageError, fmt.Errorf("failed to create session: %w", err)

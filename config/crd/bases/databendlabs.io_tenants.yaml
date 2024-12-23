@@ -129,6 +129,7 @@ spec:
                       Otherwise, only HTTPS connections are allowed. Default to true.
                     type: boolean
                   bucketName:
+                    default: us-east-1
                     description: Name of S3 bucket.
                     type: string
                   endpoint:

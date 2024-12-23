@@ -79,6 +79,7 @@ type S3Storage struct {
 	RootPath string `json:"rootPath,omitempty"`
 
 	// Name of S3 bucket.
+	// +kubebuilder:default="us-east-1"
 	BucketName string `json:"bucketName,omitempty"`
 
 	// Region of S3 storage.
