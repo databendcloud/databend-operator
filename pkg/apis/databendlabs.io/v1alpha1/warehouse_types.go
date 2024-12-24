@@ -21,8 +21,45 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
+const (
+	// WarehouseCreated means that the Warehouse creation has succeeded.
+	WarehouseCreated string = "Created"
+
+	// WarehouseSuspended means that the Warehouse is suspended.
+	WarehouseSuspended string = "Suspended"
+
+	// WarehouseFailed means that the Warehouse have failed due to some reasons.
+	WarehouseFailed string = "Failed"
+
+	// WarehouseRunning means that the Warehouse is running.
+	WarehouseRunning string = "Running"
+)
+
+const (
+	// WarehouseSuspendedReason is the "Suspended" condition reason.
+	// When the Warehouse is suspended, this is added.
+	WarehouseSuspendedReason string = "Suspended"
+
+	// WarehouseResumeReason is the "Running" condition reason.
+	// When the Warehouse suspension is changed from True to False, this is added.
+	WarehouseResumedReason string = "Resumed"
+
+	// WarehouseRunningReason is the "Running" condition reason.
+	// When the created objects succeeded after building succeeded, this is added.
+	WarehouseRunningReason string = "WarehouseRunning"
+
+	// WarehouseCreatedReason is the "Created" condition reason.
+	// When the Warehouse creation succeeded and related objects are not ready, this is added.
+	WarehouseCreatedReason string = "WarehouseCreated"
+
+	// WarehouseBuildFailedReason is the "Failed" condition reason.
+	// When the Warehouse building failed in the reconciling loop, this is added.
+	WarehouseBuildFailedReason string = "WarehouseBuildFailed"
+
+	// WarehouseRunFailedReason is the "Failed" condition reason.
+	// When the Warehouse failed outside the building stage, this is added.
+	WarehouseRunFailedReason string = "WarehouseRunFailed"
+)
 
 type DiskCacheSpec struct {
 	// Whether to enable cache in disk.
