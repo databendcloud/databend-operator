@@ -34,10 +34,10 @@ type opState int
 
 const (
 	createSucceeded opState = iota
-	running			opState = iota
-	buildFailed 	opState = iota
-	runFailed   	opState = iota
-	updateFailed 	opState = iota
+	running         opState = iota
+	buildFailed     opState = iota
+	runFailed       opState = iota
+	updateFailed    opState = iota
 )
 
 // WarehouseReconciler reconciles a Warehouse object
@@ -63,37 +63,37 @@ func setCondition(warehouse *databendv1alpha1.Warehouse, opState opState) {
 	switch opState {
 	case createSucceeded:
 		newCond = metav1.Condition{
-			Type:   databendv1alpha1.WarehouseCreated,
-			Status: metav1.ConditionTrue,
-			Reason: databendv1alpha1.WarehouseCreatedReason,
+			Type:    databendv1alpha1.WarehouseCreated,
+			Status:  metav1.ConditionTrue,
+			Reason:  databendv1alpha1.WarehouseCreatedReason,
 			Message: common.WarehouseCreatedMessage,
 		}
 	case running:
 		newCond = metav1.Condition{
-			Type:   databendv1alpha1.WarehouseRunning,
-			Status: metav1.ConditionTrue,
-			Reason: databendv1alpha1.WarehouseRunningReason,
+			Type:    databendv1alpha1.WarehouseRunning,
+			Status:  metav1.ConditionTrue,
+			Reason:  databendv1alpha1.WarehouseRunningReason,
 			Message: common.WarehouseRunningMessage,
 		}
 	case buildFailed:
 		newCond = metav1.Condition{
-			Type:   databendv1alpha1.WarehouseFailed,
-			Status: metav1.ConditionFalse,
-			Reason: databendv1alpha1.WarehouseBuildFailedReason,
+			Type:    databendv1alpha1.WarehouseFailed,
+			Status:  metav1.ConditionFalse,
+			Reason:  databendv1alpha1.WarehouseBuildFailedReason,
 			Message: common.WarehouseBuildFailedMessage,
 		}
 	case updateFailed:
 		newCond = metav1.Condition{
-			Type:   databendv1alpha1.WarehouseFailed,
-			Status: metav1.ConditionFalse,
-			Reason: databendv1alpha1.WarehouseBuildFailedReason,
+			Type:    databendv1alpha1.WarehouseFailed,
+			Status:  metav1.ConditionFalse,
+			Reason:  databendv1alpha1.WarehouseBuildFailedReason,
 			Message: common.WarehouseUpdateFailedMessage,
 		}
 	case runFailed:
 		newCond = metav1.Condition{
-			Type:   databendv1alpha1.WarehouseFailed,
-			Status: metav1.ConditionFalse,
-			Reason: databendv1alpha1.WarehouseRunFailedReason,
+			Type:    databendv1alpha1.WarehouseFailed,
+			Status:  metav1.ConditionFalse,
+			Reason:  databendv1alpha1.WarehouseRunFailedReason,
 			Message: common.WarehouseRunFailedMessage,
 		}
 	}
