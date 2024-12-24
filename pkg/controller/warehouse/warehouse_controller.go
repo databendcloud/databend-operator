@@ -19,12 +19,25 @@ package warehouse
 import (
 	"context"
 
+	"k8s.io/apimachinery/pkg/api/meta"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
+	"github.com/databendcloud/databend-operator/pkg/common"
+)
+
+type opState int
+
+const (
+	createSucceeded opState = iota
+	running			opState = iota
+	buildFailed 	opState = iota
+	runFailed   	opState = iota
+	updateFailed 	opState = iota
 )
 
 // WarehouseReconciler reconciles a Warehouse object
@@ -37,21 +50,54 @@ type WarehouseReconciler struct {
 // +kubebuilder:rbac:groups=databendlabs.io,resources=warehouses/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=databendlabs.io,resources=warehouses/finalizers,verbs=update
 
-// Reconcile is part of the main kubernetes reconciliation loop which aims to
-// move the current state of the cluster closer to the desired state.
-// TODO(user): Modify the Reconcile function to compare the state specified by
-// the Warehouse object against the actual cluster state, and then
-// perform operations to make the cluster state reflect the state specified by
-// the user.
-//
-// For more details, check Reconcile and its Result here:
-// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.19.1/pkg/reconcile
 func (r *WarehouseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = log.FromContext(ctx)
 
 	// TODO(user): your logic here
 
 	return ctrl.Result{}, nil
+}
+
+func setCondition(warehouse *databendv1alpha1.Warehouse, opState opState) {
+	var newCond metav1.Condition
+	switch opState {
+	case createSucceeded:
+		newCond = metav1.Condition{
+			Type:   databendv1alpha1.WarehouseCreated,
+			Status: metav1.ConditionTrue,
+			Reason: databendv1alpha1.WarehouseCreatedReason,
+			Message: common.WarehouseCreatedMessage,
+		}
+	case running:
+		newCond = metav1.Condition{
+			Type:   databendv1alpha1.WarehouseRunning,
+			Status: metav1.ConditionTrue,
+			Reason: databendv1alpha1.WarehouseRunningReason,
+			Message: common.WarehouseRunningMessage,
+		}
+	case buildFailed:
+		newCond = metav1.Condition{
+			Type:   databendv1alpha1.WarehouseFailed,
+			Status: metav1.ConditionFalse,
+			Reason: databendv1alpha1.WarehouseBuildFailedReason,
+			Message: common.WarehouseBuildFailedMessage,
+		}
+	case updateFailed:
+		newCond = metav1.Condition{
+			Type:   databendv1alpha1.WarehouseFailed,
+			Status: metav1.ConditionFalse,
+			Reason: databendv1alpha1.WarehouseBuildFailedReason,
+			Message: common.WarehouseUpdateFailedMessage,
+		}
+	case runFailed:
+		newCond = metav1.Condition{
+			Type:   databendv1alpha1.WarehouseFailed,
+			Status: metav1.ConditionFalse,
+			Reason: databendv1alpha1.WarehouseRunFailedReason,
+			Message: common.WarehouseRunFailedMessage,
+		}
+	}
+	meta.SetStatusCondition(&warehouse.Status.Conditions, newCond)
 }
 
 // SetupWithManager sets up the controller with the Manager.

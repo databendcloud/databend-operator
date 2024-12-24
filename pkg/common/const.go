@@ -23,9 +23,17 @@ const (
 	// {"type": "Running", "status": "True", "reason": "WarehouseRunning"} condition.
 	WarehouseRunningMessage = "Warehouse is running"
 
+	// WarehouseCreatedMessage is the status condition message for the
+	// {"type": "Created", "status": "True", "reason": "WarehouseCreated"} condition.
+	WarehouseCreatedMessage = "Succeeded to create Warehouse"
+
 	// WarehouseBuildFailedMessage is the status condition message for the
 	// {"type": "Failed", "status": "False", "reason": "WarehouseBuildFailed"} condition.
 	WarehouseBuildFailedMessage = "Failed to build Warehouse"
+
+	// WarehouseUpdateFailedMessage is the status condition message for the
+	// {"type": "Failed", "status": "False", "reason": "WarehouseBuildFailed"} condition.
+	WarehouseUpdateFailedMessage = "Failed to update Warehouse"
 
 	// WarehouseRunFailedMessage is the status condition message for the
 	// {"type": "Failed", "status": "False", "reason": "WarehouseRunFailed"} condition.
