@@ -17,3 +17,25 @@ const (
 	// {"type": "Error", "status": "False", "reason": "TenantUserError"} condition.
 	TenantUserErrorMessage = "Invalid built-in user configurations"
 )
+
+const (
+	// WarehouseRunningMessage is the status condition message for the
+	// {"type": "Running", "status": "True", "reason": "WarehouseRunning"} condition.
+	WarehouseRunningMessage = "Warehouse is running"
+
+	// WarehouseBuildFailedMessage is the status condition message for the
+	// {"type": "Failed", "status": "False", "reason": "WarehouseBuildFailed"} condition.
+	WarehouseBuildFailedMessage = "Failed to build Warehouse"
+
+	// WarehouseRunFailedMessage is the status condition message for the
+	// {"type": "Failed", "status": "False", "reason": "WarehouseRunFailed"} condition.
+	WarehouseRunFailedMessage = "Failed to run Warehouse"
+
+	// WarehouseSuspendedMessage is the status condition message for the
+	// {"type": "Suspended", "status": "True", "reason": "Suspended"} condition.
+	WarehouseSuspendedMessage = "Warehouse is suspended"
+
+	// WarehouseResumedMessage is the status condition message for the
+	// {"type": "Suspended", "status": "True", "reason": "Resumed"} condition.
+	WarehouseResumedMessage = "Warehouse is resumed"
+)

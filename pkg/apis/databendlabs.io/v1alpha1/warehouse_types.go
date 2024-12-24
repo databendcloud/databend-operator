@@ -40,7 +40,7 @@ const (
 	// When the Warehouse is suspended, this is added.
 	WarehouseSuspendedReason string = "Suspended"
 
-	// WarehouseResumeReason is the "Running" condition reason.
+	// WarehouseResumeReason is the "Suspended" condition reason.
 	// When the Warehouse suspension is changed from True to False, this is added.
 	WarehouseResumedReason string = "Resumed"
 
