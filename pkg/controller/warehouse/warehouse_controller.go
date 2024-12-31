@@ -73,7 +73,7 @@ func (r *WarehouseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	if warehouse.GetResourceVersion() == "" {
 		tenantNN := types.NamespacedName{
 			Namespace: req.Namespace,
-			Name: warehouse.Spec.Tenant.Name,
+			Name:      warehouse.Spec.Tenant.Name,
 		}
 		_, err := r.getTenant(ctx, tenantNN)
 		if err != nil {
@@ -132,7 +132,7 @@ func setCondition(warehouse *databendv1alpha1.Warehouse, opState opState) {
 
 func (r *WarehouseReconciler) getTenant(ctx context.Context, nn types.NamespacedName) (*databendv1alpha1.Tenant, error) {
 	log := ctrl.LoggerFrom(ctx)
-	
+
 	var tenant databendv1alpha1.Tenant
 	if err := r.Get(ctx, nn, &tenant, &client.GetOptions{}); err != nil {
 		return nil, err
