@@ -148,7 +148,8 @@ func (r *WarehouseReconciler) getTenant(ctx context.Context, nn types.Namespaced
 		if err := r.Get(ctx, nn, &secret, &client.GetOptions{}); err != nil {
 			return nil, fmt.Errorf("failed to get secret %v", nn)
 		}
-		tenant.Spec.Storage.S3.AccessKey, tenant.Spec.Storage.S3.SecretKey = string(secret.Data["accessKey"]), string(secret.Data["secretKey"])
+		tenant.Spec.Storage.S3.AccessKey = string(secret.Data["accessKey"])
+		tenant.Spec.Storage.S3.SecretKey = string(secret.Data["secretKey"])
 	}
 
 	// Retrieve meta configurations
