@@ -22,7 +22,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: ${{ env.GOPATH }}/src/github.com/databendlabs/databend-operator
+          go-version-file: ${{ env.GOPATH }}/src/github.com/databendlabs/databend-operator/go.mod
 
       - name: Check Go modules
         run: |
