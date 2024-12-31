@@ -81,8 +81,6 @@ func (r *WarehouseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 			setCondition(&warehouse, buildFailed)
 			return ctrl.Result{}, err
 		}
-	} else {
-
 	}
 
 	return ctrl.Result{}, nil
