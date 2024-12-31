@@ -30,7 +30,7 @@ jobs:
           git diff --cached --exit-code || (echo 'Please run "go mod tidy" to sync Go modules' && exit 1);
       - name: Check auto-generated assets
         run: |
-          make generate && git add pkg sdk manifests &&
+          make generate && git add pkg config &&
           git diff --cached --exit-code || (echo 'Please run "make generate" to generate assets' && exit 1);
       - name: Verify gofmt
         run: |
