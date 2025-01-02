@@ -18,9 +18,12 @@ package warehouse
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/equality"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -70,62 +73,59 @@ func (r *WarehouseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	ctx = ctrl.LoggerInto(ctx, log)
 	log.V(2).Info("Reconciling Warehouse")
 
-	if warehouse.GetResourceVersion() == "" {
-		tenantNN := types.NamespacedName{
-			Namespace: req.Namespace,
-			Name:      warehouse.Spec.Tenant.Name,
-		}
-		_, err := r.getTenant(ctx, tenantNN)
-		if err != nil {
-			log.V(2).Error(err, "Failed to get tenant")
-			setCondition(&warehouse, buildFailed)
-			return ctrl.Result{}, err
-		}
+	opState, err := r.reconcileStatefulSet(ctx, &warehouse)
+
+	originStatus := warehouse.Status.DeepCopy()
+	setCondition(&warehouse, opState)
+	if !equality.Semantic.DeepEqual(warehouse.Status, originStatus) {
+		return ctrl.Result{}, errors.Join(err, r.Status().Update(ctx, &warehouse))
 	}
 
-	return ctrl.Result{}, nil
+	return ctrl.Result{}, err
 }
 
-func setCondition(warehouse *databendv1alpha1.Warehouse, opState opState) {
-	var newCond metav1.Condition
-	switch opState {
-	case createSucceeded:
-		newCond = metav1.Condition{
-			Type:    databendv1alpha1.WarehouseCreated,
-			Status:  metav1.ConditionTrue,
-			Reason:  databendv1alpha1.WarehouseCreatedReason,
-			Message: common.WarehouseCreatedMessage,
-		}
-	case running:
-		newCond = metav1.Condition{
-			Type:    databendv1alpha1.WarehouseRunning,
-			Status:  metav1.ConditionTrue,
-			Reason:  databendv1alpha1.WarehouseRunningReason,
-			Message: common.WarehouseRunningMessage,
-		}
-	case buildFailed:
-		newCond = metav1.Condition{
-			Type:    databendv1alpha1.WarehouseFailed,
-			Status:  metav1.ConditionFalse,
-			Reason:  databendv1alpha1.WarehouseBuildFailedReason,
-			Message: common.WarehouseBuildFailedMessage,
-		}
-	case updateFailed:
-		newCond = metav1.Condition{
-			Type:    databendv1alpha1.WarehouseFailed,
-			Status:  metav1.ConditionFalse,
-			Reason:  databendv1alpha1.WarehouseBuildFailedReason,
-			Message: common.WarehouseUpdateFailedMessage,
-		}
-	case runFailed:
-		newCond = metav1.Condition{
-			Type:    databendv1alpha1.WarehouseFailed,
-			Status:  metav1.ConditionFalse,
-			Reason:  databendv1alpha1.WarehouseRunFailedReason,
-			Message: common.WarehouseRunFailedMessage,
-		}
+func (r *WarehouseReconciler) reconcileStatefulSet(ctx context.Context, warehouse *databendv1alpha1.Warehouse) (opState, error) {
+	log := ctrl.LoggerFrom(ctx)
+
+	// Get corresponding tenant and retrieve configurations
+	tenantNN := types.NamespacedName{
+		Namespace: warehouse.Namespace,
+		Name:      warehouse.Spec.Tenant.Name,
 	}
-	meta.SetStatusCondition(&warehouse.Status.Conditions, newCond)
+	tenant, err := r.getTenant(ctx, tenantNN)
+	if err != nil {
+		log.V(5).Error(err, "Failed to get tenant")
+		return buildFailed, err
+	}
+
+	// Build and reconcile StatefulSet
+	ss, err := buildStatefulSet(ctx, tenant, warehouse)
+	if err != nil {
+		log.V(5).Error(err, "Failed to build StatefulSet")
+		return buildFailed, err
+	}
+
+	// Non-empty resourceVersion indicates UPDATE operation.
+	var creationErr error
+	var created bool
+	if warehouse.GetResourceVersion() == "" {
+		creationErr = r.Create(ctx, ss)
+		created = creationErr == nil
+	}
+	switch {
+	case created:
+		log.V(5).Info("Succeeded to create StatefulSet", "name", ss.Name)
+	case client.IgnoreAlreadyExists(creationErr) != nil:
+		log.V(5).Info("Failed to create StatefulSet", "name", ss.Name)
+		return runFailed, creationErr
+	default:
+		if err := r.Update(ctx, ss); err != nil {
+			return updateFailed, err
+		}
+		log.V(5).Info("Succeeded to update StatefulSet", "name", ss.Name)
+	}
+
+	return createSucceeded, nil
 }
 
 func (r *WarehouseReconciler) getTenant(ctx context.Context, nn types.NamespacedName) (*databendv1alpha1.Tenant, error) {
@@ -185,10 +185,58 @@ func (r *WarehouseReconciler) getTenant(ctx context.Context, nn types.Namespaced
 	return &tenant, nil
 }
 
+func buildStatefulSet(ctx context.Context, tenant *databendv1alpha1.Tenant, warehouse *databendv1alpha1.Warehouse) (*appsv1.StatefulSet, error) {
+	_, _, _ = ctx, tenant, warehouse
+	return nil, nil
+}
+
+func setCondition(warehouse *databendv1alpha1.Warehouse, opState opState) {
+	var newCond metav1.Condition
+	switch opState {
+	case createSucceeded:
+		newCond = metav1.Condition{
+			Type:    databendv1alpha1.WarehouseCreated,
+			Status:  metav1.ConditionTrue,
+			Reason:  databendv1alpha1.WarehouseCreatedReason,
+			Message: common.WarehouseCreatedMessage,
+		}
+	case running:
+		newCond = metav1.Condition{
+			Type:    databendv1alpha1.WarehouseRunning,
+			Status:  metav1.ConditionTrue,
+			Reason:  databendv1alpha1.WarehouseRunningReason,
+			Message: common.WarehouseRunningMessage,
+		}
+	case buildFailed:
+		newCond = metav1.Condition{
+			Type:    databendv1alpha1.WarehouseFailed,
+			Status:  metav1.ConditionFalse,
+			Reason:  databendv1alpha1.WarehouseBuildFailedReason,
+			Message: common.WarehouseBuildFailedMessage,
+		}
+	case updateFailed:
+		newCond = metav1.Condition{
+			Type:    databendv1alpha1.WarehouseFailed,
+			Status:  metav1.ConditionFalse,
+			Reason:  databendv1alpha1.WarehouseBuildFailedReason,
+			Message: common.WarehouseUpdateFailedMessage,
+		}
+	case runFailed:
+		newCond = metav1.Condition{
+			Type:    databendv1alpha1.WarehouseFailed,
+			Status:  metav1.ConditionFalse,
+			Reason:  databendv1alpha1.WarehouseRunFailedReason,
+			Message: common.WarehouseRunFailedMessage,
+		}
+	}
+	meta.SetStatusCondition(&warehouse.Status.Conditions, newCond)
+}
+
 // SetupWithManager sets up the controller with the Manager.
 func (r *WarehouseReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&databendv1alpha1.Warehouse{}).
+		Owns(&appsv1.StatefulSet{}).
 		Named("warehouse").
 		Complete(r)
 }
