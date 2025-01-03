@@ -73,11 +73,23 @@ func (r *WarehouseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	ctx = ctrl.LoggerInto(ctx, log)
 	log.V(2).Info("Reconciling Warehouse")
 
-	opState, err := r.reconcileStatefulSet(ctx, &warehouse)
+	// Get corresponding tenant and retrieve configurations
+	tenantNN := types.NamespacedName{
+		Namespace: warehouse.Namespace,
+		Name:      warehouse.Spec.Tenant.Name,
+	}
+	tenant, err := r.getTenant(ctx, tenantNN)
+	if err != nil {
+		log.V(5).Error(err, "Failed to get tenant", "namespacedName", tenantNN)
+		setCondition(&warehouse, buildFailed)
+		return ctrl.Result{}, errors.Join(err, r.Status().Update(ctx, &warehouse))
+	}
 
 	originStatus := warehouse.Status.DeepCopy()
+
+	opState, err := r.reconcileStatefulSet(ctx, tenant, &warehouse)
 	if opState == createSucceeded {
-		err = r.updateReplicas(ctx, &warehouse)
+		opState, err = r.updateReplicas(ctx, &warehouse)
 	}
 	setCondition(&warehouse, opState)
 	if !equality.Semantic.DeepEqual(warehouse.Status, originStatus) {
@@ -87,19 +99,8 @@ func (r *WarehouseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	return ctrl.Result{}, err
 }
 
-func (r *WarehouseReconciler) reconcileStatefulSet(ctx context.Context, warehouse *databendv1alpha1.Warehouse) (opState, error) {
+func (r *WarehouseReconciler) reconcileStatefulSet(ctx context.Context, tenant *databendv1alpha1.Tenant, warehouse *databendv1alpha1.Warehouse) (opState, error) {
 	log := ctrl.LoggerFrom(ctx)
-
-	// Get corresponding tenant and retrieve configurations
-	tenantNN := types.NamespacedName{
-		Namespace: warehouse.Namespace,
-		Name:      warehouse.Spec.Tenant.Name,
-	}
-	tenant, err := r.getTenant(ctx, tenantNN)
-	if err != nil {
-		log.V(5).Error(err, "Failed to get tenant", "namespacedName", tenantNN)
-		return buildFailed, err
-	}
 
 	// Build and reconcile StatefulSet
 	ss, err := buildStatefulSet(ctx, tenant, warehouse)
@@ -131,7 +132,7 @@ func (r *WarehouseReconciler) reconcileStatefulSet(ctx context.Context, warehous
 	return createSucceeded, nil
 }
 
-func (r *WarehouseReconciler) updateReplicas(ctx context.Context, warehouse *databendv1alpha1.Warehouse) error {
+func (r *WarehouseReconciler) updateReplicas(ctx context.Context, warehouse *databendv1alpha1.Warehouse) (opState, error) {
 	log := ctrl.LoggerFrom(ctx)
 
 	var ss appsv1.StatefulSet
@@ -141,11 +142,15 @@ func (r *WarehouseReconciler) updateReplicas(ctx context.Context, warehouse *dat
 	}
 	if err := r.Get(ctx, ssNN, &ss); err != nil {
 		log.V(5).Error(err, "Failed to get StatefulSet", "namespacedName", ssNN)
-		return err
+		return buildFailed, err
 	}
-	warehouse.Status.ReadyReplicas = int(ss.Status.ReadyReplicas)
 
-	return nil
+	warehouse.Status.ReadyReplicas = int(ss.Status.ReadyReplicas)
+	if ss.Status.ReadyReplicas == *ss.Spec.Replicas {
+		return running, nil
+	}
+
+	return createSucceeded, nil
 }
 
 func (r *WarehouseReconciler) getTenant(ctx context.Context, nn types.NamespacedName) (*databendv1alpha1.Tenant, error) {
