@@ -88,9 +88,6 @@ func (r *WarehouseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	originStatus := warehouse.Status.DeepCopy()
 
 	opState, err := r.reconcileStatefulSet(ctx, tenant, &warehouse)
-	if opState == createSucceeded {
-		opState, err = r.updateReplicas(ctx, &warehouse)
-	}
 	setCondition(&warehouse, opState)
 	if !equality.Semantic.DeepEqual(warehouse.Status, originStatus) {
 		return ctrl.Result{}, errors.Join(err, r.Status().Update(ctx, &warehouse))
@@ -129,7 +126,7 @@ func (r *WarehouseReconciler) reconcileStatefulSet(ctx context.Context, tenant *
 		log.V(5).Info("Succeeded to update StatefulSet", "namespace", ss.Namespace, "name", ss.Name)
 	}
 
-	return createSucceeded, nil
+	return r.updateReplicas(ctx, warehouse)
 }
 
 func (r *WarehouseReconciler) updateReplicas(ctx context.Context, warehouse *databendv1alpha1.Warehouse) (opState, error) {
