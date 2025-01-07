@@ -84,32 +84,29 @@ func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	// Verify storage configuration
 	log.V(5).Info("Verifying storage configurations")
 	opState, storageErr := r.verifyStorage(ctx, &tenant)
-	if storageErr != nil {
-		err = errors.Join(err, storageErr)
-	}
-	log.V(5).Info("Succeeded to verify storage configurations")
 	setCondition(&tenant, opState)
+	if storageErr != nil {
+		return ctrl.Result{}, errors.Join(err, r.Status().Update(ctx, &tenant))
+	}
 
 	// Verify meta configuration
 	log.V(5).Info("Verifying meta configurations")
 	opState, metaErr := r.verifyMeta(ctx, &tenant)
-	if metaErr != nil {
-		err = errors.Join(err, metaErr)
-	}
-	log.V(5).Info("Succeeded to verify meta configurations")
 	setCondition(&tenant, opState)
+	if metaErr != nil {
+		return ctrl.Result{}, errors.Join(err, r.Status().Update(ctx, &tenant))
+	}
 
 	// Verify built-in users configuration
 	log.V(5).Info("Verifying built-in users configurations")
 	opState, userErr := r.verifyBuiltinUsers(ctx, &tenant)
-	if userErr != nil {
-		err = errors.Join(err, userErr)
-	}
-	log.V(5).Info("Succeeded to verify built-in users configurations")
 	setCondition(&tenant, opState)
+	if userErr != nil {
+		return ctrl.Result{}, errors.Join(err, r.Status().Update(ctx, &tenant))
+	}
 
 	if !equality.Semantic.DeepEqual(&tenant.Status, originStatus) {
-		return ctrl.Result{}, errors.Join(err, r.Status().Update(ctx, &tenant))
+		return ctrl.Result{}, r.Status().Update(ctx, &tenant)
 	}
 	return ctrl.Result{}, err
 }
