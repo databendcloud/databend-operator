@@ -110,7 +110,27 @@ func (r *WarehouseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 }
 
 func (r *WarehouseReconciler) reconcileConfigMap(ctx context.Context, tenant *databendv1alpha1.Tenant, warehouse *databendv1alpha1.Warehouse) (opState, error) {
-	_, _, _ = ctx, tenant, warehouse
+	log := ctrl.LoggerFrom(ctx)
+
+	// Build and reconcile ConfigMap
+	cm, err := object.BuildConfigMap(ctx, tenant, warehouse)
+	if err != nil {
+		log.V(5).Error(err, "Failed to build ConfigMap", "namespace", cm.Namespace, "name", cm.Name)
+		return buildFailed, err
+	}
+
+	creationErr := r.Create(ctx, cm)
+	if creationErr == nil {
+		log.V(5).Info("Succeeded to create ConfigMap", "namespace", cm.Namespace, "name", cm.Name)
+	} else if client.IgnoreAlreadyExists(creationErr) != nil {
+		log.V(5).Error(err, "Failed to create ConfigMap", "namespace", cm.Namespace, "name", cm.Name)
+		return buildFailed, creationErr
+	} else {
+		if err := r.Update(ctx, cm); err != nil {
+			return updateFailed, err
+		}
+		log.V(5).Info("Succeeded to update ConfigMap", "namespace", cm.Namespace, "name", cm.Name)
+	}
 
 	return createSucceeded, nil
 }
