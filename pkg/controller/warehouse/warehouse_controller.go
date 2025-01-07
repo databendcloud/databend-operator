@@ -35,6 +35,7 @@ import (
 
 	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 	"github.com/databendcloud/databend-operator/pkg/common"
+	"github.com/databendcloud/databend-operator/pkg/runtime/object"
 )
 
 type opState int
@@ -118,7 +119,7 @@ func (r *WarehouseReconciler) reconcileStatefulSet(ctx context.Context, tenant *
 	log := ctrl.LoggerFrom(ctx)
 
 	// Build and reconcile StatefulSet
-	ss, err := buildStatefulSet(ctx, tenant, warehouse)
+	ss, err := object.BuildStatefulSet(ctx, tenant, warehouse)
 	if err != nil {
 		log.V(5).Error(err, "Failed to build StatefulSet", "namespace", ss.Namespace, "name", ss.Name)
 		return buildFailed, err
@@ -223,11 +224,6 @@ func (r *WarehouseReconciler) getTenant(ctx context.Context, nn types.Namespaced
 	}
 
 	return &tenant, nil
-}
-
-func buildStatefulSet(ctx context.Context, tenant *databendv1alpha1.Tenant, warehouse *databendv1alpha1.Warehouse) (*appsv1.StatefulSet, error) {
-	_, _, _ = ctx, tenant, warehouse
-	return nil, nil
 }
 
 func setCondition(warehouse *databendv1alpha1.Warehouse, opState opState) {
