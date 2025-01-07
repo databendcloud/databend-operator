@@ -88,7 +88,6 @@ func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	if storageErr != nil {
 		return ctrl.Result{}, errors.Join(err, r.Status().Update(ctx, &tenant))
 	}
-	
 
 	// Verify meta configuration
 	log.V(5).Info("Verifying meta configurations")

@@ -12,6 +12,9 @@ issues:
     - path: "pkg/apis/*"
       linters:
         - lll
+    - path: "pkg/runtime/*"
+      linters:
+        - lll
     - path: "pkg/controller/*"
       linters:
         - dupl
