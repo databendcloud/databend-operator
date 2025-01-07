@@ -87,13 +87,31 @@ func (r *WarehouseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 
 	originStatus := warehouse.Status.DeepCopy()
 
-	opState, err := r.reconcileStatefulSet(ctx, tenant, &warehouse)
-	setCondition(&warehouse, opState)
-	if !equality.Semantic.DeepEqual(warehouse.Status, originStatus) {
+	// Reconcile ConfigMap
+	cmOpState, err := r.reconcileConfigMap(ctx, tenant, &warehouse)
+	setCondition(&warehouse, cmOpState)
+	if err != nil {
 		return ctrl.Result{}, errors.Join(err, r.Status().Update(ctx, &warehouse))
 	}
 
+	// Reconcile StatefulSet
+	ssOpState, err := r.reconcileStatefulSet(ctx, tenant, &warehouse)
+	setCondition(&warehouse, ssOpState)
+	if err != nil {
+		return ctrl.Result{}, errors.Join(err, r.Status().Update(ctx, &warehouse))
+	}
+
+	if !equality.Semantic.DeepEqual(warehouse.Status, originStatus) {
+		return ctrl.Result{}, r.Status().Update(ctx, &warehouse)
+	}
+
 	return ctrl.Result{}, err
+}
+
+func (r *WarehouseReconciler) reconcileConfigMap(ctx context.Context, tenant *databendv1alpha1.Tenant, warehouse *databendv1alpha1.Warehouse) (opState, error) {
+	_, _, _ = ctx, tenant, warehouse
+
+	return createSucceeded, nil
 }
 
 func (r *WarehouseReconciler) reconcileStatefulSet(ctx context.Context, tenant *databendv1alpha1.Tenant, warehouse *databendv1alpha1.Warehouse) (opState, error) {
