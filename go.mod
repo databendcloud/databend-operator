@@ -3,6 +3,7 @@ module github.com/databendcloud/databend-operator
 go 1.22.0
 
 require (
+	github.com/BurntSushi/toml v1.4.0
 	github.com/aws/aws-sdk-go v1.55.5
 	github.com/onsi/ginkgo/v2 v2.19.0
 	github.com/onsi/gomega v1.33.1
