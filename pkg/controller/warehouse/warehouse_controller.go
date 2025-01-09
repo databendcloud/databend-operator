@@ -113,7 +113,7 @@ func (r *WarehouseReconciler) reconcileConfigMap(ctx context.Context, tenant *da
 	log := ctrl.LoggerFrom(ctx)
 
 	// Build and reconcile ConfigMap
-	cm, err := object.BuildConfigMap(ctx, tenant, warehouse)
+	cm, err := object.BuildQueryConfigMap(tenant, warehouse)
 	if err != nil {
 		log.V(5).Error(err, "Failed to build ConfigMap", "namespace", cm.Namespace, "name", cm.Name)
 		return buildFailed, err
@@ -139,7 +139,7 @@ func (r *WarehouseReconciler) reconcileStatefulSet(ctx context.Context, tenant *
 	log := ctrl.LoggerFrom(ctx)
 
 	// Build and reconcile StatefulSet
-	ss, err := object.BuildStatefulSet(ctx, tenant, warehouse)
+	ss, err := object.BuildStatefulSet(tenant, warehouse)
 	if err != nil {
 		log.V(5).Error(err, "Failed to build StatefulSet", "namespace", ss.Namespace, "name", ss.Name)
 		return buildFailed, err
