@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"fmt"
 
-	corev1 "k8s.io/api/core/v1"
 	"github.com/BurntSushi/toml"
+	corev1 "k8s.io/api/core/v1"
 
 	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 	"github.com/databendcloud/databend-operator/pkg/runtime/config"
@@ -30,11 +30,7 @@ func NewQueryTomlBuilder(tenant *databendv1alpha1.Tenant, warehouse *databendv1a
 }
 
 func (b *QueryTomlBuilder) BuildConfigMap() (*corev1.ConfigMap, error) {
-	// Get ObjectMeta for ConfigMap
-	configMapName := utils.GetQueryConfigMapName(b.warehouse.Name)
-	objectMeta := utils.BuildObjectMetaUnderWarehouse(b.warehouse, configMapName)
-
-	// Build ConfigMap from QueryConfig
+	// Retrieve toml config from QueryConfig
 	config, err := b.QueryConfig()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build query config: %v", err)
@@ -44,6 +40,9 @@ func (b *QueryTomlBuilder) BuildConfigMap() (*corev1.ConfigMap, error) {
 		return nil, err
 	}
 
+	// Build ConfigMap
+	configMapName := utils.GetQueryConfigMapName(b.warehouse.Name)
+	objectMeta := utils.BuildObjectMetaUnderWarehouse(b.warehouse, configMapName)
 	configMap := corev1.ConfigMap{
 		ObjectMeta: *objectMeta,
 	}
@@ -51,7 +50,6 @@ func (b *QueryTomlBuilder) BuildConfigMap() (*corev1.ConfigMap, error) {
 		configMap.Data = make(map[string]string)
 	}
 	configMap.Data[ConfigMapKeyName] = buf.String()
-
 
 	return &configMap, nil
 }
