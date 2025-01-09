@@ -47,3 +47,12 @@ const (
 	// {"type": "Suspended", "status": "True", "reason": "Resumed"} condition.
 	WarehouseResumedMessage = "Warehouse is resumed"
 )
+
+const (
+	KeyWarehouse      = "databend.io/warehouse"
+	KeyWarehouseSize  = "databend.io/warehouse-size"
+	KeyApp            = "databend.io/app"
+	ValueAppWarehouse = "warehouse"
+
+	KeyTenant = "databend.io/tenant"
+)

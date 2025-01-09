@@ -22,6 +22,11 @@ import (
 )
 
 const (
+	// WarehouseKind is the Kind name for the Warehouse.
+	WarehouseKind string = "Warehouse"
+)
+
+const (
 	// WarehouseCreated means that the Warehouse creation has succeeded.
 	WarehouseCreated string = "Created"
 

@@ -9,13 +9,13 @@ import (
 
 type QueryTomlBuilder struct {
 	warehouse *databendv1alpha1.Warehouse
-	tenant	*databendv1alpha1.Tenant
+	tenant    *databendv1alpha1.Tenant
 }
 
 func NewQueryTomlBuilder(tenant *databendv1alpha1.Tenant, warehouse *databendv1alpha1.Warehouse) config.TomlConfig {
 	return &QueryTomlBuilder{
 		warehouse: warehouse,
-		tenant: tenant,
+		tenant:    tenant,
 	}
 }
 

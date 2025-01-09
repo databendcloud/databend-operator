@@ -24,6 +24,11 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
+const (
+	// TenantKind is the Kind name for the Tenant.
+	TenantKind string = "Tenant"
+)
+
 type UserAuthType string
 
 const (
