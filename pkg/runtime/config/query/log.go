@@ -50,7 +50,7 @@ type QueryLogConfigTracing struct {
 }
 
 // NewQueryLogConfig create new instance of Something
-func NewQueryLogConfig(tn *databendv1alpha1.Tenant, wh *databendv1alpha1.Warehouse) *QueryLogConfig {
+func NewQueryLogConfig(wh *databendv1alpha1.Warehouse) *QueryLogConfig {
 	cfg := QueryLogConfig{
 		File: QueryLogConfigFile{
 			On: false,
@@ -78,16 +78,16 @@ func NewQueryLogConfig(tn *databendv1alpha1.Tenant, wh *databendv1alpha1.Warehou
 			OTLPEndpoint:    OTLPTraceEndpoint,
 		},
 	}
-	if wh == nil || tn == nil {
+	if wh == nil {
 		return &cfg
 	}
 	cfg.Query.OTLPLabels = map[string]string{
-		"tenant":         tn.Name,
+		"tenant":         wh.Spec.Tenant.Name,
 		"warehouse":      wh.Name,
 		"warehouse_size": fmt.Sprint(wh.Spec.Replicas),
 	}
 	cfg.Profile.OTLPLabels = map[string]string{
-		"tenant":         tn.Name,
+		"tenant":         wh.Spec.Tenant.Name,
 		"warehouse":      wh.Name,
 		"warehouse_size": fmt.Sprint(wh.Spec.Replicas),
 	}
