@@ -1,8 +1,8 @@
 package query
 
-type QueryConfig struct {
+type Config struct {
 }
 
-func (b *QueryTomlBuilder) QueryConfig() (*QueryConfig, error) {
-	return &QueryConfig{}, nil
+func (b *QueryTomlBuilder) QueryConfig() (*Config, error) {
+	return &Config{}, nil
 }
