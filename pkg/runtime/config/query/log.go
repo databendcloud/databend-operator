@@ -6,6 +6,11 @@ import (
 	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 )
 
+const (
+	OTLPTraceEndpoint string = "http://localhost:4317"
+	OTLPLogEndpoint   string = "http://localhost:4318"
+)
+
 type QueryLogConfig struct {
 	File    QueryLogConfigFile    `toml:"file" json:"file"`
 	Stderr  QueryLogConfigStderr  `toml:"stderr" json:"stderr"`
