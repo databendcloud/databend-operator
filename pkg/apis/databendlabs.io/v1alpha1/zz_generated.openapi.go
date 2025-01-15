@@ -610,7 +610,7 @@ func schema_pkg_apis_databendlabsio_v1alpha1_User(ref common.ReferenceCallback) 
 					},
 					"authType": {
 						SchemaProps: spec.SchemaProps{
-							Description: "Authentication type of warehouse password. Currently we support: md5, no_password.",
+							Description: "Authentication type of warehouse password. Currently we support: sha256_password, no_password.",
 							Type:        []string{"string"},
 							Format:      "",
 						},
@@ -810,13 +810,6 @@ func schema_pkg_apis_databendlabsio_v1alpha1_WarehouseSpec(ref common.ReferenceC
 					"replicas": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Desired replicas of Query",
-							Type:        []string{"integer"},
-							Format:      "int32",
-						},
-					},
-					"autoSuspendAfterSecs": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Time for Query clsuter to suspend when no query requests are received. Set to 0 if you don't want Query cluster to be suspended.",
 							Type:        []string{"integer"},
 							Format:      "int32",
 						},

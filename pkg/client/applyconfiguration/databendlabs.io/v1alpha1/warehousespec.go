@@ -24,19 +24,18 @@ import (
 // WarehouseSpecApplyConfiguration represents a declarative configuration of the WarehouseSpec type for use
 // with apply.
 type WarehouseSpecApplyConfiguration struct {
-	Replicas             *int                                    `json:"replicas,omitempty"`
-	AutoSuspendAfterSecs *int                                    `json:"autoSuspendAfterSecs,omitempty"`
-	QueryImage           *string                                 `json:"queryImage,omitempty"`
-	Tenant               *v1.LocalObjectReference                `json:"tenant,omitempty"`
-	Cache                *DiskCacheSpecApplyConfiguration        `json:"diskCacheSize,omitempty"`
-	Log                  *LogSpecApplyConfiguration              `json:"log,omitempty"`
-	PodLabels            map[string]string                       `json:"labels,omitempty"`
-	PodResource          *v1.ResourceRequirements                `json:"resourcesPerNode,omitempty"`
-	PodTolerations       []v1.Toleration                         `json:"tolerations,omitempty"`
-	NodeSelector         map[string]string                       `json:"nodeSelector,omitempty"`
-	Service              *WarehouseServiceSpecApplyConfiguration `json:"service,omitempty"`
-	Ingress              *WarehouseIngressSpecApplyConfiguration `json:"ingress,omitempty"`
-	Settings             map[string]string                       `json:"settings,omitempty"`
+	Replicas       *int                                    `json:"replicas,omitempty"`
+	QueryImage     *string                                 `json:"queryImage,omitempty"`
+	Tenant         *v1.LocalObjectReference                `json:"tenant,omitempty"`
+	Cache          *DiskCacheSpecApplyConfiguration        `json:"diskCacheSize,omitempty"`
+	Log            *LogSpecApplyConfiguration              `json:"log,omitempty"`
+	PodLabels      map[string]string                       `json:"labels,omitempty"`
+	PodResource    *v1.ResourceRequirements                `json:"resourcesPerNode,omitempty"`
+	PodTolerations []v1.Toleration                         `json:"tolerations,omitempty"`
+	NodeSelector   map[string]string                       `json:"nodeSelector,omitempty"`
+	Service        *WarehouseServiceSpecApplyConfiguration `json:"service,omitempty"`
+	Ingress        *WarehouseIngressSpecApplyConfiguration `json:"ingress,omitempty"`
+	Settings       map[string]string                       `json:"settings,omitempty"`
 }
 
 // WarehouseSpecApplyConfiguration constructs a declarative configuration of the WarehouseSpec type for use with
@@ -50,14 +49,6 @@ func WarehouseSpec() *WarehouseSpecApplyConfiguration {
 // If called multiple times, the Replicas field is set to the value of the last call.
 func (b *WarehouseSpecApplyConfiguration) WithReplicas(value int) *WarehouseSpecApplyConfiguration {
 	b.Replicas = &value
-	return b
-}
-
-// WithAutoSuspendAfterSecs sets the AutoSuspendAfterSecs field in the declarative configuration to the given value
-// and returns the receiver, so that objects can be built by chaining "With" function invocations.
-// If called multiple times, the AutoSuspendAfterSecs field is set to the value of the last call.
-func (b *WarehouseSpecApplyConfiguration) WithAutoSuspendAfterSecs(value int) *WarehouseSpecApplyConfiguration {
-	b.AutoSuspendAfterSecs = &value
 	return b
 }
 
