@@ -23,7 +23,7 @@ type S3StorageConfig struct {
 func NewStorageConfig(tn *databendv1alpha1.Tenant, wh *databendv1alpha1.Warehouse) *StorageConfig {
 	return &StorageConfig{
 		StorageType: "s3",
-		NumCpus:     uint64(wh.Spec.PodResource.Requests.Cpu().Value()),
+		NumCpus:     uint64(wh.Spec.PodResource.Limits.Cpu().Value()),
 		S3: &S3StorageConfig{
 			AccessKeyId:     tn.Spec.S3.AccessKey,
 			SecretAccessKey: tn.Spec.S3.SecretKey,

@@ -32,7 +32,7 @@ const (
 type UserAuthType string
 
 const (
-	MD5        UserAuthType = "md5"
+	SHA256     UserAuthType = "sha256_password"
 	NoPassword UserAuthType = "no_password"
 )
 
@@ -139,7 +139,7 @@ type User struct {
 	Name string `json:"name,omitempty"`
 
 	// Authentication type of warehouse password.
-	// Currently we support: md5, no_password.
+	// Currently we support: sha256_password, no_password.
 	// +kubebuilder:default="no_password"
 	AuthType UserAuthType `json:"authType,omitempty"`
 

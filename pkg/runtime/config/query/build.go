@@ -8,8 +8,9 @@ import (
 	corev1 "k8s.io/api/core/v1"
 
 	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
+	"github.com/databendcloud/databend-operator/pkg/common"
 	"github.com/databendcloud/databend-operator/pkg/runtime/config"
-	"github.com/databendcloud/databend-operator/pkg/runtime/utils"
+	"github.com/databendcloud/databend-operator/pkg/runtime/objectmeta"
 )
 
 const (
@@ -41,8 +42,8 @@ func (b *QueryTomlBuilder) BuildConfigMap() (*corev1.ConfigMap, error) {
 	}
 
 	// Build ConfigMap
-	configMapName := utils.GetQueryConfigMapName(b.warehouse.Name)
-	objectMeta := utils.BuildObjectMetaUnderWarehouse(b.warehouse, configMapName)
+	configMapName := common.GetQueryConfigMapName(b.warehouse.Name)
+	objectMeta := objectmeta.BuildObjectMetaUnderWarehouse(b.warehouse, configMapName)
 	configMap := corev1.ConfigMap{
 		ObjectMeta: *objectMeta,
 	}

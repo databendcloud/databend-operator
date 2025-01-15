@@ -147,11 +147,6 @@ type WarehouseSpec struct {
 	// +kubebuilder:default=1
 	Replicas int `json:"replicas,omitempty"`
 
-	// Time for Query clsuter to suspend when no query requests are received.
-	// Set to 0 if you don't want Query cluster to be suspended.
-	// +kubebuilder:default=0
-	AutoSuspendAfterSecs int `json:"autoSuspendAfterSecs,omitempty"`
-
 	// Image for Query.
 	QueryImage string `json:"queryImage,omitempty"`
 
