@@ -92,15 +92,14 @@ func GetCacheSettings(tenant *databendv1alpha1.Tenant, wh *databendv1alpha1.Ware
 	}
 
 	settings := NewDiskCacheSetting(uint64(wh.Spec.Cache.MaxBytes / Gi))
-	if wh.Spec.Cache.MaxBytes < 20 * Gi {
+	if wh.Spec.Cache.MaxBytes < 20*Gi {
 		settings = NewDiskCacheSetting(20)
-	} else if int64(wh.Spec.Cache.MaxBytes) > wh.Spec.PodResource.Limits.Cpu().Value() * 30 * Gi {
-		settings =  NewDiskCacheSetting(20)
+	} else if int64(wh.Spec.Cache.MaxBytes) > wh.Spec.PodResource.Limits.Cpu().Value()*30*Gi {
+		settings = NewDiskCacheSetting(20)
 	}
 
 	if wh.Spec.Cache.Path != "" {
 		settings.Disk.Path = wh.Spec.Cache.Path
 	}
-
 	return settings
 }
