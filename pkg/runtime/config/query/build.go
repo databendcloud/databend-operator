@@ -2,7 +2,6 @@ package query
 
 import (
 	"bytes"
-	"fmt"
 
 	"github.com/BurntSushi/toml"
 	corev1 "k8s.io/api/core/v1"
@@ -23,6 +22,14 @@ type QueryTomlBuilder struct {
 	tenant    *databendv1alpha1.Tenant
 }
 
+type Config struct {
+	Log     *QueryLogConfig `toml:"log" json:"log,omitempty"`
+	Query   *QueryConfig    `toml:"query" json:"query"`
+	Meta    *MetaConfig     `toml:"meta" json:"meta"`
+	Storage *StorageConfig  `toml:"storage" json:"storage"`
+	Cache   *CacheConfig    `toml:"cache,omitempty" json:"cache,omitempty"`
+}
+
 func NewQueryTomlBuilder(tenant *databendv1alpha1.Tenant, warehouse *databendv1alpha1.Warehouse) config.TomlConfig {
 	return &QueryTomlBuilder{
 		warehouse: warehouse,
@@ -30,14 +37,20 @@ func NewQueryTomlBuilder(tenant *databendv1alpha1.Tenant, warehouse *databendv1a
 	}
 }
 
+func (b *QueryTomlBuilder) QueryConfig() *Config {
+	return &Config{
+		Log:     NewQueryLogConfig(b.warehouse),
+		Query:   NewQueryConfig(b.tenant, b.warehouse),
+		Meta:    NewMetaConfig(b.tenant),
+		Storage: NewStorageConfig(b.tenant, b.warehouse),
+		Cache:   NewCacheConfig(b.tenant, b.warehouse),
+	}
+}
+
 func (b *QueryTomlBuilder) BuildConfigMap() (*corev1.ConfigMap, error) {
 	// Retrieve toml config from QueryConfig
-	config, err := b.QueryConfig()
-	if err != nil {
-		return nil, fmt.Errorf("failed to build query config: %v", err)
-	}
 	buf := new(bytes.Buffer)
-	if err := toml.NewEncoder(buf).Encode(config); err != nil {
+	if err := toml.NewEncoder(buf).Encode(b.QueryConfig()); err != nil {
 		return nil, err
 	}
 
