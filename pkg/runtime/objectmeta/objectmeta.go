@@ -128,8 +128,6 @@ func BuildOwnerReferencesByTenant(tenant *databendv1alpha1.Tenant) []metav1.Owne
 			Kind:       kind,
 			Name:       tenant.Name,
 			UID:        tenant.UID,
-			//// tenant CRD cannot be deleted unless all reference got deleted
-			//BlockOwnerDeletion: ptr.Bool(true),
 		},
 	}
 }
