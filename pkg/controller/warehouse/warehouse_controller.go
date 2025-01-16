@@ -35,7 +35,7 @@ import (
 
 	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 	"github.com/databendcloud/databend-operator/pkg/common"
-	"github.com/databendcloud/databend-operator/pkg/runtime/core"
+	databendruntime"github.com/databendcloud/databend-operator/pkg/runtime"
 )
 
 type opState int
@@ -113,7 +113,7 @@ func (r *WarehouseReconciler) reconcileConfigMap(ctx context.Context, tenant *da
 	log := ctrl.LoggerFrom(ctx)
 
 	// Build and reconcile ConfigMap
-	cm, err := core.BuildQueryConfigMap(tenant, warehouse)
+	cm, err := databendruntime.BuildQueryConfigMap(tenant, warehouse)
 	if err != nil {
 		log.V(5).Error(err, "Failed to build ConfigMap", "namespace", cm.Namespace, "name", cm.Name)
 		return buildFailed, err
@@ -139,7 +139,7 @@ func (r *WarehouseReconciler) reconcileStatefulSet(ctx context.Context, tenant *
 	log := ctrl.LoggerFrom(ctx)
 
 	// Build and reconcile StatefulSet
-	ss, err := core.BuildStatefulSet(tenant, warehouse)
+	ss, err := databendruntime.BuildStatefulSet(tenant, warehouse)
 	if err != nil {
 		log.V(5).Error(err, "Failed to build StatefulSet", "namespace", ss.Namespace, "name", ss.Name)
 		return buildFailed, err
