@@ -1,20 +1,8 @@
 package query
 
 import (
-	"fmt"
-
 	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
-)
-
-type CacheType string
-
-const (
-	DiskCache CacheType = "disk"
-
-	cachePath       = "/var/lib/databend/cache"
-	cacheVolumeName = "ephemeral-block-cache"
-
-	Gi = 1024 * 1024 * 1024
+	"github.com/databendcloud/databend-operator/pkg/runtime/resource"
 )
 
 type CacheConfig struct {
@@ -30,35 +18,6 @@ type DiskCacheConfig struct {
 	MaxBytes uint64 `toml:"max_bytes"`
 }
 
-type CacheSettings struct {
-	DataCacheStorage CacheType     `toml:"cache_type"`
-	Disk             *DiskSettings `toml:"disk"`
-}
-
-type DiskSettings struct {
-	Path               string `toml:"path"`
-	MaxBytes           uint64 `toml:"max_bytes"`
-	K8sResourceRequest string `toml:"k8s_resource_request"`
-	K8sResourceLimit   string `toml:"k8s_resource_limit"`
-	VolumeName         string `toml:"volume_name"`
-}
-
-func NewDiskCacheSetting(size uint64) *CacheSettings {
-	if size <= 0 {
-		return nil
-	}
-	return &CacheSettings{
-		DataCacheStorage: DiskCache,
-		Disk: &DiskSettings{
-			Path:               cachePath,
-			MaxBytes:           size * Gi,
-			K8sResourceRequest: fmt.Sprintf("%dGi", size),
-			K8sResourceLimit:   fmt.Sprintf("%dGi", size),
-			VolumeName:         cacheVolumeName,
-		},
-	}
-}
-
 func NewCacheConfig(tn *databendv1alpha1.Tenant, wh *databendv1alpha1.Warehouse) *CacheConfig {
 	cfg := &CacheConfig{}
 	cfg.TableBloomIndexFilterSize = 5368709120
@@ -70,36 +29,14 @@ func NewCacheConfig(tn *databendv1alpha1.Tenant, wh *databendv1alpha1.Warehouse)
 	if wh == nil || tn == nil {
 		return cfg
 	}
-	settings := GetCacheSettings(tn, wh)
+	settings := resource.GetCacheSettings(tn, wh)
 	if settings == nil {
 		return cfg
 	}
 	cfg.DataCacheStorage = string(settings.DataCacheStorage)
-	cfg.Disk = BuildDiskCacheConfig(settings)
+	cfg.Disk = &DiskCacheConfig{
+		Path:     settings.Path,
+		MaxBytes: settings.MaxBytes,
+	}
 	return cfg
-}
-
-func BuildDiskCacheConfig(settings *CacheSettings) *DiskCacheConfig {
-	return &DiskCacheConfig{
-		Path:     settings.Disk.Path,
-		MaxBytes: settings.Disk.MaxBytes,
-	}
-}
-
-func GetCacheSettings(tenant *databendv1alpha1.Tenant, wh *databendv1alpha1.Warehouse) *CacheSettings {
-	if wh == nil || !wh.Spec.Cache.Enabled || wh.Spec.Cache.MaxBytes <= 0 {
-		return nil
-	}
-
-	settings := NewDiskCacheSetting(uint64(wh.Spec.Cache.MaxBytes / Gi))
-	if wh.Spec.Cache.MaxBytes < 20*Gi {
-		settings = NewDiskCacheSetting(20)
-	} else if int64(wh.Spec.Cache.MaxBytes) > wh.Spec.PodResource.Limits.Cpu().Value()*30*Gi {
-		settings = NewDiskCacheSetting(20)
-	}
-
-	if wh.Spec.Cache.Path != "" {
-		settings.Disk.Path = wh.Spec.Cache.Path
-	}
-	return settings
 }

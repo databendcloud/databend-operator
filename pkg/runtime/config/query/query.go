@@ -13,16 +13,6 @@ const (
 	DefaultPassword string = "admin"
 )
 
-const (
-	ServicePortFlight    int = 9090
-	ServicePortAdmin     int = 8080
-	ServicePortMetrics   int = 7070
-	ServicePortMySQL     int = 3307
-	ServicePortCKHttp    int = 8124
-	ServicePortQuery     int = 8000
-	ServicePortFlightSQL int = 8900
-)
-
 type QueryConfig struct {
 	TenantId              string `toml:"tenant_id" json:"tenant_id"`
 	ClusterId             string `toml:"cluster_id" json:"cluster_id"`
@@ -66,19 +56,19 @@ func NewQueryConfig(tn *databendv1alpha1.Tenant, wh *databendv1alpha1.Warehouse)
 		MaxMemoryLimitEnabled: false,
 		MaxRunningQueries:     8,
 
-		FlightApiAddress: fmt.Sprintf("%s:%d", ContainerHost, ServicePortFlight),
-		AdminApiAddress:  fmt.Sprintf("%s:%d", ContainerHost, ServicePortAdmin),
-		MetricApiAddress: fmt.Sprintf("%s:%d", ContainerHost, ServicePortMetrics),
+		FlightApiAddress: fmt.Sprintf("%s:%d", ContainerHost, common.ServicePortFlight),
+		AdminApiAddress:  fmt.Sprintf("%s:%d", ContainerHost, common.ServicePortAdmin),
+		MetricApiAddress: fmt.Sprintf("%s:%d", ContainerHost, common.ServicePortMetrics),
 
 		MysqlHandlerHost:             ContainerHost,
-		MysqlHandlerPort:             ServicePortMySQL,
+		MysqlHandlerPort:             common.ServicePortMySQL,
 		ClickhouseHttpHandlerHost:    ContainerHost,
-		ClickhouseHttpHandlerPort:    ServicePortCKHttp,
+		ClickhouseHttpHandlerPort:    common.ServicePortCKHttp,
 		HttpHandlerHost:              ContainerHost,
-		HttpHandlerPort:              ServicePortQuery,
+		HttpHandlerPort:              common.ServicePortQuery,
 		HttpHandlerResultTimeoutSecs: 240,
 		FlightSQLHandlerHost:         ContainerHost,
-		FlightSQLHandlerPort:         ServicePortFlightSQL,
+		FlightSQLHandlerPort:         common.ServicePortFlightSQL,
 		RpcClientTimeoutSecs:         30,
 
 		Settings: wh.Spec.Settings,

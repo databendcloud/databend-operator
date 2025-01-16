@@ -55,7 +55,7 @@ func (b *QueryTomlBuilder) BuildConfigMap() (*corev1.ConfigMap, error) {
 	}
 
 	// Build ConfigMap
-	configMapName := common.GetQueryConfigMapName(b.warehouse.Name)
+	configMapName := common.GetQueryConfigMapName(b.tenant.Name, b.warehouse.Name)
 	objectMeta := objectmeta.BuildObjectMetaUnderWarehouse(b.warehouse, configMapName)
 	configMap := corev1.ConfigMap{
 		ObjectMeta: *objectMeta,

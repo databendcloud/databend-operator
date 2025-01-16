@@ -48,6 +48,28 @@ const (
 	WarehouseResumedMessage = "Warehouse is resumed"
 )
 
+type ServiceProtocol string
+
+const (
+	ServiceProtocolFlight    ServiceProtocol = "flight"
+	ServiceProtocolAdmin     ServiceProtocol = "admin"
+	ServiceProtocolMetrics   ServiceProtocol = "metrics"
+	ServiceProtocolMySQL     ServiceProtocol = "mysql"
+	ServiceProtocolCKHttp    ServiceProtocol = "ckhttp"
+	ServiceProtocolQuery     ServiceProtocol = "query"
+	ServiceProtocolFlightSQL ServiceProtocol = "flightsql"
+)
+
+const (
+	ServicePortFlight    int = 9090
+	ServicePortAdmin     int = 8080
+	ServicePortMetrics   int = 7070
+	ServicePortMySQL     int = 3307
+	ServicePortCKHttp    int = 8124
+	ServicePortQuery     int = 8000
+	ServicePortFlightSQL int = 8900
+)
+
 const (
 	KeyWarehouse      = "databend.io/warehouse"
 	KeyWarehouseSize  = "databend.io/warehouse-size"
@@ -55,4 +77,9 @@ const (
 	ValueAppWarehouse = "warehouse"
 
 	KeyTenant = "databend.io/tenant"
+)
+
+const (
+	DatabendQueryContainerName string = "databend-query"
+	DefaultQueryImage          string = "datafuselabs/databend-query:latest"
 )

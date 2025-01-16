@@ -35,7 +35,7 @@ import (
 
 	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 	"github.com/databendcloud/databend-operator/pkg/common"
-	databendruntime"github.com/databendcloud/databend-operator/pkg/runtime"
+	databendruntime "github.com/databendcloud/databend-operator/pkg/runtime"
 )
 
 type opState int
