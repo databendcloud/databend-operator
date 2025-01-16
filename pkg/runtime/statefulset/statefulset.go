@@ -24,15 +24,11 @@ type StatefulSetBuilder struct {
 func NewDatabendQueryStatefulSetBuilder(
 	tenant *databendv1alpha1.Tenant,
 	warehouse *databendv1alpha1.Warehouse,
-	serviceName string,
 	serviceAccountName string,
-	configMapName string,
-	profileName string,
 ) *StatefulSetBuilder {
 	return &StatefulSetBuilder{
 		tenant:             tenant,
 		warehouse:          warehouse,
-		serviceName:        serviceName,
 		serviceAccountName: serviceAccountName,
 	}
 }

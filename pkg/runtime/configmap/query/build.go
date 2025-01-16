@@ -8,7 +8,7 @@ import (
 
 	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 	"github.com/databendcloud/databend-operator/pkg/common"
-	"github.com/databendcloud/databend-operator/pkg/runtime/config"
+	"github.com/databendcloud/databend-operator/pkg/runtime/configmap"
 	"github.com/databendcloud/databend-operator/pkg/runtime/objectmeta"
 )
 
@@ -30,7 +30,7 @@ type Config struct {
 	Cache   *CacheConfig    `toml:"cache,omitempty" json:"cache,omitempty"`
 }
 
-func NewQueryTomlBuilder(tenant *databendv1alpha1.Tenant, warehouse *databendv1alpha1.Warehouse) config.TomlConfig {
+func NewQueryTomlBuilder(tenant *databendv1alpha1.Tenant, warehouse *databendv1alpha1.Warehouse) configmap.TomlConfig {
 	return &QueryTomlBuilder{
 		warehouse: warehouse,
 		tenant:    tenant,
