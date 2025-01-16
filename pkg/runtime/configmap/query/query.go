@@ -3,7 +3,7 @@ package query
 import (
 	"fmt"
 
-	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
+	v1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 	"github.com/databendcloud/databend-operator/pkg/common"
 )
 
@@ -11,16 +11,6 @@ const (
 	ContainerHost   string = "0.0.0.0"
 	DefaultUser     string = "admin"
 	DefaultPassword string = "admin"
-)
-
-const (
-	ServicePortFlight    int = 9090
-	ServicePortAdmin     int = 8080
-	ServicePortMetrics   int = 7070
-	ServicePortMySQL     int = 3307
-	ServicePortCKHttp    int = 8124
-	ServicePortQuery     int = 8000
-	ServicePortFlightSQL int = 8900
 )
 
 type QueryConfig struct {
@@ -57,7 +47,7 @@ type BuiltInUser struct {
 	AuthString string `toml:"auth_string" json:"auth_string"`
 }
 
-func NewQueryConfig(tn *databendv1alpha1.Tenant, wh *databendv1alpha1.Warehouse) *QueryConfig {
+func NewQueryConfig(tn *v1alpha1.Tenant, wh *v1alpha1.Warehouse) *QueryConfig {
 	q := &QueryConfig{
 		TenantId:              tn.Name,
 		ClusterId:             wh.Name,
@@ -66,19 +56,19 @@ func NewQueryConfig(tn *databendv1alpha1.Tenant, wh *databendv1alpha1.Warehouse)
 		MaxMemoryLimitEnabled: false,
 		MaxRunningQueries:     8,
 
-		FlightApiAddress: fmt.Sprintf("%s:%d", ContainerHost, ServicePortFlight),
-		AdminApiAddress:  fmt.Sprintf("%s:%d", ContainerHost, ServicePortAdmin),
-		MetricApiAddress: fmt.Sprintf("%s:%d", ContainerHost, ServicePortMetrics),
+		FlightApiAddress: fmt.Sprintf("%s:%d", ContainerHost, common.ServicePortFlight),
+		AdminApiAddress:  fmt.Sprintf("%s:%d", ContainerHost, common.ServicePortAdmin),
+		MetricApiAddress: fmt.Sprintf("%s:%d", ContainerHost, common.ServicePortMetrics),
 
 		MysqlHandlerHost:             ContainerHost,
-		MysqlHandlerPort:             ServicePortMySQL,
+		MysqlHandlerPort:             common.ServicePortMySQL,
 		ClickhouseHttpHandlerHost:    ContainerHost,
-		ClickhouseHttpHandlerPort:    ServicePortCKHttp,
+		ClickhouseHttpHandlerPort:    common.ServicePortCKHttp,
 		HttpHandlerHost:              ContainerHost,
-		HttpHandlerPort:              ServicePortQuery,
+		HttpHandlerPort:              common.ServicePortQuery,
 		HttpHandlerResultTimeoutSecs: 240,
 		FlightSQLHandlerHost:         ContainerHost,
-		FlightSQLHandlerPort:         ServicePortFlightSQL,
+		FlightSQLHandlerPort:         common.ServicePortFlightSQL,
 		RpcClientTimeoutSecs:         30,
 
 		Settings: wh.Spec.Settings,
@@ -86,7 +76,7 @@ func NewQueryConfig(tn *databendv1alpha1.Tenant, wh *databendv1alpha1.Warehouse)
 	return q.withResourceLimit(wh).withUsers(tn)
 }
 
-func (q *QueryConfig) withResourceLimit(wh *databendv1alpha1.Warehouse) *QueryConfig {
+func (q *QueryConfig) withResourceLimit(wh *v1alpha1.Warehouse) *QueryConfig {
 	if wh.Spec.PodResource.Limits.Cpu().Value() > 0 {
 		q.NumCpus = uint64(wh.Spec.PodResource.Limits.Cpu().Value())
 	}
@@ -97,7 +87,7 @@ func (q *QueryConfig) withResourceLimit(wh *databendv1alpha1.Warehouse) *QueryCo
 	return q
 }
 
-func (q *QueryConfig) withUsers(tn *databendv1alpha1.Tenant) *QueryConfig {
+func (q *QueryConfig) withUsers(tn *v1alpha1.Tenant) *QueryConfig {
 	if len(tn.Spec.Users) > 0 {
 		for _, u := range tn.Spec.Users {
 			q.Users = append(q.Users, BuiltInUser{
@@ -110,7 +100,7 @@ func (q *QueryConfig) withUsers(tn *databendv1alpha1.Tenant) *QueryConfig {
 		// Apend default user
 		q.Users = append(q.Users, BuiltInUser{
 			Name:       DefaultUser,
-			AuthType:   string(databendv1alpha1.SHA256),
+			AuthType:   string(v1alpha1.SHA256),
 			AuthString: common.SHA256String(DefaultPassword),
 		})
 	}

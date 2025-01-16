@@ -65,9 +65,8 @@ func schema_pkg_apis_databendlabsio_v1alpha1_DiskCacheSpec(ref common.ReferenceC
 					},
 					"size": {
 						SchemaProps: spec.SchemaProps{
-							Description: "Max bytes of cache in disk.",
-							Type:        []string{"integer"},
-							Format:      "int32",
+							Description: "Max size of cache in disk.",
+							Ref:         ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
 						},
 					},
 					"path": {
@@ -87,6 +86,8 @@ func schema_pkg_apis_databendlabsio_v1alpha1_DiskCacheSpec(ref common.ReferenceC
 				},
 			},
 		},
+		Dependencies: []string{
+			"k8s.io/apimachinery/pkg/api/resource.Quantity"},
 	}
 }
 

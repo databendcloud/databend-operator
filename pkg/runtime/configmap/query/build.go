@@ -6,9 +6,9 @@ import (
 	"github.com/BurntSushi/toml"
 	corev1 "k8s.io/api/core/v1"
 
-	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
+	v1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 	"github.com/databendcloud/databend-operator/pkg/common"
-	"github.com/databendcloud/databend-operator/pkg/runtime/config"
+	"github.com/databendcloud/databend-operator/pkg/runtime/configmap"
 	"github.com/databendcloud/databend-operator/pkg/runtime/objectmeta"
 )
 
@@ -18,8 +18,8 @@ const (
 )
 
 type QueryTomlBuilder struct {
-	warehouse *databendv1alpha1.Warehouse
-	tenant    *databendv1alpha1.Tenant
+	warehouse *v1alpha1.Warehouse
+	tenant    *v1alpha1.Tenant
 }
 
 type Config struct {
@@ -30,7 +30,7 @@ type Config struct {
 	Cache   *CacheConfig    `toml:"cache,omitempty" json:"cache,omitempty"`
 }
 
-func NewQueryTomlBuilder(tenant *databendv1alpha1.Tenant, warehouse *databendv1alpha1.Warehouse) config.TomlConfig {
+func NewQueryTomlBuilder(tenant *v1alpha1.Tenant, warehouse *v1alpha1.Warehouse) configmap.TomlConfig {
 	return &QueryTomlBuilder{
 		warehouse: warehouse,
 		tenant:    tenant,
@@ -55,7 +55,7 @@ func (b *QueryTomlBuilder) BuildConfigMap() (*corev1.ConfigMap, error) {
 	}
 
 	// Build ConfigMap
-	configMapName := common.GetQueryConfigMapName(b.warehouse.Name)
+	configMapName := common.GetQueryConfigMapName(b.tenant.Name, b.warehouse.Name)
 	objectMeta := objectmeta.BuildObjectMetaUnderWarehouse(b.warehouse, configMapName)
 	configMap := corev1.ConfigMap{
 		ObjectMeta: *objectMeta,

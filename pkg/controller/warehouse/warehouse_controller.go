@@ -33,9 +33,9 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
+	v1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 	"github.com/databendcloud/databend-operator/pkg/common"
-	"github.com/databendcloud/databend-operator/pkg/runtime/core"
+	databendruntime "github.com/databendcloud/databend-operator/pkg/runtime"
 )
 
 type opState int
@@ -63,7 +63,7 @@ type WarehouseReconciler struct {
 func (r *WarehouseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := ctrl.LoggerFrom(ctx)
 
-	var warehouse databendv1alpha1.Warehouse
+	var warehouse v1alpha1.Warehouse
 	if err := r.Get(ctx, req.NamespacedName, &warehouse); err != nil {
 		if apierrors.IsNotFound(err) {
 			log.V(2).Info("Warehouse has been deleted", "namespacedName", req.NamespacedName)
@@ -109,11 +109,11 @@ func (r *WarehouseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	return ctrl.Result{}, err
 }
 
-func (r *WarehouseReconciler) reconcileConfigMap(ctx context.Context, tenant *databendv1alpha1.Tenant, warehouse *databendv1alpha1.Warehouse) (opState, error) {
+func (r *WarehouseReconciler) reconcileConfigMap(ctx context.Context, tenant *v1alpha1.Tenant, warehouse *v1alpha1.Warehouse) (opState, error) {
 	log := ctrl.LoggerFrom(ctx)
 
 	// Build and reconcile ConfigMap
-	cm, err := core.BuildQueryConfigMap(tenant, warehouse)
+	cm, err := databendruntime.BuildQueryConfigMap(tenant, warehouse)
 	if err != nil {
 		log.V(5).Error(err, "Failed to build ConfigMap", "namespace", cm.Namespace, "name", cm.Name)
 		return buildFailed, err
@@ -135,11 +135,11 @@ func (r *WarehouseReconciler) reconcileConfigMap(ctx context.Context, tenant *da
 	return createSucceeded, nil
 }
 
-func (r *WarehouseReconciler) reconcileStatefulSet(ctx context.Context, tenant *databendv1alpha1.Tenant, warehouse *databendv1alpha1.Warehouse) (opState, error) {
+func (r *WarehouseReconciler) reconcileStatefulSet(ctx context.Context, tenant *v1alpha1.Tenant, warehouse *v1alpha1.Warehouse) (opState, error) {
 	log := ctrl.LoggerFrom(ctx)
 
 	// Build and reconcile StatefulSet
-	ss, err := core.BuildStatefulSet(tenant, warehouse)
+	ss, err := databendruntime.BuildStatefulSet(tenant, warehouse)
 	if err != nil {
 		log.V(5).Error(err, "Failed to build StatefulSet", "namespace", ss.Namespace, "name", ss.Name)
 		return buildFailed, err
@@ -168,7 +168,7 @@ func (r *WarehouseReconciler) reconcileStatefulSet(ctx context.Context, tenant *
 	return r.updateReplicas(ctx, warehouse)
 }
 
-func (r *WarehouseReconciler) updateReplicas(ctx context.Context, warehouse *databendv1alpha1.Warehouse) (opState, error) {
+func (r *WarehouseReconciler) updateReplicas(ctx context.Context, warehouse *v1alpha1.Warehouse) (opState, error) {
 	log := ctrl.LoggerFrom(ctx)
 
 	var ss appsv1.StatefulSet
@@ -189,10 +189,10 @@ func (r *WarehouseReconciler) updateReplicas(ctx context.Context, warehouse *dat
 	return createSucceeded, nil
 }
 
-func (r *WarehouseReconciler) getTenant(ctx context.Context, nn types.NamespacedName) (*databendv1alpha1.Tenant, error) {
+func (r *WarehouseReconciler) getTenant(ctx context.Context, nn types.NamespacedName) (*v1alpha1.Tenant, error) {
 	log := ctrl.LoggerFrom(ctx)
 
-	var tenant databendv1alpha1.Tenant
+	var tenant v1alpha1.Tenant
 	if err := r.Get(ctx, nn, &tenant, &client.GetOptions{}); err != nil {
 		return nil, err
 	}
@@ -246,42 +246,42 @@ func (r *WarehouseReconciler) getTenant(ctx context.Context, nn types.Namespaced
 	return &tenant, nil
 }
 
-func setCondition(warehouse *databendv1alpha1.Warehouse, opState opState) {
+func setCondition(warehouse *v1alpha1.Warehouse, opState opState) {
 	var newCond metav1.Condition
 	switch opState {
 	case createSucceeded:
 		newCond = metav1.Condition{
-			Type:    databendv1alpha1.WarehouseCreated,
+			Type:    v1alpha1.WarehouseCreated,
 			Status:  metav1.ConditionTrue,
-			Reason:  databendv1alpha1.WarehouseCreatedReason,
+			Reason:  v1alpha1.WarehouseCreatedReason,
 			Message: common.WarehouseCreatedMessage,
 		}
 	case running:
 		newCond = metav1.Condition{
-			Type:    databendv1alpha1.WarehouseRunning,
+			Type:    v1alpha1.WarehouseRunning,
 			Status:  metav1.ConditionTrue,
-			Reason:  databendv1alpha1.WarehouseRunningReason,
+			Reason:  v1alpha1.WarehouseRunningReason,
 			Message: common.WarehouseRunningMessage,
 		}
 	case buildFailed:
 		newCond = metav1.Condition{
-			Type:    databendv1alpha1.WarehouseFailed,
+			Type:    v1alpha1.WarehouseFailed,
 			Status:  metav1.ConditionFalse,
-			Reason:  databendv1alpha1.WarehouseBuildFailedReason,
+			Reason:  v1alpha1.WarehouseBuildFailedReason,
 			Message: common.WarehouseBuildFailedMessage,
 		}
 	case updateFailed:
 		newCond = metav1.Condition{
-			Type:    databendv1alpha1.WarehouseFailed,
+			Type:    v1alpha1.WarehouseFailed,
 			Status:  metav1.ConditionFalse,
-			Reason:  databendv1alpha1.WarehouseBuildFailedReason,
+			Reason:  v1alpha1.WarehouseBuildFailedReason,
 			Message: common.WarehouseUpdateFailedMessage,
 		}
 	case runFailed:
 		newCond = metav1.Condition{
-			Type:    databendv1alpha1.WarehouseFailed,
+			Type:    v1alpha1.WarehouseFailed,
 			Status:  metav1.ConditionFalse,
-			Reason:  databendv1alpha1.WarehouseRunFailedReason,
+			Reason:  v1alpha1.WarehouseRunFailedReason,
 			Message: common.WarehouseRunFailedMessage,
 		}
 	}
@@ -291,7 +291,7 @@ func setCondition(warehouse *databendv1alpha1.Warehouse, opState opState) {
 // SetupWithManager sets up the controller with the Manager.
 func (r *WarehouseReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&databendv1alpha1.Warehouse{}).
+		For(&v1alpha1.Warehouse{}).
 		Owns(&appsv1.StatefulSet{}).
 		Named("warehouse").
 		Complete(r)

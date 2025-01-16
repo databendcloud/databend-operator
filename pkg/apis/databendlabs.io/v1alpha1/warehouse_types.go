@@ -18,6 +18,7 @@ package v1alpha1
 
 import (
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -71,8 +72,8 @@ type DiskCacheSpec struct {
 	// +kubebuilder:default=false
 	Enabled bool `json:"enabled,omitempty"`
 
-	// Max bytes of cache in disk.
-	MaxBytes int `json:"size,omitempty"`
+	// Max size of cache in disk.
+	MaxSize resource.Quantity `json:"size,omitempty"`
 
 	// Path to cache directory in disk.
 	// If not set, default to /var/lib/databend/cache.

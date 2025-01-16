@@ -4,10 +4,23 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+
+	v1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 )
 
-func GetQueryConfigMapName(whName string) string {
-	return fmt.Sprintf("query-%s", whName)
+func GetQueryConfigMapName(tnName, whName string) string {
+	return fmt.Sprintf("query-cm-%s-%s", tnName, whName)
+}
+
+func GetQueryStatefulSetName(tnName, whName string) string {
+	return fmt.Sprintf("query-ss-%s-%s", tnName, whName)
+}
+
+func GetQueryImage(wh *v1alpha1.Warehouse) string {
+	if wh.Spec.QueryImage != "" {
+		return wh.Spec.QueryImage
+	}
+	return "databend/databend-query:latest"
 }
 
 func SHA256String(input string) string {

@@ -19,9 +19,8 @@
           "type": "string"
         },
         "size": {
-          "description": "Max bytes of cache in disk.",
-          "type": "integer",
-          "format": "int32"
+          "description": "Max size of cache in disk.",
+          "$ref": "#/definitions/k8s.io.apimachinery.pkg.api.resource.Quantity"
         },
         "storageClass": {
           "description": "Provide storage class to allocate disk cache automatically.",

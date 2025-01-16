@@ -1,7 +1,7 @@
 package query
 
 import (
-	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
+	v1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 )
 
 type MetaConfig struct {
@@ -13,7 +13,7 @@ type MetaConfig struct {
 	AutoSyncInterval      int `toml:"auto_sync_interval" json:"auto_sync_interval"`
 }
 
-func NewMetaConfig(tn *databendv1alpha1.Tenant) *MetaConfig {
+func NewMetaConfig(tn *v1alpha1.Tenant) *MetaConfig {
 	meta := &MetaConfig{
 		Endpoints:             tn.Spec.Meta.Endpoints,
 		Username:              "root",

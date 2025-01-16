@@ -3,7 +3,7 @@ package query
 import (
 	"fmt"
 
-	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
+	v1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 )
 
 const (
@@ -55,7 +55,7 @@ type QueryLogConfigTracing struct {
 }
 
 // NewQueryLogConfig create new instance of Something
-func NewQueryLogConfig(wh *databendv1alpha1.Warehouse) *QueryLogConfig {
+func NewQueryLogConfig(wh *v1alpha1.Warehouse) *QueryLogConfig {
 	cfg := QueryLogConfig{
 		File: QueryLogConfigFile{
 			On: false,
