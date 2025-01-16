@@ -3,9 +3,11 @@ module github.com/databendcloud/databend-operator
 go 1.22.0
 
 require (
+	github.com/BurntSushi/toml v1.4.0
 	github.com/aws/aws-sdk-go v1.55.5
 	github.com/onsi/ginkgo/v2 v2.19.0
 	github.com/onsi/gomega v1.33.1
+	github.com/pkg/errors v0.9.1
 	go.uber.org/zap v1.26.0
 	k8s.io/api v0.31.0
 	k8s.io/apimachinery v0.31.0
@@ -56,7 +58,6 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.19.1 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.55.0 // indirect

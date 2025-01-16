@@ -248,7 +248,7 @@ spec:
                       default: no_password
                       description: |-
                         Authentication type of warehouse password.
-                        Currently we support: md5, no_password.
+                        Currently we support: sha256_password, no_password.
                       type: string
                     name:
                       description: Name of warehouse user.

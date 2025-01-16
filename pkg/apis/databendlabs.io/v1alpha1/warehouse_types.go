@@ -22,6 +22,11 @@ import (
 )
 
 const (
+	// WarehouseKind is the Kind name for the Warehouse.
+	WarehouseKind string = "Warehouse"
+)
+
+const (
 	// WarehouseCreated means that the Warehouse creation has succeeded.
 	WarehouseCreated string = "Created"
 
@@ -141,11 +146,6 @@ type WarehouseSpec struct {
 	// Desired replicas of Query
 	// +kubebuilder:default=1
 	Replicas int `json:"replicas,omitempty"`
-
-	// Time for Query clsuter to suspend when no query requests are received.
-	// Set to 0 if you don't want Query cluster to be suspended.
-	// +kubebuilder:default=0
-	AutoSuspendAfterSecs int `json:"autoSuspendAfterSecs,omitempty"`
 
 	// Image for Query.
 	QueryImage string `json:"queryImage,omitempty"`

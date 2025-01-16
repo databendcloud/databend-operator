@@ -312,7 +312,7 @@
           "$ref": "#/definitions/v1.ObjectReference"
         },
         "authType": {
-          "description": "Authentication type of warehouse password. Currently we support: md5, no_password.",
+          "description": "Authentication type of warehouse password. Currently we support: sha256_password, no_password.",
           "type": "string"
         },
         "name": {
@@ -413,11 +413,6 @@
       "description": "WarehouseSpec defines the desired state of Warehouse.",
       "type": "object",
       "properties": {
-        "autoSuspendAfterSecs": {
-          "description": "Time for Query clsuter to suspend when no query requests are received. Set to 0 if you don't want Query cluster to be suspended.",
-          "type": "integer",
-          "format": "int32"
-        },
         "diskCacheSize": {
           "description": "Configurations of cache in disk.",
           "default": {},

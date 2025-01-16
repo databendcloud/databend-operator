@@ -24,10 +24,15 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
+const (
+	// TenantKind is the Kind name for the Tenant.
+	TenantKind string = "Tenant"
+)
+
 type UserAuthType string
 
 const (
-	MD5        UserAuthType = "md5"
+	SHA256     UserAuthType = "sha256_password"
 	NoPassword UserAuthType = "no_password"
 )
 
@@ -134,7 +139,7 @@ type User struct {
 	Name string `json:"name,omitempty"`
 
 	// Authentication type of warehouse password.
-	// Currently we support: md5, no_password.
+	// Currently we support: sha256_password, no_password.
 	// +kubebuilder:default="no_password"
 	AuthType UserAuthType `json:"authType,omitempty"`
 
