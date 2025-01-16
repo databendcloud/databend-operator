@@ -65,8 +65,12 @@ spec:
                       If not set, default to /var/lib/databend/cache.
                     type: string
                   size:
-                    description: Max bytes of cache in disk.
-                    type: integer
+                    anyOf:
+                    - type: integer
+                    - type: string
+                    description: Max size of cache in disk.
+                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                    x-kubernetes-int-or-string: true
                   storageClass:
                     description: Provide storage class to allocate disk cache automatically.
                     type: string

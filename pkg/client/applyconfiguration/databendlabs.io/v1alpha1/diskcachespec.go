@@ -17,13 +17,17 @@ limitations under the License.
 
 package v1alpha1
 
+import (
+	resource "k8s.io/apimachinery/pkg/api/resource"
+)
+
 // DiskCacheSpecApplyConfiguration represents a declarative configuration of the DiskCacheSpec type for use
 // with apply.
 type DiskCacheSpecApplyConfiguration struct {
-	Enabled      *bool   `json:"enabled,omitempty"`
-	MaxBytes     *int    `json:"size,omitempty"`
-	Path         *string `json:"path,omitempty"`
-	StorageClass *string `json:"storageClass,omitempty"`
+	Enabled      *bool              `json:"enabled,omitempty"`
+	MaxSize      *resource.Quantity `json:"size,omitempty"`
+	Path         *string            `json:"path,omitempty"`
+	StorageClass *string            `json:"storageClass,omitempty"`
 }
 
 // DiskCacheSpecApplyConfiguration constructs a declarative configuration of the DiskCacheSpec type for use with
@@ -40,11 +44,11 @@ func (b *DiskCacheSpecApplyConfiguration) WithEnabled(value bool) *DiskCacheSpec
 	return b
 }
 
-// WithMaxBytes sets the MaxBytes field in the declarative configuration to the given value
+// WithMaxSize sets the MaxSize field in the declarative configuration to the given value
 // and returns the receiver, so that objects can be built by chaining "With" function invocations.
-// If called multiple times, the MaxBytes field is set to the value of the last call.
-func (b *DiskCacheSpecApplyConfiguration) WithMaxBytes(value int) *DiskCacheSpecApplyConfiguration {
-	b.MaxBytes = &value
+// If called multiple times, the MaxSize field is set to the value of the last call.
+func (b *DiskCacheSpecApplyConfiguration) WithMaxSize(value resource.Quantity) *DiskCacheSpecApplyConfiguration {
+	b.MaxSize = &value
 	return b
 }
 
