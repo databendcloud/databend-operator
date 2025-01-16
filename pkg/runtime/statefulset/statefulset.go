@@ -61,7 +61,7 @@ func (b *StatefulSetBuilder) Build() *appsv1.StatefulSet {
 					Containers:   b.buildPodContainers(),
 					Volumes:      b.buildPodVolumes(),
 					Affinity: &corev1.Affinity{
-						PodAffinity:  b.buildPodAffinity(),
+						PodAffinity: b.buildPodAffinity(),
 					},
 					TerminationGracePeriodSeconds: ptr.To(int64(30)),
 				},

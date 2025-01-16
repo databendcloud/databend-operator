@@ -49,7 +49,7 @@ func NewDiskCacheSetting(size uint64) *CacheSettings {
 		return nil
 	}
 	return &CacheSettings{
-		DataCacheStorage: DiskCache,
+		DataCacheStorage:   DiskCache,
 		Path:               cachePath,
 		MaxBytes:           size * Gi,
 		K8sResourceRequest: fmt.Sprintf("%dGi", size),
