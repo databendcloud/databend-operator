@@ -27,7 +27,7 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
+	v1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 )
 
 var _ = Describe("Warehouse Controller", func() {
@@ -40,13 +40,13 @@ var _ = Describe("Warehouse Controller", func() {
 			Name:      resourceName,
 			Namespace: "default", // TODO(user):Modify as needed
 		}
-		warehouse := &databendv1alpha1.Warehouse{}
+		warehouse := &v1alpha1.Warehouse{}
 
 		BeforeEach(func() {
 			By("creating the custom resource for the Kind Warehouse")
 			err := k8sClient.Get(ctx, typeNamespacedName, warehouse)
 			if err != nil && errors.IsNotFound(err) {
-				resource := &databendv1alpha1.Warehouse{
+				resource := &v1alpha1.Warehouse{
 					ObjectMeta: metav1.ObjectMeta{
 						Name:      resourceName,
 						Namespace: "default",
@@ -59,7 +59,7 @@ var _ = Describe("Warehouse Controller", func() {
 
 		AfterEach(func() {
 			// TODO(user): Cleanup logic after each test, like removing the resource instance.
-			resource := &databendv1alpha1.Warehouse{}
+			resource := &v1alpha1.Warehouse{}
 			err := k8sClient.Get(ctx, typeNamespacedName, resource)
 			Expect(err).NotTo(HaveOccurred())
 

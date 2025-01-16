@@ -1,7 +1,7 @@
 package query
 
 import (
-	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
+	v1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 )
 
 type StorageConfig struct {
@@ -20,7 +20,7 @@ type S3StorageConfig struct {
 	Region          string `toml:"region" json:"region"`
 }
 
-func NewStorageConfig(tn *databendv1alpha1.Tenant, wh *databendv1alpha1.Warehouse) *StorageConfig {
+func NewStorageConfig(tn *v1alpha1.Tenant, wh *v1alpha1.Warehouse) *StorageConfig {
 	return &StorageConfig{
 		StorageType: "s3",
 		NumCpus:     uint64(wh.Spec.PodResource.Limits.Cpu().Value()),

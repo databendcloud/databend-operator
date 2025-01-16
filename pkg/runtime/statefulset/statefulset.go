@@ -9,23 +9,23 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/ptr"
 
-	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
+	v1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 	"github.com/databendcloud/databend-operator/pkg/common"
 	"github.com/databendcloud/databend-operator/pkg/runtime/resource"
 )
 
 type StatefulSetBuilder struct {
-	tenant             *databendv1alpha1.Tenant
-	warehouse          *databendv1alpha1.Warehouse
+	tenant    *v1alpha1.Tenant
+	warehouse *v1alpha1.Warehouse
 }
 
 func NewStatefulSetBuilder(
-	tenant *databendv1alpha1.Tenant,
-	warehouse *databendv1alpha1.Warehouse,
+	tenant *v1alpha1.Tenant,
+	warehouse *v1alpha1.Warehouse,
 ) *StatefulSetBuilder {
 	return &StatefulSetBuilder{
-		tenant:             tenant,
-		warehouse:          warehouse,
+		tenant:    tenant,
+		warehouse: warehouse,
 	}
 }
 
@@ -132,8 +132,8 @@ func (b *StatefulSetBuilder) buildMeta() metav1.ObjectMeta {
 		kind       = b.warehouse.Kind
 	)
 	if len(apiVersion) == 0 || len(kind) == 0 {
-		apiVersion = databendv1alpha1.GroupVersion.String()
-		kind = databendv1alpha1.WarehouseKind
+		apiVersion = v1alpha1.GroupVersion.String()
+		kind = v1alpha1.WarehouseKind
 	}
 	meta.OwnerReferences = []metav1.OwnerReference{
 		{
@@ -273,7 +273,7 @@ func getVolumeMounts() []corev1.VolumeMount {
 	return mnts
 }
 
-func patchQueryPodWithCache(tpl *corev1.PodTemplateSpec, tn *databendv1alpha1.Tenant, wh *databendv1alpha1.Warehouse) {
+func patchQueryPodWithCache(tpl *corev1.PodTemplateSpec, tn *v1alpha1.Tenant, wh *v1alpha1.Warehouse) {
 	settings := resource.GetCacheSettings(tn, wh)
 	if settings == nil {
 		return

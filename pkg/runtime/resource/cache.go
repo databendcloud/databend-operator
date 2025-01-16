@@ -3,7 +3,7 @@ package resource
 import (
 	"fmt"
 
-	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
+	v1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 )
 
 type CacheType string
@@ -26,7 +26,7 @@ type CacheSettings struct {
 	VolumeName         string    `toml:"volume_name"`
 }
 
-func GetCacheSettings(tenant *databendv1alpha1.Tenant, wh *databendv1alpha1.Warehouse) *CacheSettings {
+func GetCacheSettings(tenant *v1alpha1.Tenant, wh *v1alpha1.Warehouse) *CacheSettings {
 	if wh == nil || !wh.Spec.Cache.Enabled || wh.Spec.Cache.MaxSize.Value() <= 0 {
 		return nil
 	}

@@ -38,7 +38,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
+	v1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 	"github.com/databendcloud/databend-operator/pkg/common"
 )
 
@@ -67,7 +67,7 @@ type TenantReconciler struct {
 func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := ctrl.LoggerFrom(ctx)
 
-	var tenant databendv1alpha1.Tenant
+	var tenant v1alpha1.Tenant
 	if err := r.Get(ctx, req.NamespacedName, &tenant); err != nil {
 		if apierrors.IsNotFound(err) {
 			log.V(2).Info("Tenant has been deleted", "namespacedName", req.NamespacedName)
@@ -111,7 +111,7 @@ func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	return ctrl.Result{}, err
 }
 
-func (r *TenantReconciler) verifyStorage(ctx context.Context, tenant *databendv1alpha1.Tenant) (opState, error) {
+func (r *TenantReconciler) verifyStorage(ctx context.Context, tenant *v1alpha1.Tenant) (opState, error) {
 	log := ctrl.LoggerFrom(ctx)
 
 	if tenant.Spec.Storage.S3 == nil {
@@ -159,7 +159,7 @@ func (r *TenantReconciler) verifyStorage(ctx context.Context, tenant *databendv1
 	return creationSucceeded, nil
 }
 
-func (r *TenantReconciler) verifyMeta(ctx context.Context, tenant *databendv1alpha1.Tenant) (opState, error) {
+func (r *TenantReconciler) verifyMeta(ctx context.Context, tenant *v1alpha1.Tenant) (opState, error) {
 	log := ctrl.LoggerFrom(ctx)
 
 	if len(tenant.Spec.Meta.Endpoints) == 0 {
@@ -192,7 +192,7 @@ func (r *TenantReconciler) verifyMeta(ctx context.Context, tenant *databendv1alp
 	return creationSucceeded, nil
 }
 
-func (r *TenantReconciler) verifyBuiltinUsers(ctx context.Context, tenant *databendv1alpha1.Tenant) (opState, error) {
+func (r *TenantReconciler) verifyBuiltinUsers(ctx context.Context, tenant *v1alpha1.Tenant) (opState, error) {
 	log := ctrl.LoggerFrom(ctx)
 
 	if len(tenant.Spec.Users) == 0 {
@@ -217,36 +217,36 @@ func (r *TenantReconciler) verifyBuiltinUsers(ctx context.Context, tenant *datab
 	return creationSucceeded, nil
 }
 
-func setCondition(tenant *databendv1alpha1.Tenant, opState opState) {
+func setCondition(tenant *v1alpha1.Tenant, opState opState) {
 	var newCond metav1.Condition
 	switch opState {
 	case creationSucceeded:
 		newCond = metav1.Condition{
-			Type:    databendv1alpha1.TenantCreated,
+			Type:    v1alpha1.TenantCreated,
 			Status:  metav1.ConditionTrue,
 			Message: common.TenantCreationSucceededMessage,
-			Reason:  databendv1alpha1.TenantCreationSucceededReason,
+			Reason:  v1alpha1.TenantCreationSucceededReason,
 		}
 	case storageError:
 		newCond = metav1.Condition{
-			Type:    databendv1alpha1.TenantError,
+			Type:    v1alpha1.TenantError,
 			Status:  metav1.ConditionFalse,
 			Message: common.TenantStorageErrorMessage,
-			Reason:  databendv1alpha1.TenantStorageErrorReason,
+			Reason:  v1alpha1.TenantStorageErrorReason,
 		}
 	case metaError:
 		newCond = metav1.Condition{
-			Type:    databendv1alpha1.TenantError,
+			Type:    v1alpha1.TenantError,
 			Status:  metav1.ConditionFalse,
 			Message: common.TenantMetaErrorMessage,
-			Reason:  databendv1alpha1.TenantMetaErrorReason,
+			Reason:  v1alpha1.TenantMetaErrorReason,
 		}
 	case builtinUserError:
 		newCond = metav1.Condition{
-			Type:    databendv1alpha1.TenantError,
+			Type:    v1alpha1.TenantError,
 			Status:  metav1.ConditionFalse,
 			Message: common.TenantUserErrorMessage,
-			Reason:  databendv1alpha1.TenantUserErrorReason,
+			Reason:  v1alpha1.TenantUserErrorReason,
 		}
 	default:
 		return
@@ -257,7 +257,7 @@ func setCondition(tenant *databendv1alpha1.Tenant, opState opState) {
 // SetupWithManager sets up the controller with the Manager.
 func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&databendv1alpha1.Tenant{}).
+		For(&v1alpha1.Tenant{}).
 		Named("tenant").
 		Complete(r)
 }

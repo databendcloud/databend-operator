@@ -27,7 +27,7 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
+	v1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 )
 
 var _ = Describe("Tenant Controller", func() {
@@ -40,13 +40,13 @@ var _ = Describe("Tenant Controller", func() {
 			Name:      resourceName,
 			Namespace: "default", // TODO(user):Modify as needed
 		}
-		tenant := &databendv1alpha1.Tenant{}
+		tenant := &v1alpha1.Tenant{}
 
 		BeforeEach(func() {
 			By("creating the custom resource for the Kind Tenant")
 			err := k8sClient.Get(ctx, typeNamespacedName, tenant)
 			if err != nil && errors.IsNotFound(err) {
-				resource := &databendv1alpha1.Tenant{
+				resource := &v1alpha1.Tenant{
 					ObjectMeta: metav1.ObjectMeta{
 						Name:      resourceName,
 						Namespace: "default",
@@ -59,7 +59,7 @@ var _ = Describe("Tenant Controller", func() {
 
 		AfterEach(func() {
 			// TODO(user): Cleanup logic after each test, like removing the resource instance.
-			resource := &databendv1alpha1.Tenant{}
+			resource := &v1alpha1.Tenant{}
 			err := k8sClient.Get(ctx, typeNamespacedName, resource)
 			Expect(err).NotTo(HaveOccurred())
 

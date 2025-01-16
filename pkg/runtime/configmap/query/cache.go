@@ -1,7 +1,7 @@
 package query
 
 import (
-	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
+	v1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 	"github.com/databendcloud/databend-operator/pkg/runtime/resource"
 )
 
@@ -18,7 +18,7 @@ type DiskCacheConfig struct {
 	MaxBytes uint64 `toml:"max_bytes"`
 }
 
-func NewCacheConfig(tn *databendv1alpha1.Tenant, wh *databendv1alpha1.Warehouse) *CacheConfig {
+func NewCacheConfig(tn *v1alpha1.Tenant, wh *v1alpha1.Warehouse) *CacheConfig {
 	cfg := &CacheConfig{}
 	cfg.TableBloomIndexFilterSize = 5368709120
 	cfg.TableBloomIndexMetaCount = 200000

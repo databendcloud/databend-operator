@@ -7,20 +7,20 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
-	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
+	v1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 	"github.com/databendcloud/databend-operator/pkg/common"
 )
 
 var (
 	WarehouseGVK = schema.GroupVersionKind{
-		Group:   databendv1alpha1.SchemeGroupVersion.Group,
-		Version: databendv1alpha1.SchemeGroupVersion.Version,
-		Kind:    databendv1alpha1.WarehouseKind,
+		Group:   v1alpha1.SchemeGroupVersion.Group,
+		Version: v1alpha1.SchemeGroupVersion.Version,
+		Kind:    v1alpha1.WarehouseKind,
 	}
 	TenantGVK = schema.GroupVersionKind{
-		Group:   databendv1alpha1.SchemeGroupVersion.Group,
-		Version: databendv1alpha1.SchemeGroupVersion.Version,
-		Kind:    databendv1alpha1.TenantKind,
+		Group:   v1alpha1.SchemeGroupVersion.Group,
+		Version: v1alpha1.SchemeGroupVersion.Version,
+		Kind:    v1alpha1.TenantKind,
 	}
 )
 
@@ -52,7 +52,7 @@ func CheckOwnerRef(ref []metav1.OwnerReference) (bool, *metav1.OwnerReference) {
 	return false, nil
 }
 
-func OwnedByTenant(r []metav1.OwnerReference, tenant *databendv1alpha1.Tenant) error {
+func OwnedByTenant(r []metav1.OwnerReference, tenant *v1alpha1.Tenant) error {
 	has, ref := CheckOwnerRef(r)
 	if !has {
 		return common.OwnerNotFound
@@ -64,7 +64,7 @@ func OwnedByTenant(r []metav1.OwnerReference, tenant *databendv1alpha1.Tenant) e
 	return errors.Wrap(common.OwnedByOtherIdentity, ref.String())
 }
 
-func OwnedByWarehouse(r []metav1.OwnerReference, wh *databendv1alpha1.Warehouse) error {
+func OwnedByWarehouse(r []metav1.OwnerReference, wh *v1alpha1.Warehouse) error {
 	has, ref := CheckOwnerRef(r)
 	if !has {
 		return common.OwnerNotFound
@@ -76,7 +76,7 @@ func OwnedByWarehouse(r []metav1.OwnerReference, wh *databendv1alpha1.Warehouse)
 	return errors.Wrap(common.OwnedByOtherIdentity, ref.String())
 }
 
-func LabelsFromTenant(tenant *databendv1alpha1.Tenant) map[string]string {
+func LabelsFromTenant(tenant *v1alpha1.Tenant) map[string]string {
 	ll := make(map[string]string)
 
 	ll[common.KeyTenant] = tenant.Name
@@ -84,7 +84,7 @@ func LabelsFromTenant(tenant *databendv1alpha1.Tenant) map[string]string {
 	return ll
 }
 
-func LabelsFromWarehouse(wh *databendv1alpha1.Warehouse) map[string]string {
+func LabelsFromWarehouse(wh *v1alpha1.Warehouse) map[string]string {
 	ll := make(map[string]string)
 
 	ll[common.KeyTenant] = wh.Spec.Tenant.Name
@@ -95,7 +95,7 @@ func LabelsFromWarehouse(wh *databendv1alpha1.Warehouse) map[string]string {
 	return ll
 }
 
-func BuildAnnotationsFromTenant(tenant *databendv1alpha1.Tenant) map[string]string {
+func BuildAnnotationsFromTenant(tenant *v1alpha1.Tenant) map[string]string {
 	annotations := make(map[string]string)
 
 	annotations[common.KeyTenant] = tenant.Name
@@ -103,7 +103,7 @@ func BuildAnnotationsFromTenant(tenant *databendv1alpha1.Tenant) map[string]stri
 	return annotations
 }
 
-func BuildAnnotationsFromWarehouse(wh *databendv1alpha1.Warehouse) map[string]string {
+func BuildAnnotationsFromWarehouse(wh *v1alpha1.Warehouse) map[string]string {
 	annotations := make(map[string]string)
 
 	annotations[common.KeyTenant] = wh.Spec.Tenant.Name
@@ -113,7 +113,7 @@ func BuildAnnotationsFromWarehouse(wh *databendv1alpha1.Warehouse) map[string]st
 	return annotations
 }
 
-func BuildOwnerReferencesByTenant(tenant *databendv1alpha1.Tenant) []metav1.OwnerReference {
+func BuildOwnerReferencesByTenant(tenant *v1alpha1.Tenant) []metav1.OwnerReference {
 	var apiVersion, kind string
 	if len(tenant.APIVersion) == 0 || len(tenant.Kind) == 0 {
 		apiVersion = TenantGVK.GroupVersion().String()
@@ -132,7 +132,7 @@ func BuildOwnerReferencesByTenant(tenant *databendv1alpha1.Tenant) []metav1.Owne
 	}
 }
 
-func BuildOwnerReferencesByWarehouse(wh *databendv1alpha1.Warehouse) []metav1.OwnerReference {
+func BuildOwnerReferencesByWarehouse(wh *v1alpha1.Warehouse) []metav1.OwnerReference {
 	var apiVersion, kind string
 	if len(wh.APIVersion) == 0 || len(wh.Kind) == 0 {
 		apiVersion = WarehouseGVK.GroupVersion().String()
@@ -151,7 +151,7 @@ func BuildOwnerReferencesByWarehouse(wh *databendv1alpha1.Warehouse) []metav1.Ow
 	}
 }
 
-func BuildObjectMetaUnderTenant(tenant *databendv1alpha1.Tenant, name string) *metav1.ObjectMeta {
+func BuildObjectMetaUnderTenant(tenant *v1alpha1.Tenant, name string) *metav1.ObjectMeta {
 	ll := LabelsFromTenant(tenant)
 	annotations := BuildAnnotationsFromTenant(tenant)
 	meta := &metav1.ObjectMeta{
@@ -165,7 +165,7 @@ func BuildObjectMetaUnderTenant(tenant *databendv1alpha1.Tenant, name string) *m
 }
 
 // initialize object meta for the workloads like configMap, statefulset, service, etc to be created under the warehouse.
-func BuildObjectMetaUnderWarehouse(wh *databendv1alpha1.Warehouse, name string) *metav1.ObjectMeta {
+func BuildObjectMetaUnderWarehouse(wh *v1alpha1.Warehouse, name string) *metav1.ObjectMeta {
 	ll := LabelsFromWarehouse(wh)
 	annotations := BuildAnnotationsFromWarehouse(wh)
 	meta := &metav1.ObjectMeta{

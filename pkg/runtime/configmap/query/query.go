@@ -3,7 +3,7 @@ package query
 import (
 	"fmt"
 
-	databendv1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
+	v1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 	"github.com/databendcloud/databend-operator/pkg/common"
 )
 
@@ -47,7 +47,7 @@ type BuiltInUser struct {
 	AuthString string `toml:"auth_string" json:"auth_string"`
 }
 
-func NewQueryConfig(tn *databendv1alpha1.Tenant, wh *databendv1alpha1.Warehouse) *QueryConfig {
+func NewQueryConfig(tn *v1alpha1.Tenant, wh *v1alpha1.Warehouse) *QueryConfig {
 	q := &QueryConfig{
 		TenantId:              tn.Name,
 		ClusterId:             wh.Name,
@@ -76,7 +76,7 @@ func NewQueryConfig(tn *databendv1alpha1.Tenant, wh *databendv1alpha1.Warehouse)
 	return q.withResourceLimit(wh).withUsers(tn)
 }
 
-func (q *QueryConfig) withResourceLimit(wh *databendv1alpha1.Warehouse) *QueryConfig {
+func (q *QueryConfig) withResourceLimit(wh *v1alpha1.Warehouse) *QueryConfig {
 	if wh.Spec.PodResource.Limits.Cpu().Value() > 0 {
 		q.NumCpus = uint64(wh.Spec.PodResource.Limits.Cpu().Value())
 	}
@@ -87,7 +87,7 @@ func (q *QueryConfig) withResourceLimit(wh *databendv1alpha1.Warehouse) *QueryCo
 	return q
 }
 
-func (q *QueryConfig) withUsers(tn *databendv1alpha1.Tenant) *QueryConfig {
+func (q *QueryConfig) withUsers(tn *v1alpha1.Tenant) *QueryConfig {
 	if len(tn.Spec.Users) > 0 {
 		for _, u := range tn.Spec.Users {
 			q.Users = append(q.Users, BuiltInUser{
@@ -100,7 +100,7 @@ func (q *QueryConfig) withUsers(tn *databendv1alpha1.Tenant) *QueryConfig {
 		// Apend default user
 		q.Users = append(q.Users, BuiltInUser{
 			Name:       DefaultUser,
-			AuthType:   string(databendv1alpha1.SHA256),
+			AuthType:   string(v1alpha1.SHA256),
 			AuthString: common.SHA256String(DefaultPassword),
 		})
 	}
