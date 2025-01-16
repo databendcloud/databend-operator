@@ -17,19 +17,15 @@ import (
 type StatefulSetBuilder struct {
 	tenant             *databendv1alpha1.Tenant
 	warehouse          *databendv1alpha1.Warehouse
-	serviceName        string
-	serviceAccountName string
 }
 
-func NewDatabendQueryStatefulSetBuilder(
+func NewStatefulSetBuilder(
 	tenant *databendv1alpha1.Tenant,
 	warehouse *databendv1alpha1.Warehouse,
-	serviceAccountName string,
 ) *StatefulSetBuilder {
 	return &StatefulSetBuilder{
 		tenant:             tenant,
 		warehouse:          warehouse,
-		serviceAccountName: serviceAccountName,
 	}
 }
 
@@ -43,11 +39,9 @@ func (b *StatefulSetBuilder) Build() *appsv1.StatefulSet {
 			Selector: &metav1.LabelSelector{
 				MatchLabels: meta.Labels,
 			},
-			ServiceName: b.serviceName,
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: meta,
 				Spec: corev1.PodSpec{
-					ServiceAccountName: b.serviceAccountName,
 					SecurityContext: &corev1.PodSecurityContext{
 						FSGroup:      ptr.To(int64(1000)),
 						RunAsNonRoot: ptr.To(true),
