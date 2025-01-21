@@ -146,14 +146,9 @@ func (r *WarehouseReconciler) reconcileStatefulSet(ctx context.Context, tenant *
 	}
 
 	// Non-empty resourceVersion indicates UPDATE operation.
-	var creationErr error
-	var created bool
-	if warehouse.GetResourceVersion() == "" {
-		creationErr = r.Create(ctx, ss)
-		created = creationErr == nil
-	}
+	creationErr := r.Create(ctx, ss)
 	switch {
-	case created:
+	case creationErr == nil:
 		log.V(5).Info("Succeeded to create StatefulSet", "namespace", ss.Namespace, "name", ss.Name)
 	case client.IgnoreAlreadyExists(creationErr) != nil:
 		log.V(5).Error(err, "Failed to create StatefulSet", "namespace", ss.Namespace, "name", ss.Name)
@@ -174,9 +169,13 @@ func (r *WarehouseReconciler) updateReplicas(ctx context.Context, warehouse *v1a
 	var ss appsv1.StatefulSet
 	ssNN := types.NamespacedName{
 		Namespace: warehouse.Namespace,
-		Name:      warehouse.Name,
+		Name:      common.GetQueryStatefulSetName(warehouse.Spec.Tenant.Name, warehouse.Name),
 	}
 	if err := r.Get(ctx, ssNN, &ss); err != nil {
+		if apierrors.IsNotFound(err) {
+			log.V(5).Info("StatefulSet has not been created yet", "namespacedName", ssNN)
+			return createSucceeded, nil
+		}
 		log.V(5).Error(err, "Failed to get StatefulSet", "namespacedName", ssNN)
 		return buildFailed, err
 	}
