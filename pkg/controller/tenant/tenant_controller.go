@@ -20,7 +20,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	// "net"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
