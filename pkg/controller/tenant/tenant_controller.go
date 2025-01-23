@@ -20,7 +20,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net"
+	// "net"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -167,13 +167,13 @@ func (r *TenantReconciler) verifyMeta(ctx context.Context, tenant *v1alpha1.Tena
 
 	// Check meta connections
 	metaConfig := tenant.Spec.Meta
-	for _, endpoint := range metaConfig.Endpoints {
-		conn, err := net.DialTimeout("tcp", endpoint, DefaultTimeout)
-		if err != nil {
-			return metaError, fmt.Errorf("failed to dial to %s, %w", endpoint, err)
-		}
-		_ = conn.Close()
-	}
+	// for _, endpoint := range metaConfig.Endpoints {
+	// 	conn, err := net.DialTimeout("tcp", endpoint, DefaultTimeout)
+	// 	if err != nil {
+	// 		return metaError, fmt.Errorf("failed to dial to %s, %w", endpoint, err)
+	// 	}
+	// 	_ = conn.Close()
+	// }
 
 	// Check secrets
 	if metaConfig.MetaAuth.PasswordSecretRef != nil {
