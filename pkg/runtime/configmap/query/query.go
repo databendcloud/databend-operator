@@ -93,7 +93,7 @@ func (q *QueryConfig) withUsers(tn *v1alpha1.Tenant) *QueryConfig {
 			q.Users = append(q.Users, BuiltInUser{
 				Name:       u.Name,
 				AuthType:   string(u.AuthType),
-				AuthString: u.AuthString,
+				AuthString: common.SHA256String(u.AuthString),
 			})
 		}
 	} else {
