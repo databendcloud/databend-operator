@@ -72,7 +72,6 @@ const (
 
 const (
 	KeyWarehouse      = "databend.io/warehouse"
-	KeyWarehouseSize  = "databend.io/warehouse-size"
 	KeyApp            = "databend.io/app"
 	ValueAppWarehouse = "warehouse"
 
