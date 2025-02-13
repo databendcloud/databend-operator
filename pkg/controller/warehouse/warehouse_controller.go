@@ -144,6 +144,7 @@ func (r *WarehouseReconciler) reconcileStatefulSet(ctx context.Context, tenant *
 		log.V(5).Error(err, "Failed to build StatefulSet", "namespace", ss.Namespace, "name", ss.Name)
 		return buildFailed, err
 	}
+	log.V(5).Info("New Statefulset", "ss", *ss)
 
 	// Non-empty resourceVersion indicates UPDATE operation.
 	creationErr := r.Create(ctx, ss)

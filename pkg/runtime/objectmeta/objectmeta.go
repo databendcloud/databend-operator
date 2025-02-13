@@ -1,8 +1,6 @@
 package objectmeta
 
 import (
-	"fmt"
-
 	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -89,7 +87,6 @@ func LabelsFromWarehouse(wh *v1alpha1.Warehouse) map[string]string {
 
 	ll[common.KeyTenant] = wh.Spec.Tenant.Name
 	ll[common.KeyWarehouse] = wh.Name
-	ll[common.KeyWarehouseSize] = fmt.Sprint(wh.Spec.Replicas)
 	ll[common.KeyApp] = common.ValueAppWarehouse
 
 	return ll
@@ -108,7 +105,6 @@ func BuildAnnotationsFromWarehouse(wh *v1alpha1.Warehouse) map[string]string {
 
 	annotations[common.KeyTenant] = wh.Spec.Tenant.Name
 	annotations[common.KeyWarehouse] = wh.Name
-	annotations[common.KeyWarehouseSize] = fmt.Sprint(wh.Spec.Replicas)
 
 	return annotations
 }

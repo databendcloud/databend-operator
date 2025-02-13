@@ -1,8 +1,6 @@
 package statefulset
 
 import (
-	"fmt"
-
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	kresource "k8s.io/apimachinery/pkg/api/resource"
@@ -69,19 +67,17 @@ func (b *StatefulSetBuilder) statefulSetName() string {
 
 func (b *StatefulSetBuilder) buildAnnotations() map[string]string {
 	annotations := map[string]string{
-		common.KeyTenant:        b.tenant.Name,
-		common.KeyWarehouse:     b.warehouse.Name,
-		common.KeyWarehouseSize: fmt.Sprint(b.warehouse.Spec.Replicas),
+		common.KeyTenant:    b.tenant.Name,
+		common.KeyWarehouse: b.warehouse.Name,
 	}
 	return annotations
 }
 
 func (b *StatefulSetBuilder) buildLabels() map[string]string {
 	lbs := map[string]string{
-		common.KeyTenant:        b.tenant.Name,
-		common.KeyWarehouse:     b.warehouse.Name,
-		common.KeyWarehouseSize: fmt.Sprint(b.warehouse.Spec.Replicas),
-		common.KeyApp:           common.ValueAppWarehouse,
+		common.KeyTenant:    b.tenant.Name,
+		common.KeyWarehouse: b.warehouse.Name,
+		common.KeyApp:       common.ValueAppWarehouse,
 	}
 	return lbs
 }
@@ -192,21 +188,22 @@ func (b *StatefulSetBuilder) buildPodAffinity() *corev1.PodAffinity {
 					},
 				},
 			},
-		},
-	}
-	// ensure all instances are in the same zone
-	if b.warehouse.Spec.Replicas > 1 {
-		podAffinity.RequiredDuringSchedulingIgnoredDuringExecution = []corev1.PodAffinityTerm{
+			// We'd better place all instances are in the same zone.
+			// However, some nodes may not have the label `topology.kubernetes.io/zone`.
+			// We should not use `RequiredDuringSchedulingIgnoredDuringExecution` here.
 			{
-				LabelSelector: &metav1.LabelSelector{
-					MatchLabels: map[string]string{
-						common.KeyTenant:    b.tenant.Name,
-						common.KeyWarehouse: b.warehouse.Name,
+				Weight: 10,
+				PodAffinityTerm: corev1.PodAffinityTerm{
+					TopologyKey: "topology.kubernetes.io/zone",
+					LabelSelector: &metav1.LabelSelector{
+						MatchLabels: map[string]string{
+							common.KeyTenant:    b.tenant.Name,
+							common.KeyWarehouse: b.warehouse.Name,
+						},
 					},
 				},
-				TopologyKey: "topology.kubernetes.io/zone",
 			},
-		}
+		},
 	}
 	return podAffinity
 }
