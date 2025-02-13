@@ -7,4 +7,3 @@ API rule violation: names_match,github.com/databendcloud/databend-operator/pkg/a
 API rule violation: names_match,github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1,WarehouseSpec,PodLabels
 API rule violation: names_match,github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1,WarehouseSpec,PodResource
 API rule violation: names_match,github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1,WarehouseSpec,PodTolerations
-API rule violation: names_match,github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1,WarehouseStatus,Conditions

@@ -25,7 +25,7 @@ import (
 // with apply.
 type WarehouseStatusApplyConfiguration struct {
 	ReadyReplicas *int                             `json:"readyReplicas,omitempty"`
-	Conditions    []v1.ConditionApplyConfiguration `json:"status,omitempty"`
+	Conditions    []v1.ConditionApplyConfiguration `json:"conditions,omitempty"`
 }
 
 // WarehouseStatusApplyConfiguration constructs a declarative configuration of the WarehouseStatus type for use with
