@@ -192,21 +192,22 @@ func (b *StatefulSetBuilder) buildPodAffinity() *corev1.PodAffinity {
 					},
 				},
 			},
-		},
-	}
-	// ensure all instances are in the same zone
-	if b.warehouse.Spec.Replicas > 1 {
-		podAffinity.RequiredDuringSchedulingIgnoredDuringExecution = []corev1.PodAffinityTerm{
+			// We'd better place all instances are in the same zone.
+			// However, some nodes may not have the label `topology.kubernetes.io/zone`.
+			// We should not use `RequiredDuringSchedulingIgnoredDuringExecution` here.
 			{
-				LabelSelector: &metav1.LabelSelector{
-					MatchLabels: map[string]string{
-						common.KeyTenant:    b.tenant.Name,
-						common.KeyWarehouse: b.warehouse.Name,
+				Weight: 10,
+				PodAffinityTerm: corev1.PodAffinityTerm{
+					TopologyKey: "topology.kubernetes.io/zone",
+					LabelSelector: &metav1.LabelSelector{
+						MatchLabels: map[string]string{
+							common.KeyTenant:    b.tenant.Name,
+							common.KeyWarehouse: b.warehouse.Name,
+						},
 					},
 				},
-				TopologyKey: "topology.kubernetes.io/zone",
 			},
-		}
+		},
 	}
 	return podAffinity
 }
