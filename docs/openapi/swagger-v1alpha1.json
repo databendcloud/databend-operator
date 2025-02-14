@@ -488,12 +488,7 @@
       "description": "WarehouseStatus defines the observed state of Warehouse.",
       "type": "object",
       "properties": {
-        "readyReplicas": {
-          "description": "Number of the ready Query.",
-          "type": "integer",
-          "format": "int32"
-        },
-        "status": {
+        "conditions": {
           "description": "Conditions for the Tenant.",
           "type": "array",
           "items": {
@@ -506,6 +501,11 @@
           "x-kubernetes-list-type": "map",
           "x-kubernetes-patch-merge-key": "type",
           "x-kubernetes-patch-strategy": "merge"
+        },
+        "readyReplicas": {
+          "description": "Number of the ready Query.",
+          "type": "integer",
+          "format": "int32"
         }
       }
     }

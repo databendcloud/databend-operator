@@ -947,7 +947,7 @@ func schema_pkg_apis_databendlabsio_v1alpha1_WarehouseStatus(ref common.Referenc
 							Format:      "int32",
 						},
 					},
-					"status": {
+					"conditions": {
 						VendorExtensible: spec.VendorExtensible{
 							Extensions: spec.Extensions{
 								"x-kubernetes-list-map-keys": []interface{}{
