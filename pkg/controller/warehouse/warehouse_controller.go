@@ -31,7 +31,10 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/klog/v2"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/builder"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/handler"
+	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
 	v1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 	"github.com/databendcloud/databend-operator/pkg/common"
@@ -294,7 +297,13 @@ func setCondition(warehouse *v1alpha1.Warehouse, opState opState) {
 func (r *WarehouseReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&v1alpha1.Warehouse{}).
-		Owns(&appsv1.StatefulSet{}).
+		Watches(
+			&appsv1.StatefulSet{},
+			handler.EnqueueRequestForOwner(
+				mgr.GetScheme(), mgr.GetRESTMapper(), &v1alpha1.Warehouse{},
+			),
+			builder.WithPredicates(predicate.ResourceVersionChangedPredicate{}),
+		).
 		Named("warehouse").
 		Complete(r)
 }
