@@ -291,6 +291,9 @@ func patchQueryPodWithCache(tpl *corev1.PodTemplateSpec, sts *appsv1.StatefulSet
 		pvcVolume := corev1.PersistentVolumeClaim{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: settings.VolumeName,
+				Finalizers: []string{
+					"kubernetes.io/pvc-protection",
+				},
 			},
 			Spec: corev1.PersistentVolumeClaimSpec{
 				AccessModes: []corev1.PersistentVolumeAccessMode{
