@@ -64,6 +64,10 @@ spec:
                       Path to cache directory in disk.
                       If not set, default to /var/lib/databend/cache.
                     type: string
+                  pvc:
+                    default: false
+                    description: Whether to use PVC as the storage of disk cache.
+                    type: boolean
                   size:
                     anyOf:
                     - type: integer

@@ -18,6 +18,10 @@
           "description": "Path to cache directory in disk. If not set, default to /var/lib/databend/cache.",
           "type": "string"
         },
+        "pvc": {
+          "description": "Whether to use PVC as the storage of disk cache.",
+          "type": "boolean"
+        },
         "size": {
           "description": "Max size of cache in disk.",
           "$ref": "#/definitions/k8s.io.apimachinery.pkg.api.resource.Quantity"
