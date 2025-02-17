@@ -78,7 +78,7 @@ func schema_pkg_apis_databendlabsio_v1alpha1_DiskCacheSpec(ref common.ReferenceC
 					},
 					"storageClass": {
 						SchemaProps: spec.SchemaProps{
-							Description: "Provide storage class to allocate disk cache automatically.",
+							Description: "Provide storage class to allocate disk cache automatically. If not set, default to use EmptyDir as disk cache rather than PVC.",
 							Type:        []string{"string"},
 							Format:      "",
 						},

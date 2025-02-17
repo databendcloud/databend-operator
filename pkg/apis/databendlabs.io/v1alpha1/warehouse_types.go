@@ -80,6 +80,7 @@ type DiskCacheSpec struct {
 	Path string `json:"path,omitempty"`
 
 	// Provide storage class to allocate disk cache automatically.
+	// If not set, default to use EmptyDir as disk cache rather than PVC.
 	StorageClass string `json:"storageClass,omitempty"`
 }
 
