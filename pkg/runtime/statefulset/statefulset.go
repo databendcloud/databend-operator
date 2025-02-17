@@ -277,7 +277,7 @@ func patchQueryPodWithCache(tpl *corev1.PodTemplateSpec, sts *appsv1.StatefulSet
 	}
 
 	sizeLimit := kresource.MustParse(settings.K8sResourceLimit)
-	if settings.DataCacheStorage == resource.NvmeCache {
+	if wh.Spec.Cache.StorageClass == "" {
 		cacheVolume := corev1.Volume{
 			Name: settings.VolumeName,
 			VolumeSource: corev1.VolumeSource{

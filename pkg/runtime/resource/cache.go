@@ -10,7 +10,6 @@ type CacheType string
 
 const (
 	DiskCache CacheType = "disk"
-	NvmeCache CacheType = "nvme"
 
 	cachePath       = "/var/lib/databend/cache"
 	cacheVolumeName = "ephemeral-block-cache"
@@ -42,10 +41,6 @@ func GetCacheSettings(tenant *v1alpha1.Tenant, wh *v1alpha1.Warehouse) *CacheSet
 	if wh.Spec.Cache.Path != "" {
 		settings.Path = wh.Spec.Cache.Path
 	}
-
-	if wh.Spec.Cache.StorageClass != "" {
-		settings.DataCacheStorage = DiskCache
-	}
 	return settings
 }
 
@@ -54,7 +49,7 @@ func NewDiskCacheSetting(size uint64) *CacheSettings {
 		return nil
 	}
 	return &CacheSettings{
-		DataCacheStorage:   NvmeCache,
+		DataCacheStorage:   DiskCache,
 		Path:               cachePath,
 		MaxBytes:           size * Gi,
 		K8sResourceRequest: fmt.Sprintf("%dGi", size),
