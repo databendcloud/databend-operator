@@ -18,12 +18,16 @@
           "description": "Path to cache directory in disk. If not set, default to /var/lib/databend/cache.",
           "type": "string"
         },
+        "pvc": {
+          "description": "Whether to use PVC as the storage of disk cache.",
+          "type": "boolean"
+        },
         "size": {
           "description": "Max size of cache in disk.",
           "$ref": "#/definitions/k8s.io.apimachinery.pkg.api.resource.Quantity"
         },
         "storageClass": {
-          "description": "Provide storage class to allocate disk cache automatically.",
+          "description": "Provide storage class to allocate disk cache automatically. If not set, default to use EmptyDir as disk cache rather than PVC.",
           "type": "string"
         }
       }
@@ -412,7 +416,7 @@
       "description": "WarehouseSpec defines the desired state of Warehouse.",
       "type": "object",
       "properties": {
-        "diskCacheSize": {
+        "cache": {
           "description": "Configurations of cache in disk.",
           "default": {},
           "$ref": "#/definitions/v1alpha1.DiskCacheSpec"

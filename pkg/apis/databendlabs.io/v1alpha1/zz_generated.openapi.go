@@ -76,9 +76,16 @@ func schema_pkg_apis_databendlabsio_v1alpha1_DiskCacheSpec(ref common.ReferenceC
 							Format:      "",
 						},
 					},
+					"pvc": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Whether to use PVC as the storage of disk cache.",
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
 					"storageClass": {
 						SchemaProps: spec.SchemaProps{
-							Description: "Provide storage class to allocate disk cache automatically.",
+							Description: "Provide storage class to allocate disk cache automatically. If not set, default to use EmptyDir as disk cache rather than PVC.",
 							Type:        []string{"string"},
 							Format:      "",
 						},
@@ -828,7 +835,7 @@ func schema_pkg_apis_databendlabsio_v1alpha1_WarehouseSpec(ref common.ReferenceC
 							Ref:         ref("k8s.io/api/core/v1.LocalObjectReference"),
 						},
 					},
-					"diskCacheSize": {
+					"cache": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Configurations of cache in disk.",
 							Default:     map[string]interface{}{},

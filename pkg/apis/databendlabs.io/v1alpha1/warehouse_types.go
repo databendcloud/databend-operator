@@ -79,7 +79,12 @@ type DiskCacheSpec struct {
 	// If not set, default to /var/lib/databend/cache.
 	Path string `json:"path,omitempty"`
 
+	// Whether to use PVC as the storage of disk cache.
+	// +kubebuilder:default=false
+	IsPVC bool `json:"pvc,omitempty"`
+
 	// Provide storage class to allocate disk cache automatically.
+	// If not set, default to use EmptyDir as disk cache rather than PVC.
 	StorageClass string `json:"storageClass,omitempty"`
 }
 
@@ -156,7 +161,7 @@ type WarehouseSpec struct {
 	Tenant *corev1.LocalObjectReference `json:"tenant,omitempty"`
 
 	// Configurations of cache in disk.
-	Cache DiskCacheSpec `json:"diskCacheSize,omitempty"`
+	Cache DiskCacheSpec `json:"cache,omitempty"`
 
 	// Configurations of logging.
 	Log LogSpec `json:"log,omitempty"`

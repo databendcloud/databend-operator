@@ -27,6 +27,7 @@ type DiskCacheSpecApplyConfiguration struct {
 	Enabled      *bool              `json:"enabled,omitempty"`
 	MaxSize      *resource.Quantity `json:"size,omitempty"`
 	Path         *string            `json:"path,omitempty"`
+	IsPVC        *bool              `json:"pvc,omitempty"`
 	StorageClass *string            `json:"storageClass,omitempty"`
 }
 
@@ -57,6 +58,14 @@ func (b *DiskCacheSpecApplyConfiguration) WithMaxSize(value resource.Quantity) *
 // If called multiple times, the Path field is set to the value of the last call.
 func (b *DiskCacheSpecApplyConfiguration) WithPath(value string) *DiskCacheSpecApplyConfiguration {
 	b.Path = &value
+	return b
+}
+
+// WithIsPVC sets the IsPVC field in the declarative configuration to the given value
+// and returns the receiver, so that objects can be built by chaining "With" function invocations.
+// If called multiple times, the IsPVC field is set to the value of the last call.
+func (b *DiskCacheSpecApplyConfiguration) WithIsPVC(value bool) *DiskCacheSpecApplyConfiguration {
+	b.IsPVC = &value
 	return b
 }
 

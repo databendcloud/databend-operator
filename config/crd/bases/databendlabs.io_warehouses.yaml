@@ -52,7 +52,7 @@ spec:
           spec:
             description: WarehouseSpec defines the desired state of Warehouse.
             properties:
-              diskCacheSize:
+              cache:
                 description: Configurations of cache in disk.
                 properties:
                   enabled:
@@ -64,6 +64,10 @@ spec:
                       Path to cache directory in disk.
                       If not set, default to /var/lib/databend/cache.
                     type: string
+                  pvc:
+                    default: false
+                    description: Whether to use PVC as the storage of disk cache.
+                    type: boolean
                   size:
                     anyOf:
                     - type: integer
@@ -72,7 +76,9 @@ spec:
                     pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                     x-kubernetes-int-or-string: true
                   storageClass:
-                    description: Provide storage class to allocate disk cache automatically.
+                    description: |-
+                      Provide storage class to allocate disk cache automatically.
+                      If not set, default to use EmptyDir as disk cache rather than PVC.
                     type: string
                 type: object
               ingress:

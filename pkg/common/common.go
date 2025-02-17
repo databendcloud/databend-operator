@@ -13,7 +13,7 @@ func GetQueryConfigMapName(tnName, whName string) string {
 }
 
 func GetQueryStatefulSetName(tnName, whName string) string {
-	return fmt.Sprintf("query-ss-%s-%s", tnName, whName)
+	return fmt.Sprintf("query-sts-%s-%s", tnName, whName)
 }
 
 func GetQueryImage(wh *v1alpha1.Warehouse) string {
