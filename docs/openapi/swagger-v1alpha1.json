@@ -412,7 +412,7 @@
       "description": "WarehouseSpec defines the desired state of Warehouse.",
       "type": "object",
       "properties": {
-        "diskCacheSize": {
+        "cache": {
           "description": "Configurations of cache in disk.",
           "default": {},
           "$ref": "#/definitions/v1alpha1.DiskCacheSpec"

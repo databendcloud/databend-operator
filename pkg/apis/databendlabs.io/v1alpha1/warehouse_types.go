@@ -157,7 +157,7 @@ type WarehouseSpec struct {
 	Tenant *corev1.LocalObjectReference `json:"tenant,omitempty"`
 
 	// Configurations of cache in disk.
-	Cache DiskCacheSpec `json:"diskCacheSize,omitempty"`
+	Cache DiskCacheSpec `json:"cache,omitempty"`
 
 	// Configurations of logging.
 	Log LogSpec `json:"log,omitempty"`

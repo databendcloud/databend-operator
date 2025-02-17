@@ -828,7 +828,7 @@ func schema_pkg_apis_databendlabsio_v1alpha1_WarehouseSpec(ref common.ReferenceC
 							Ref:         ref("k8s.io/api/core/v1.LocalObjectReference"),
 						},
 					},
-					"diskCacheSize": {
+					"cache": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Configurations of cache in disk.",
 							Default:     map[string]interface{}{},

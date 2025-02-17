@@ -52,7 +52,7 @@ spec:
           spec:
             description: WarehouseSpec defines the desired state of Warehouse.
             properties:
-              diskCacheSize:
+              cache:
                 description: Configurations of cache in disk.
                 properties:
                   enabled:

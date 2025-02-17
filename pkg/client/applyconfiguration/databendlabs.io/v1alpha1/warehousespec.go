@@ -27,7 +27,7 @@ type WarehouseSpecApplyConfiguration struct {
 	Replicas       *int                                    `json:"replicas,omitempty"`
 	QueryImage     *string                                 `json:"queryImage,omitempty"`
 	Tenant         *v1.LocalObjectReference                `json:"tenant,omitempty"`
-	Cache          *DiskCacheSpecApplyConfiguration        `json:"diskCacheSize,omitempty"`
+	Cache          *DiskCacheSpecApplyConfiguration        `json:"cache,omitempty"`
 	Log            *LogSpecApplyConfiguration              `json:"log,omitempty"`
 	PodLabels      map[string]string                       `json:"labels,omitempty"`
 	PodResource    *v1.ResourceRequirements                `json:"resourcesPerNode,omitempty"`
