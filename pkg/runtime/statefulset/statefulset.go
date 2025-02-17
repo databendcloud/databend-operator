@@ -9,6 +9,7 @@ import (
 
 	v1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 	"github.com/databendcloud/databend-operator/pkg/common"
+	"github.com/databendcloud/databend-operator/pkg/runtime/objectmeta"
 	"github.com/databendcloud/databend-operator/pkg/runtime/resource"
 )
 
@@ -290,10 +291,8 @@ func patchQueryPodWithCache(tpl *corev1.PodTemplateSpec, sts *appsv1.StatefulSet
 	} else {
 		pvcVolume := corev1.PersistentVolumeClaim{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: settings.VolumeName,
-				Finalizers: []string{
-					"kubernetes.io/pvc-protection",
-				},
+				Name:            settings.VolumeName,
+				OwnerReferences: objectmeta.BuildOwnerReferencesByWarehouse(wh),
 			},
 			Spec: corev1.PersistentVolumeClaimSpec{
 				AccessModes: []corev1.PersistentVolumeAccessMode{
