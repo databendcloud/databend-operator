@@ -57,7 +57,7 @@ func (b *StatefulSetBuilder) Build() *appsv1.StatefulSet {
 		},
 	}
 	sts = sts.DeepCopy()
-	patchQueryPodWithCache(&sts.Spec.Template, b.tenant, b.warehouse)
+	patchQueryPodWithCache(&sts.Spec.Template, &sts.Spec, b.tenant, b.warehouse)
 	return sts
 }
 
@@ -270,21 +270,43 @@ func getVolumeMounts() []corev1.VolumeMount {
 	return mnts
 }
 
-func patchQueryPodWithCache(tpl *corev1.PodTemplateSpec, tn *v1alpha1.Tenant, wh *v1alpha1.Warehouse) {
+func patchQueryPodWithCache(tpl *corev1.PodTemplateSpec, sts *appsv1.StatefulSetSpec, tn *v1alpha1.Tenant, wh *v1alpha1.Warehouse) {
 	settings := resource.GetCacheSettings(tn, wh)
 	if settings == nil {
 		return
 	}
+
 	sizeLimit := kresource.MustParse(settings.K8sResourceLimit)
-	cacheVolume := corev1.Volume{
-		Name: settings.VolumeName,
-		VolumeSource: corev1.VolumeSource{
-			EmptyDir: &corev1.EmptyDirVolumeSource{
-				SizeLimit: &sizeLimit,
+	if settings.DataCacheStorage == resource.NvmeCache {
+		cacheVolume := corev1.Volume{
+			Name: settings.VolumeName,
+			VolumeSource: corev1.VolumeSource{
+				EmptyDir: &corev1.EmptyDirVolumeSource{
+					SizeLimit: &sizeLimit,
+				},
 			},
-		},
+		}
+		tpl.Spec.Volumes = append(tpl.Spec.Volumes, cacheVolume)
+	} else {
+		pvcVolume := corev1.PersistentVolumeClaim{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: settings.VolumeName,
+			},
+			Spec: corev1.PersistentVolumeClaimSpec{
+				AccessModes: []corev1.PersistentVolumeAccessMode{
+					corev1.ReadWriteOnce,
+				},
+				StorageClassName: &wh.Spec.Cache.StorageClass,
+				Resources: corev1.VolumeResourceRequirements{
+					Requests: corev1.ResourceList{
+						corev1.ResourceStorage: sizeLimit,
+					},
+				},
+			},
+		}
+		sts.VolumeClaimTemplates = append(sts.VolumeClaimTemplates, pvcVolume)
 	}
-	tpl.Spec.Volumes = append(tpl.Spec.Volumes, cacheVolume)
+
 	for idx := range tpl.Spec.Containers {
 		container := tpl.Spec.Containers[idx]
 		if container.Name != common.DatabendQueryContainerName {
