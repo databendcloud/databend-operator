@@ -1,8 +1,6 @@
 package query
 
 import (
-	"fmt"
-
 	v1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 )
 
@@ -89,12 +87,10 @@ func NewQueryLogConfig(wh *v1alpha1.Warehouse) *QueryLogConfig {
 	cfg.Query.OTLPLabels = map[string]string{
 		"tenant":         wh.Spec.Tenant.Name,
 		"warehouse":      wh.Name,
-		"warehouse_size": fmt.Sprint(wh.Spec.Replicas),
 	}
 	cfg.Profile.OTLPLabels = map[string]string{
 		"tenant":         wh.Spec.Tenant.Name,
 		"warehouse":      wh.Name,
-		"warehouse_size": fmt.Sprint(wh.Spec.Replicas),
 	}
 	if wh.Spec.Log.Stderr.Level != "" {
 		cfg.Stderr.Level = wh.Spec.Log.Stderr.Level
