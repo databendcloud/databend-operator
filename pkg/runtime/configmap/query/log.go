@@ -14,7 +14,6 @@ type QueryLogConfig struct {
 	Stderr  QueryLogConfigStderr  `toml:"stderr" json:"stderr"`
 	Query   QueryLogConfigQuery   `toml:"query,omitempty" json:"query,omitempty"`
 	Profile QueryLogConfigProfile `toml:"profile,omitempty" json:"profile,omitempty"`
-	Tracing QueryLogConfigTracing `toml:"tracing,omitempty" json:"tracing,omitempty"`
 }
 
 type QueryLogConfigFile struct {
@@ -46,52 +45,42 @@ type QueryLogConfigProfile struct {
 	OTLPLabels   map[string]string `toml:"otlp_labels,omitempty" json:"otlp_labels,omitempty"`
 }
 
-type QueryLogConfigTracing struct {
-	On              bool   `toml:"on" json:"on"`
-	CaptureLogLevel string `toml:"capture_log_level,omitempty" json:"capture_log_level,omitempty"`
-	OTLPEndpoint    string `toml:"otlp_endpoint,omitempty" json:"otlp_endpoint,omitempty"`
-}
-
 // NewQueryLogConfig create new instance of Something
 func NewQueryLogConfig(wh *v1alpha1.Warehouse) *QueryLogConfig {
 	cfg := QueryLogConfig{
 		File: QueryLogConfigFile{
-			On: false,
+			On:     wh.Spec.Log.File.Enabled,
+			Level:  "INFO",
+			Format: "json",
+			Dir:    "/var/log/databend-query",
 		},
 		Stderr: QueryLogConfigStderr{
-			On:     true,
-			Level:  "INFO",
+			On:     wh.Spec.Log.Stderr.Enabled,
+			Level:  "WARN,databend=info,opendal=info,openraft=info",
 			Format: "json",
 		},
 		Query: QueryLogConfigQuery{
-			On:           true,
+			On:           wh.Spec.Log.Query.Enabled,
 			Dir:          "",
 			OTLPEndpoint: OTLPLogEndpoint,
 			OTLPProtocol: "http",
+			OTLPLabels: map[string]string{
+				"tenant":    wh.Spec.Tenant.Name,
+				"warehouse": wh.Name,
+			},
 		},
 		Profile: QueryLogConfigProfile{
-			On:           true,
+			On:           wh.Spec.Log.Profile.Enabled,
 			Dir:          "",
 			OTLPEndpoint: OTLPLogEndpoint,
 			OTLPProtocol: "http",
+			OTLPLabels: map[string]string{
+				"tenant":    wh.Spec.Tenant.Name,
+				"warehouse": wh.Name,
+			},
 		},
-		Tracing: QueryLogConfigTracing{
-			On:              false,
-			CaptureLogLevel: "DEBUG",
-			OTLPEndpoint:    OTLPTraceEndpoint,
-		},
 	}
-	if wh == nil {
-		return &cfg
-	}
-	cfg.Query.OTLPLabels = map[string]string{
-		"tenant":         wh.Spec.Tenant.Name,
-		"warehouse":      wh.Name,
-	}
-	cfg.Profile.OTLPLabels = map[string]string{
-		"tenant":         wh.Spec.Tenant.Name,
-		"warehouse":      wh.Name,
-	}
+
 	if wh.Spec.Log.Stderr.Level != "" {
 		cfg.Stderr.Level = wh.Spec.Log.Stderr.Level
 	}
@@ -107,9 +96,6 @@ func NewQueryLogConfig(wh *v1alpha1.Warehouse) *QueryLogConfig {
 	if wh.Spec.Log.Profile.Protocol != "" {
 		cfg.Profile.OTLPProtocol = wh.Spec.Log.Profile.Protocol
 	}
-	if !wh.Spec.Log.Query.Enabled {
-		cfg.Query.On = false
-		cfg.Profile.On = false
-	}
+
 	return &cfg
 }

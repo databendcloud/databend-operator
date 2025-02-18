@@ -125,7 +125,7 @@ spec:
                     description: Specifications for profile logging.
                     properties:
                       enabled:
-                        default: false
+                        default: true
                         description: Whether to enable OTLP logging.
                         type: boolean
                       endpoint:
@@ -145,7 +145,7 @@ spec:
                     description: Specifications for query logging.
                     properties:
                       enabled:
-                        default: false
+                        default: true
                         description: Whether to enable OTLP logging.
                         type: boolean
                       endpoint:
@@ -165,7 +165,7 @@ spec:
                     description: Specifications for stderr logging.
                     properties:
                       enabled:
-                        default: false
+                        default: true
                         description: Whether to enable stderr logging.
                         type: boolean
                       format:

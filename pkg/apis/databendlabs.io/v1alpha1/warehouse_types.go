@@ -119,7 +119,7 @@ type FileLogSpec struct {
 
 type StderrLogSpec struct {
 	// Whether to enable stderr logging.
-	// +kubebuilder:default=false
+	// +kubebuilder:default=true
 	Enabled bool `json:"enabled,omitempty"`
 
 	// Log format.
@@ -131,7 +131,7 @@ type StderrLogSpec struct {
 
 type OTLPLogSpec struct {
 	// Whether to enable OTLP logging.
-	// +kubebuilder:default=false
+	// +kubebuilder:default=true
 	Enabled bool `json:"enabled,omitempty"`
 
 	// OpenTelemetry Protocol
