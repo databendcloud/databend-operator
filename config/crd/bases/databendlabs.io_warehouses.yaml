@@ -56,7 +56,6 @@ spec:
                 description: Configurations of cache in disk.
                 properties:
                   enabled:
-                    default: false
                     description: Whether to enable cache in disk.
                     type: boolean
                   path:
@@ -111,7 +110,6 @@ spec:
                         description: Path to log directory.
                         type: string
                       enabled:
-                        default: false
                         description: Whether to enable file logging.
                         type: boolean
                       format:
@@ -125,7 +123,6 @@ spec:
                     description: Specifications for profile logging.
                     properties:
                       enabled:
-                        default: true
                         description: Whether to enable OTLP logging.
                         type: boolean
                       endpoint:
@@ -145,7 +142,6 @@ spec:
                     description: Specifications for query logging.
                     properties:
                       enabled:
-                        default: true
                         description: Whether to enable OTLP logging.
                         type: boolean
                       endpoint:
@@ -165,7 +161,6 @@ spec:
                     description: Specifications for stderr logging.
                     properties:
                       enabled:
-                        default: true
                         description: Whether to enable stderr logging.
                         type: boolean
                       format:
@@ -185,8 +180,8 @@ spec:
                 description: Image for Query.
                 type: string
               replicas:
-                default: 1
                 description: Desired replicas of Query
+                minimum: 1
                 type: integer
               resourcesPerNode:
                 description: Resource required for each Query pod.
@@ -254,9 +249,8 @@ spec:
                     description: External name is needed when Type is set to "ExternalName"
                     type: string
                   type:
-                    default: ClusterIP
                     description: Type of service [ClusterIP | NodePort | ExternalName
-                      | LoadBalance].
+                      | LoadBalance], default to ClusterIP.
                     type: string
                 type: object
               settings:
@@ -320,6 +314,10 @@ spec:
                       type: string
                   type: object
                 type: array
+            required:
+            - queryImage
+            - replicas
+            - tenant
             type: object
           status:
             description: WarehouseStatus defines the observed state of Warehouse.

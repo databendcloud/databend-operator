@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	OTLPLogEndpoint   string = "http://localhost:4318"
+	OTLPLogEndpoint string = "http://localhost:4318"
 )
 
 type QueryLogConfig struct {
@@ -54,7 +54,7 @@ func NewQueryLogConfig(wh *v1alpha1.Warehouse) *QueryLogConfig {
 			Dir:    "/var/log/databend-query",
 		},
 		Stderr: QueryLogConfigStderr{
-			On:     wh.Spec.Log.Stderr.Enabled,
+			On:     true,
 			Level:  "WARN,databend=info,opendal=info,openraft=info",
 			Format: "json",
 		},

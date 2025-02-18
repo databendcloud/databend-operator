@@ -69,7 +69,6 @@ const (
 
 type DiskCacheSpec struct {
 	// Whether to enable cache in disk.
-	// +kubebuilder:default=false
 	Enabled bool `json:"enabled,omitempty"`
 
 	// Max size of cache in disk.
@@ -104,7 +103,6 @@ type LogSpec struct {
 
 type FileLogSpec struct {
 	// Whether to enable file logging.
-	// +kubebuilder:default=false
 	Enabled bool `json:"enabled,omitempty"`
 
 	// Log format.
@@ -119,7 +117,6 @@ type FileLogSpec struct {
 
 type StderrLogSpec struct {
 	// Whether to enable stderr logging.
-	// +kubebuilder:default=true
 	Enabled bool `json:"enabled,omitempty"`
 
 	// Log format.
@@ -131,7 +128,6 @@ type StderrLogSpec struct {
 
 type OTLPLogSpec struct {
 	// Whether to enable OTLP logging.
-	// +kubebuilder:default=true
 	Enabled bool `json:"enabled,omitempty"`
 
 	// OpenTelemetry Protocol
@@ -146,8 +142,7 @@ type OTLPLogSpec struct {
 }
 
 type WarehouseServiceSpec struct {
-	// Type of service [ClusterIP | NodePort | ExternalName | LoadBalance].
-	// +kubebuilder:default="ClusterIP"
+	// Type of service [ClusterIP | NodePort | ExternalName | LoadBalance], default to ClusterIP.
 	Type string `json:"type,omitempty"`
 
 	// External name is needed when Type is set to "ExternalName"
@@ -168,14 +163,17 @@ type WarehouseIngressSpec struct {
 // WarehouseSpec defines the desired state of Warehouse.
 type WarehouseSpec struct {
 	// Desired replicas of Query
-	// +kubebuilder:default=1
+	// +kubebuilder:validation:Required
+	// +kubebuilder:validation:Minimum=1
 	Replicas int `json:"replicas,omitempty"`
 
 	// Image for Query.
+	// +kubebuilder:validation:Required
 	QueryImage string `json:"queryImage,omitempty"`
 
 	// Reference to the Tenant CR, which provides the configuration of storage and Meta cluster.
 	// Warehouse must be created in the Tenant's namespace.
+	// +kubebuilder:validation:Required
 	Tenant *corev1.LocalObjectReference `json:"tenant,omitempty"`
 
 	// Configurations of cache in disk.

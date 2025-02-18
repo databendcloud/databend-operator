@@ -436,7 +436,7 @@
           "type": "string"
         },
         "type": {
-          "description": "Type of service [ClusterIP | NodePort | ExternalName | LoadBalance].",
+          "description": "Type of service [ClusterIP | NodePort | ExternalName | LoadBalance], default to ClusterIP.",
           "type": "string"
         }
       }

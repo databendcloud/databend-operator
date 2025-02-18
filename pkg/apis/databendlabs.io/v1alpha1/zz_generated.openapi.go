@@ -847,7 +847,7 @@ func schema_pkg_apis_databendlabsio_v1alpha1_WarehouseServiceSpec(ref common.Ref
 				Properties: map[string]spec.Schema{
 					"type": {
 						SchemaProps: spec.SchemaProps{
-							Description: "Type of service [ClusterIP | NodePort | ExternalName | LoadBalance].",
+							Description: "Type of service [ClusterIP | NodePort | ExternalName | LoadBalance], default to ClusterIP.",
 							Type:        []string{"string"},
 							Format:      "",
 						},
