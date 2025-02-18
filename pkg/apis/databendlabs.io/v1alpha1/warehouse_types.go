@@ -93,7 +93,7 @@ type LogSpec struct {
 	File FileLogSpec `json:"file,omitempty"`
 
 	// Specifications for stderr logging.
-	Stderr FileLogSpec `json:"stderr,omitempty"`
+	Stderr StderrLogSpec `json:"stderr,omitempty"`
 
 	// Specifications for query logging.
 	Query OTLPLogSpec `json:"query,omitempty"`
@@ -107,11 +107,26 @@ type FileLogSpec struct {
 	// +kubebuilder:default=false
 	Enabled bool `json:"enabled,omitempty"`
 
+	// Log format.
+	Format string `json:"format,omitempty"`
+
 	// Log level.
 	Level string `json:"level,omitempty"`
 
 	// Path to log directory.
-	Directory string `json:"directory,omitempty"`
+	Dir string `json:"dir,omitempty"`
+}
+
+type StderrLogSpec struct {
+	// Whether to enable stderr logging.
+	// +kubebuilder:default=false
+	Enabled bool `json:"enabled,omitempty"`
+
+	// Log format.
+	Format string `json:"format,omitempty"`
+
+	// Log level.
+	Level string `json:"level,omitempty"`
 }
 
 type OTLPLogSpec struct {
@@ -125,6 +140,9 @@ type OTLPLogSpec struct {
 
 	// Endpoint for OpenTelemetry Protocol
 	Endpoint string `json:"endpoint,omitempty"`
+
+	// Labels for OpenTelemetry Protocol
+	Labels map[string]string `json:"labels,omitempty"`
 }
 
 type WarehouseServiceSpec struct {

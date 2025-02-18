@@ -20,9 +20,10 @@ package v1alpha1
 // OTLPLogSpecApplyConfiguration represents a declarative configuration of the OTLPLogSpec type for use
 // with apply.
 type OTLPLogSpecApplyConfiguration struct {
-	Enabled  *bool   `json:"enabled,omitempty"`
-	Protocol *string `json:"protocol,omitempty"`
-	Endpoint *string `json:"endpoint,omitempty"`
+	Enabled  *bool             `json:"enabled,omitempty"`
+	Protocol *string           `json:"protocol,omitempty"`
+	Endpoint *string           `json:"endpoint,omitempty"`
+	Labels   map[string]string `json:"labels,omitempty"`
 }
 
 // OTLPLogSpecApplyConfiguration constructs a declarative configuration of the OTLPLogSpec type for use with
@@ -52,5 +53,19 @@ func (b *OTLPLogSpecApplyConfiguration) WithProtocol(value string) *OTLPLogSpecA
 // If called multiple times, the Endpoint field is set to the value of the last call.
 func (b *OTLPLogSpecApplyConfiguration) WithEndpoint(value string) *OTLPLogSpecApplyConfiguration {
 	b.Endpoint = &value
+	return b
+}
+
+// WithLabels puts the entries into the Labels field in the declarative configuration
+// and returns the receiver, so that objects can be build by chaining "With" function invocations.
+// If called multiple times, the entries provided by each call will be put on the Labels field,
+// overwriting an existing map entries in Labels field with the same key.
+func (b *OTLPLogSpecApplyConfiguration) WithLabels(entries map[string]string) *OTLPLogSpecApplyConfiguration {
+	if b.Labels == nil && len(entries) > 0 {
+		b.Labels = make(map[string]string, len(entries))
+	}
+	for k, v := range entries {
+		b.Labels[k] = v
+	}
 	return b
 }

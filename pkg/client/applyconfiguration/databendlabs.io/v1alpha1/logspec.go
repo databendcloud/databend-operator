@@ -20,10 +20,10 @@ package v1alpha1
 // LogSpecApplyConfiguration represents a declarative configuration of the LogSpec type for use
 // with apply.
 type LogSpecApplyConfiguration struct {
-	File    *FileLogSpecApplyConfiguration `json:"file,omitempty"`
-	Stderr  *FileLogSpecApplyConfiguration `json:"stderr,omitempty"`
-	Query   *OTLPLogSpecApplyConfiguration `json:"query,omitempty"`
-	Profile *OTLPLogSpecApplyConfiguration `json:"profile,omitempty"`
+	File    *FileLogSpecApplyConfiguration   `json:"file,omitempty"`
+	Stderr  *StderrLogSpecApplyConfiguration `json:"stderr,omitempty"`
+	Query   *OTLPLogSpecApplyConfiguration   `json:"query,omitempty"`
+	Profile *OTLPLogSpecApplyConfiguration   `json:"profile,omitempty"`
 }
 
 // LogSpecApplyConfiguration constructs a declarative configuration of the LogSpec type for use with
@@ -43,7 +43,7 @@ func (b *LogSpecApplyConfiguration) WithFile(value *FileLogSpecApplyConfiguratio
 // WithStderr sets the Stderr field in the declarative configuration to the given value
 // and returns the receiver, so that objects can be built by chaining "With" function invocations.
 // If called multiple times, the Stderr field is set to the value of the last call.
-func (b *LogSpecApplyConfiguration) WithStderr(value *FileLogSpecApplyConfiguration) *LogSpecApplyConfiguration {
+func (b *LogSpecApplyConfiguration) WithStderr(value *StderrLogSpecApplyConfiguration) *LogSpecApplyConfiguration {
 	b.Stderr = value
 	return b
 }
