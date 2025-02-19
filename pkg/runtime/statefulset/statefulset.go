@@ -107,13 +107,13 @@ func (b *StatefulSetBuilder) buildPodContainers() []corev1.Container {
 				RunAsUser:              ptr.To(int64(1000)),
 				RunAsGroup:             ptr.To(int64(1000)),
 			},
-			LivenessProbe: getProbe(),
+			LivenessProbe:  getProbe(),
 			ReadinessProbe: getProbe(),
-			Command:      command,
-			Resources:    b.warehouse.Spec.PodResource,
-			Ports:        getPorts(),
-			Env:          getEnvs(),
-			VolumeMounts: getVolumeMounts(),
+			Command:        command,
+			Resources:      b.warehouse.Spec.PodResource,
+			Ports:          getPorts(),
+			Env:            getEnvs(),
+			VolumeMounts:   getVolumeMounts(),
 		},
 	}
 	return q
@@ -221,8 +221,8 @@ func getProbe() *corev1.Probe {
 			},
 		},
 		InitialDelaySeconds: 5,
-		PeriodSeconds: 	 15,
-		FailureThreshold: 3,
+		PeriodSeconds:       15,
+		FailureThreshold:    3,
 	}
 }
 
