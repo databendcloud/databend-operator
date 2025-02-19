@@ -47,6 +47,8 @@ func ForKind(kind schema.GroupVersionKind) interface{} {
 		return &databendlabsiov1alpha1.S3AuthApplyConfiguration{}
 	case v1alpha1.SchemeGroupVersion.WithKind("S3Storage"):
 		return &databendlabsiov1alpha1.S3StorageApplyConfiguration{}
+	case v1alpha1.SchemeGroupVersion.WithKind("StderrLogSpec"):
+		return &databendlabsiov1alpha1.StderrLogSpecApplyConfiguration{}
 	case v1alpha1.SchemeGroupVersion.WithKind("Storage"):
 		return &databendlabsiov1alpha1.StorageApplyConfiguration{}
 	case v1alpha1.SchemeGroupVersion.WithKind("Tenant"):

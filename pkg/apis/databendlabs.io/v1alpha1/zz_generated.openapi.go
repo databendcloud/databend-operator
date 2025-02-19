@@ -35,6 +35,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.OTLPLogSpec":          schema_pkg_apis_databendlabsio_v1alpha1_OTLPLogSpec(ref),
 		"github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.S3Auth":               schema_pkg_apis_databendlabsio_v1alpha1_S3Auth(ref),
 		"github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.S3Storage":            schema_pkg_apis_databendlabsio_v1alpha1_S3Storage(ref),
+		"github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.StderrLogSpec":        schema_pkg_apis_databendlabsio_v1alpha1_StderrLogSpec(ref),
 		"github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.Storage":              schema_pkg_apis_databendlabsio_v1alpha1_Storage(ref),
 		"github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.Tenant":               schema_pkg_apis_databendlabsio_v1alpha1_Tenant(ref),
 		"github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.TenantList":           schema_pkg_apis_databendlabsio_v1alpha1_TenantList(ref),
@@ -111,6 +112,13 @@ func schema_pkg_apis_databendlabsio_v1alpha1_FileLogSpec(ref common.ReferenceCal
 							Format:      "",
 						},
 					},
+					"format": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Log format.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"level": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Log level.",
@@ -118,7 +126,7 @@ func schema_pkg_apis_databendlabsio_v1alpha1_FileLogSpec(ref common.ReferenceCal
 							Format:      "",
 						},
 					},
-					"directory": {
+					"dir": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Path to log directory.",
 							Type:        []string{"string"},
@@ -148,7 +156,7 @@ func schema_pkg_apis_databendlabsio_v1alpha1_LogSpec(ref common.ReferenceCallbac
 						SchemaProps: spec.SchemaProps{
 							Description: "Specifications for stderr logging.",
 							Default:     map[string]interface{}{},
-							Ref:         ref("github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.FileLogSpec"),
+							Ref:         ref("github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.StderrLogSpec"),
 						},
 					},
 					"query": {
@@ -169,7 +177,7 @@ func schema_pkg_apis_databendlabsio_v1alpha1_LogSpec(ref common.ReferenceCallbac
 			},
 		},
 		Dependencies: []string{
-			"github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.FileLogSpec", "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.OTLPLogSpec"},
+			"github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.FileLogSpec", "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.OTLPLogSpec", "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.StderrLogSpec"},
 	}
 }
 
@@ -297,6 +305,22 @@ func schema_pkg_apis_databendlabsio_v1alpha1_OTLPLogSpec(ref common.ReferenceCal
 							Format:      "",
 						},
 					},
+					"labels": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Labels for OpenTelemetry Protocol",
+							Type:        []string{"object"},
+							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: "",
+										Type:    []string{"string"},
+										Format:  "",
+									},
+								},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -403,6 +427,39 @@ func schema_pkg_apis_databendlabsio_v1alpha1_S3Storage(ref common.ReferenceCallb
 		},
 		Dependencies: []string{
 			"k8s.io/api/core/v1.ObjectReference"},
+	}
+}
+
+func schema_pkg_apis_databendlabsio_v1alpha1_StderrLogSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"enabled": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Whether to enable stderr logging.",
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
+					"format": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Log format.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"level": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Log level.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+				},
+			},
+		},
 	}
 }
 
@@ -790,7 +847,7 @@ func schema_pkg_apis_databendlabsio_v1alpha1_WarehouseServiceSpec(ref common.Ref
 				Properties: map[string]spec.Schema{
 					"type": {
 						SchemaProps: spec.SchemaProps{
-							Description: "Type of service [ClusterIP | NodePort | ExternalName | LoadBalance].",
+							Description: "Type of service [ClusterIP | NodePort | ExternalName | LoadBalance], default to ClusterIP.",
 							Type:        []string{"string"},
 							Format:      "",
 						},

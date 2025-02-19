@@ -17,25 +17,24 @@ limitations under the License.
 
 package v1alpha1
 
-// FileLogSpecApplyConfiguration represents a declarative configuration of the FileLogSpec type for use
+// StderrLogSpecApplyConfiguration represents a declarative configuration of the StderrLogSpec type for use
 // with apply.
-type FileLogSpecApplyConfiguration struct {
+type StderrLogSpecApplyConfiguration struct {
 	Enabled *bool   `json:"enabled,omitempty"`
 	Format  *string `json:"format,omitempty"`
 	Level   *string `json:"level,omitempty"`
-	Dir     *string `json:"dir,omitempty"`
 }
 
-// FileLogSpecApplyConfiguration constructs a declarative configuration of the FileLogSpec type for use with
+// StderrLogSpecApplyConfiguration constructs a declarative configuration of the StderrLogSpec type for use with
 // apply.
-func FileLogSpec() *FileLogSpecApplyConfiguration {
-	return &FileLogSpecApplyConfiguration{}
+func StderrLogSpec() *StderrLogSpecApplyConfiguration {
+	return &StderrLogSpecApplyConfiguration{}
 }
 
 // WithEnabled sets the Enabled field in the declarative configuration to the given value
 // and returns the receiver, so that objects can be built by chaining "With" function invocations.
 // If called multiple times, the Enabled field is set to the value of the last call.
-func (b *FileLogSpecApplyConfiguration) WithEnabled(value bool) *FileLogSpecApplyConfiguration {
+func (b *StderrLogSpecApplyConfiguration) WithEnabled(value bool) *StderrLogSpecApplyConfiguration {
 	b.Enabled = &value
 	return b
 }
@@ -43,7 +42,7 @@ func (b *FileLogSpecApplyConfiguration) WithEnabled(value bool) *FileLogSpecAppl
 // WithFormat sets the Format field in the declarative configuration to the given value
 // and returns the receiver, so that objects can be built by chaining "With" function invocations.
 // If called multiple times, the Format field is set to the value of the last call.
-func (b *FileLogSpecApplyConfiguration) WithFormat(value string) *FileLogSpecApplyConfiguration {
+func (b *StderrLogSpecApplyConfiguration) WithFormat(value string) *StderrLogSpecApplyConfiguration {
 	b.Format = &value
 	return b
 }
@@ -51,15 +50,7 @@ func (b *FileLogSpecApplyConfiguration) WithFormat(value string) *FileLogSpecApp
 // WithLevel sets the Level field in the declarative configuration to the given value
 // and returns the receiver, so that objects can be built by chaining "With" function invocations.
 // If called multiple times, the Level field is set to the value of the last call.
-func (b *FileLogSpecApplyConfiguration) WithLevel(value string) *FileLogSpecApplyConfiguration {
+func (b *StderrLogSpecApplyConfiguration) WithLevel(value string) *StderrLogSpecApplyConfiguration {
 	b.Level = &value
-	return b
-}
-
-// WithDir sets the Dir field in the declarative configuration to the given value
-// and returns the receiver, so that objects can be built by chaining "With" function invocations.
-// If called multiple times, the Dir field is set to the value of the last call.
-func (b *FileLogSpecApplyConfiguration) WithDir(value string) *FileLogSpecApplyConfiguration {
-	b.Dir = &value
 	return b
 }

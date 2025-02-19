@@ -35,13 +35,17 @@
     "v1alpha1.FileLogSpec": {
       "type": "object",
       "properties": {
-        "directory": {
+        "dir": {
           "description": "Path to log directory.",
           "type": "string"
         },
         "enabled": {
           "description": "Whether to enable file logging.",
           "type": "boolean"
+        },
+        "format": {
+          "description": "Log format.",
+          "type": "string"
         },
         "level": {
           "description": "Log level.",
@@ -70,7 +74,7 @@
         "stderr": {
           "description": "Specifications for stderr logging.",
           "default": {},
-          "$ref": "#/definitions/v1alpha1.FileLogSpec"
+          "$ref": "#/definitions/v1alpha1.StderrLogSpec"
         }
       }
     },
@@ -137,6 +141,14 @@
           "description": "Endpoint for OpenTelemetry Protocol",
           "type": "string"
         },
+        "labels": {
+          "description": "Labels for OpenTelemetry Protocol",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "default": ""
+          }
+        },
         "protocol": {
           "description": "OpenTelemetry Protocol",
           "type": "string"
@@ -194,6 +206,23 @@
         "secretRef": {
           "description": "Reference to the secret with SerectKey and AccessKey to S3 storage. Secret can be created in any namespace.",
           "$ref": "#/definitions/v1.ObjectReference"
+        }
+      }
+    },
+    "v1alpha1.StderrLogSpec": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Whether to enable stderr logging.",
+          "type": "boolean"
+        },
+        "format": {
+          "description": "Log format.",
+          "type": "string"
+        },
+        "level": {
+          "description": "Log level.",
+          "type": "string"
         }
       }
     },
@@ -407,7 +436,7 @@
           "type": "string"
         },
         "type": {
-          "description": "Type of service [ClusterIP | NodePort | ExternalName | LoadBalance].",
+          "description": "Type of service [ClusterIP | NodePort | ExternalName | LoadBalance], default to ClusterIP.",
           "type": "string"
         }
       }
