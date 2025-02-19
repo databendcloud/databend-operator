@@ -5,6 +5,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	kresource "k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/utils/ptr"
 
 	v1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
@@ -106,11 +107,13 @@ func (b *StatefulSetBuilder) buildPodContainers() []corev1.Container {
 				RunAsUser:              ptr.To(int64(1000)),
 				RunAsGroup:             ptr.To(int64(1000)),
 			},
-			Command:      command,
-			Resources:    b.warehouse.Spec.PodResource,
-			Ports:        getPorts(),
-			Env:          getEnvs(),
-			VolumeMounts: getVolumeMounts(),
+			LivenessProbe:  getProbe(),
+			ReadinessProbe: getProbe(),
+			Command:        command,
+			Resources:      b.warehouse.Spec.PodResource,
+			Ports:          getPorts(),
+			Env:            getEnvs(),
+			VolumeMounts:   getVolumeMounts(),
 		},
 	}
 	return q
@@ -207,6 +210,20 @@ func (b *StatefulSetBuilder) buildPodAffinity() *corev1.PodAffinity {
 		},
 	}
 	return podAffinity
+}
+
+func getProbe() *corev1.Probe {
+	return &corev1.Probe{
+		ProbeHandler: corev1.ProbeHandler{
+			HTTPGet: &corev1.HTTPGetAction{
+				Path: "/v1/health",
+				Port: intstr.FromString("admin"),
+			},
+		},
+		InitialDelaySeconds: 5,
+		PeriodSeconds:       15,
+		FailureThreshold:    3,
+	}
 }
 
 func getEnvs() []corev1.EnvVar {
