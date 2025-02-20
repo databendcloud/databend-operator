@@ -23,6 +23,10 @@ func GetQueryImage(wh *v1alpha1.Warehouse) string {
 	return "databend/databend-query:latest"
 }
 
+func GetTenantServiceAccountName(tnName string) string {
+	return fmt.Sprintf("databend-tenant-%s", tnName)
+}
+
 func SHA256String(input string) string {
 	hasher := sha256.New()
 	hasher.Write([]byte(input))

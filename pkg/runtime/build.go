@@ -3,9 +3,12 @@ package runtime
 import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	v1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
+	"github.com/databendcloud/databend-operator/pkg/common"
 	"github.com/databendcloud/databend-operator/pkg/runtime/configmap/query"
+	"github.com/databendcloud/databend-operator/pkg/runtime/objectmeta"
 	"github.com/databendcloud/databend-operator/pkg/runtime/statefulset"
 )
 
@@ -23,6 +26,17 @@ func BuildQueryService(tenant *v1alpha1.Tenant, warehosue *v1alpha1.Warehouse) (
 	return nil, nil
 }
 
+// BuildServiceAccount Provision iam policy for service account
 func BuildTenantServiceAccount(tenant *v1alpha1.Tenant) (*corev1.ServiceAccount, error) {
-	return nil, nil
+	sa := &corev1.ServiceAccount{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      common.GetTenantServiceAccountName(tenant.Name),
+			Namespace: tenant.Namespace,
+			Labels: map[string]string{
+				common.KeyTenant: tenant.Name,
+			},
+			OwnerReferences: objectmeta.BuildOwnerReferencesByTenant(tenant),
+		},
+	}
+	return sa, nil
 }

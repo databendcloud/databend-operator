@@ -16,6 +16,10 @@ const (
 	// TenantStorageErrorMessage is status condition message for the
 	// {"type": "Error", "status": "False", "reason": "TenantUserError"} condition.
 	TenantUserErrorMessage = "Invalid built-in user configurations"
+
+	// TenantServiceAccountErrorMessage is status condition message for the
+	// {"type": "Error", "status": "False", "reason": "TenantServiceAccountError"} condition.
+	TenantServiceAccountErrorMessage = "Failed to create service account"
 )
 
 const (

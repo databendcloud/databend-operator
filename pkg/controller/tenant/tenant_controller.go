@@ -39,15 +39,17 @@ import (
 
 	v1alpha1 "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1"
 	"github.com/databendcloud/databend-operator/pkg/common"
+	databendruntime "github.com/databendcloud/databend-operator/pkg/runtime"
 )
 
 type opState int
 
 const (
-	creationSucceeded opState = iota
-	storageError      opState = iota
-	metaError         opState = iota
-	builtinUserError  opState = iota
+	creationSucceeded   opState = iota
+	storageError        opState = iota
+	metaError           opState = iota
+	builtinUserError    opState = iota
+	serviceAccountError opState = iota
 )
 
 const DefaultTimeout = time.Second * 10
@@ -100,6 +102,14 @@ func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	opState, err = r.verifyBuiltinUsers(ctx, &tenant)
 	setCondition(&tenant, opState)
 	if err != nil {
+		return ctrl.Result{}, errors.Join(err, r.Status().Update(ctx, &tenant))
+	}
+
+	// Create ServiceAccount if not exists
+	log.V(5).Info("Creating ServiceAccount")
+	sa, _ := databendruntime.BuildTenantServiceAccount(&tenant)
+	if err := r.Create(ctx, sa); client.IgnoreAlreadyExists(err) != nil {
+		setCondition(&tenant, serviceAccountError)
 		return ctrl.Result{}, errors.Join(err, r.Status().Update(ctx, &tenant))
 	}
 
@@ -245,6 +255,13 @@ func setCondition(tenant *v1alpha1.Tenant, opState opState) {
 			Status:  metav1.ConditionFalse,
 			Message: common.TenantUserErrorMessage,
 			Reason:  v1alpha1.TenantUserErrorReason,
+		}
+	case serviceAccountError:
+		newCond = metav1.Condition{
+			Type:    v1alpha1.TenantError,
+			Status:  metav1.ConditionFalse,
+			Message: common.TenantServiceAccountErrorMessage,
+			Reason:  v1alpha1.TenantServiceAccountErrorReason,
 		}
 	default:
 		return
