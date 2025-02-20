@@ -46,6 +46,7 @@ func (b *StatefulSetBuilder) Build() *appsv1.StatefulSet {
 						FSGroup:      ptr.To(int64(1000)),
 						RunAsNonRoot: ptr.To(true),
 					},
+					ServiceAccountName: common.GetTenantServiceAccountName(b.tenant.Name),
 					NodeSelector: copyMap(b.warehouse.Spec.NodeSelector),
 					Tolerations:  copyTolerations(b.warehouse.Spec.PodTolerations),
 					Containers:   b.buildPodContainers(),

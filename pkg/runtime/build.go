@@ -9,6 +9,7 @@ import (
 	"github.com/databendcloud/databend-operator/pkg/common"
 	"github.com/databendcloud/databend-operator/pkg/runtime/configmap/query"
 	"github.com/databendcloud/databend-operator/pkg/runtime/objectmeta"
+	"github.com/databendcloud/databend-operator/pkg/runtime/service"
 	"github.com/databendcloud/databend-operator/pkg/runtime/statefulset"
 )
 
@@ -23,7 +24,7 @@ func BuildQueryConfigMap(tenant *v1alpha1.Tenant, warehouse *v1alpha1.Warehouse)
 }
 
 func BuildQueryService(tenant *v1alpha1.Tenant, warehosue *v1alpha1.Warehouse) (*corev1.Service, error) {
-	return nil, nil
+	return service.BuildService(tenant, warehosue), nil
 }
 
 // BuildServiceAccount Provision iam policy for service account

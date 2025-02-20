@@ -16,6 +16,10 @@ func GetQueryStatefulSetName(tnName, whName string) string {
 	return fmt.Sprintf("query-sts-%s-%s", tnName, whName)
 }
 
+func GetQueryServiceName(tnName, whName string) string {
+	return fmt.Sprintf("query-svc-%s-%s", tnName, whName)
+}
+
 func GetQueryImage(wh *v1alpha1.Warehouse) string {
 	if wh.Spec.QueryImage != "" {
 		return wh.Spec.QueryImage

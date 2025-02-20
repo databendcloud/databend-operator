@@ -140,6 +140,10 @@ func (r *WarehouseReconciler) reconcileConfigMap(ctx context.Context, tenant *v1
 	return createSucceeded, nil
 }
 
+func (r *WarehouseReconciler) reconcileService(ctx context.Context, tenant *v1alpha1.Tenant, warehouse *v1alpha1.Warehouse) (opState, error) {
+	return createSucceeded, nil
+}
+
 func (r *WarehouseReconciler) reconcileStatefulSet(ctx context.Context, tenant *v1alpha1.Tenant, warehouse *v1alpha1.Warehouse) (opState, error) {
 	log := ctrl.LoggerFrom(ctx)
 
