@@ -33,7 +33,6 @@ type WarehouseSpecApplyConfiguration struct {
 	PodResource    *v1.ResourceRequirements                `json:"resourcesPerNode,omitempty"`
 	PodTolerations []v1.Toleration                         `json:"tolerations,omitempty"`
 	NodeSelector   map[string]string                       `json:"nodeSelector,omitempty"`
-	Service        *WarehouseServiceSpecApplyConfiguration `json:"service,omitempty"`
 	Ingress        *WarehouseIngressSpecApplyConfiguration `json:"ingress,omitempty"`
 	Settings       map[string]string                       `json:"settings,omitempty"`
 }
@@ -127,14 +126,6 @@ func (b *WarehouseSpecApplyConfiguration) WithNodeSelector(entries map[string]st
 	for k, v := range entries {
 		b.NodeSelector[k] = v
 	}
-	return b
-}
-
-// WithService sets the Service field in the declarative configuration to the given value
-// and returns the receiver, so that objects can be built by chaining "With" function invocations.
-// If called multiple times, the Service field is set to the value of the last call.
-func (b *WarehouseSpecApplyConfiguration) WithService(value *WarehouseServiceSpecApplyConfiguration) *WarehouseSpecApplyConfiguration {
-	b.Service = value
 	return b
 }
 

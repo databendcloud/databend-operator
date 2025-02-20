@@ -242,17 +242,6 @@ spec:
                       More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
                     type: object
                 type: object
-              service:
-                description: Service specifications for Query cluster.
-                properties:
-                  externalName:
-                    description: External name is needed when Type is set to "ExternalName"
-                    type: string
-                  type:
-                    description: Type of service [ClusterIP | NodePort | ExternalName
-                      | LoadBalance], default to ClusterIP.
-                    type: string
-                type: object
               settings:
                 additionalProperties:
                   type: string

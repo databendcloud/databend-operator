@@ -16,11 +16,19 @@ func GetQueryStatefulSetName(tnName, whName string) string {
 	return fmt.Sprintf("query-sts-%s-%s", tnName, whName)
 }
 
+func GetQueryServiceName(tnName, whName string) string {
+	return fmt.Sprintf("query-svc-%s-%s", tnName, whName)
+}
+
 func GetQueryImage(wh *v1alpha1.Warehouse) string {
 	if wh.Spec.QueryImage != "" {
 		return wh.Spec.QueryImage
 	}
 	return "databend/databend-query:latest"
+}
+
+func GetTenantServiceAccountName(tnName string) string {
+	return fmt.Sprintf("databend-tenant-%s", tnName)
 }
 
 func SHA256String(input string) string {

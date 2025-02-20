@@ -63,6 +63,10 @@ const (
 	// When the tenant has an error built-in user configurations and reaches an error state,
 	// this is added.
 	TenantUserErrorReason = "TenantUserError"
+
+	// TenantServiceAccountErrorReason is the "Error" condition reason.
+	// When the tenant failed to create service account and reaches an error state, this is added.
+	TenantServiceAccountErrorReason = "TenantServiceAccountError"
 )
 
 type Storage struct {

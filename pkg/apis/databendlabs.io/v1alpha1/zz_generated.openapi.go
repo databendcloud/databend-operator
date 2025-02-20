@@ -45,7 +45,6 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.Warehouse":            schema_pkg_apis_databendlabsio_v1alpha1_Warehouse(ref),
 		"github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.WarehouseIngressSpec": schema_pkg_apis_databendlabsio_v1alpha1_WarehouseIngressSpec(ref),
 		"github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.WarehouseList":        schema_pkg_apis_databendlabsio_v1alpha1_WarehouseList(ref),
-		"github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.WarehouseServiceSpec": schema_pkg_apis_databendlabsio_v1alpha1_WarehouseServiceSpec(ref),
 		"github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.WarehouseSpec":        schema_pkg_apis_databendlabsio_v1alpha1_WarehouseSpec(ref),
 		"github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.WarehouseStatus":      schema_pkg_apis_databendlabsio_v1alpha1_WarehouseStatus(ref),
 	}
@@ -839,32 +838,6 @@ func schema_pkg_apis_databendlabsio_v1alpha1_WarehouseList(ref common.ReferenceC
 	}
 }
 
-func schema_pkg_apis_databendlabsio_v1alpha1_WarehouseServiceSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
-	return common.OpenAPIDefinition{
-		Schema: spec.Schema{
-			SchemaProps: spec.SchemaProps{
-				Type: []string{"object"},
-				Properties: map[string]spec.Schema{
-					"type": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Type of service [ClusterIP | NodePort | ExternalName | LoadBalance], default to ClusterIP.",
-							Type:        []string{"string"},
-							Format:      "",
-						},
-					},
-					"externalName": {
-						SchemaProps: spec.SchemaProps{
-							Description: "External name is needed when Type is set to \"ExternalName\"",
-							Type:        []string{"string"},
-							Format:      "",
-						},
-					},
-				},
-			},
-		},
-	}
-}
-
 func schema_pkg_apis_databendlabsio_v1alpha1_WarehouseSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -959,13 +932,6 @@ func schema_pkg_apis_databendlabsio_v1alpha1_WarehouseSpec(ref common.ReferenceC
 							},
 						},
 					},
-					"service": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Service specifications for Query cluster.",
-							Default:     map[string]interface{}{},
-							Ref:         ref("github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.WarehouseServiceSpec"),
-						},
-					},
 					"ingress": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Ingress specifications for Query cluster.",
@@ -993,7 +959,7 @@ func schema_pkg_apis_databendlabsio_v1alpha1_WarehouseSpec(ref common.ReferenceC
 			},
 		},
 		Dependencies: []string{
-			"github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.DiskCacheSpec", "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.LogSpec", "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.WarehouseIngressSpec", "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.WarehouseServiceSpec", "k8s.io/api/core/v1.LocalObjectReference", "k8s.io/api/core/v1.ResourceRequirements", "k8s.io/api/core/v1.Toleration"},
+			"github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.DiskCacheSpec", "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.LogSpec", "github.com/databendcloud/databend-operator/pkg/apis/databendlabs.io/v1alpha1.WarehouseIngressSpec", "k8s.io/api/core/v1.LocalObjectReference", "k8s.io/api/core/v1.ResourceRequirements", "k8s.io/api/core/v1.Toleration"},
 	}
 }
 

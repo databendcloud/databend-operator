@@ -93,6 +93,13 @@ func (r *WarehouseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 
 	originStatus := warehouse.Status.DeepCopy()
 
+	// Reconcile Service
+	svcOpState, err := r.reconcileService(ctx, tenant, &warehouse)
+	setCondition(&warehouse, svcOpState)
+	if err != nil {
+		return ctrl.Result{}, errors.Join(err, r.Status().Update(ctx, &warehouse))
+	}
+
 	// Reconcile ConfigMap
 	cmOpState, err := r.reconcileConfigMap(ctx, tenant, &warehouse)
 	setCondition(&warehouse, cmOpState)
@@ -140,11 +147,37 @@ func (r *WarehouseReconciler) reconcileConfigMap(ctx context.Context, tenant *v1
 	return createSucceeded, nil
 }
 
+func (r *WarehouseReconciler) reconcileService(ctx context.Context, tenant *v1alpha1.Tenant, warehouse *v1alpha1.Warehouse) (opState, error) {
+	log := ctrl.LoggerFrom(ctx)
+
+	// Build and reconcile Service
+	svc, err := databendruntime.BuildQueryService(tenant, warehouse)
+	if err != nil {
+		log.V(5).Error(err, "Failed to build Service", "namespace", svc.Namespace, "name", svc.Name)
+		return buildFailed, err
+	}
+
+	creationErr := r.Create(ctx, svc)
+	if creationErr == nil {
+		log.V(5).Info("Succeeded to create Service", "namespace", svc.Namespace, "name", svc.Name)
+	} else if client.IgnoreAlreadyExists(creationErr) != nil {
+		log.V(5).Error(err, "Failed to create Service", "namespace", svc.Namespace, "name", svc.Name)
+		return buildFailed, creationErr
+	} else {
+		if err := r.Update(ctx, svc); err != nil {
+			return updateFailed, err
+		}
+		log.V(5).Info("Succeeded to update Service", "namespace", svc.Namespace, "name", svc.Name)
+	}
+
+	return createSucceeded, nil
+}
+
 func (r *WarehouseReconciler) reconcileStatefulSet(ctx context.Context, tenant *v1alpha1.Tenant, warehouse *v1alpha1.Warehouse) (opState, error) {
 	log := ctrl.LoggerFrom(ctx)
 
 	// Build and reconcile StatefulSet
-	ss, err := databendruntime.BuildStatefulSet(tenant, warehouse)
+	ss, err := databendruntime.BuildQueryStatefulSet(tenant, warehouse)
 	if err != nil {
 		log.V(5).Error(err, "Failed to build StatefulSet", "namespace", ss.Namespace, "name", ss.Name)
 		return buildFailed, err
