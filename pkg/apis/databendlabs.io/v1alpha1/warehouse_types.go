@@ -141,14 +141,6 @@ type OTLPLogSpec struct {
 	Labels map[string]string `json:"labels,omitempty"`
 }
 
-type WarehouseServiceSpec struct {
-	// Type of service [ClusterIP | NodePort | ExternalName | LoadBalance], default to ClusterIP.
-	Type string `json:"type,omitempty"`
-
-	// External name is needed when Type is set to "ExternalName"
-	ExternalName string `json:"externalName,omitempty"`
-}
-
 type WarehouseIngressSpec struct {
 	// Annotations for Ingress.
 	Annotations map[string]string `json:"annotations,omitempty"`
@@ -193,9 +185,6 @@ type WarehouseSpec struct {
 
 	// Node selector for Query pod.
 	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
-
-	// Service specifications for Query cluster.
-	Service WarehouseServiceSpec `json:"service,omitempty"`
 
 	// Ingress specifications for Query cluster.
 	Ingress WarehouseIngressSpec `json:"ingress,omitempty"`

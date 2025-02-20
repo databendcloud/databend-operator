@@ -428,19 +428,6 @@
         }
       }
     },
-    "v1alpha1.WarehouseServiceSpec": {
-      "type": "object",
-      "properties": {
-        "externalName": {
-          "description": "External name is needed when Type is set to \"ExternalName\"",
-          "type": "string"
-        },
-        "type": {
-          "description": "Type of service [ClusterIP | NodePort | ExternalName | LoadBalance], default to ClusterIP.",
-          "type": "string"
-        }
-      }
-    },
     "v1alpha1.WarehouseSpec": {
       "description": "WarehouseSpec defines the desired state of Warehouse.",
       "type": "object",
@@ -489,11 +476,6 @@
           "description": "Resource required for each Query pod.",
           "default": {},
           "$ref": "#/definitions/v1.ResourceRequirements"
-        },
-        "service": {
-          "description": "Service specifications for Query cluster.",
-          "default": {},
-          "$ref": "#/definitions/v1alpha1.WarehouseServiceSpec"
         },
         "settings": {
           "description": "Custom settings that will append to the config file of Query.",

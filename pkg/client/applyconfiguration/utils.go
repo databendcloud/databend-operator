@@ -63,8 +63,6 @@ func ForKind(kind schema.GroupVersionKind) interface{} {
 		return &databendlabsiov1alpha1.WarehouseApplyConfiguration{}
 	case v1alpha1.SchemeGroupVersion.WithKind("WarehouseIngressSpec"):
 		return &databendlabsiov1alpha1.WarehouseIngressSpecApplyConfiguration{}
-	case v1alpha1.SchemeGroupVersion.WithKind("WarehouseServiceSpec"):
-		return &databendlabsiov1alpha1.WarehouseServiceSpecApplyConfiguration{}
 	case v1alpha1.SchemeGroupVersion.WithKind("WarehouseSpec"):
 		return &databendlabsiov1alpha1.WarehouseSpecApplyConfiguration{}
 	case v1alpha1.SchemeGroupVersion.WithKind("WarehouseStatus"):
