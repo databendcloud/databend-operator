@@ -39,6 +39,7 @@ func (b *StatefulSetBuilder) Build() *appsv1.StatefulSet {
 			Selector: &metav1.LabelSelector{
 				MatchLabels: meta.Labels,
 			},
+			ServiceName: common.GetQueryServiceName(b.tenant.Name, b.warehouse.Name),
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: meta,
 				Spec: corev1.PodSpec{
@@ -47,10 +48,10 @@ func (b *StatefulSetBuilder) Build() *appsv1.StatefulSet {
 						RunAsNonRoot: ptr.To(true),
 					},
 					ServiceAccountName: common.GetTenantServiceAccountName(b.tenant.Name),
-					NodeSelector: copyMap(b.warehouse.Spec.NodeSelector),
-					Tolerations:  copyTolerations(b.warehouse.Spec.PodTolerations),
-					Containers:   b.buildPodContainers(),
-					Volumes:      b.buildPodVolumes(),
+					NodeSelector:       copyMap(b.warehouse.Spec.NodeSelector),
+					Tolerations:        copyTolerations(b.warehouse.Spec.PodTolerations),
+					Containers:         b.buildPodContainers(),
+					Volumes:            b.buildPodVolumes(),
 					Affinity: &corev1.Affinity{
 						PodAffinity: b.buildPodAffinity(),
 					},
