@@ -144,7 +144,7 @@ func (r *WarehouseReconciler) reconcileStatefulSet(ctx context.Context, tenant *
 	log := ctrl.LoggerFrom(ctx)
 
 	// Build and reconcile StatefulSet
-	ss, err := databendruntime.BuildStatefulSet(tenant, warehouse)
+	ss, err := databendruntime.BuildQueryStatefulSet(tenant, warehouse)
 	if err != nil {
 		log.V(5).Error(err, "Failed to build StatefulSet", "namespace", ss.Namespace, "name", ss.Name)
 		return buildFailed, err
