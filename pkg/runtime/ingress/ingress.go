@@ -29,7 +29,7 @@ func BuildIngress(tenant *v1alpha1.Tenant, wh *v1alpha1.Warehouse) *networkingv1
 							Paths: []networkingv1.HTTPIngressPath{
 								{
 									PathType: ptr.To(networkingv1.PathTypePrefix),
-									Path:    "/v1/admin",
+									Path:     "/v1/admin",
 									Backend: networkingv1.IngressBackend{
 										Service: &networkingv1.IngressServiceBackend{
 											Name: common.GetQueryServiceName(tenant.Name, wh.Name),
@@ -41,7 +41,7 @@ func BuildIngress(tenant *v1alpha1.Tenant, wh *v1alpha1.Warehouse) *networkingv1
 								},
 								{
 									PathType: ptr.To(networkingv1.PathTypePrefix),
-									Path:    "/v1/ckhttp",
+									Path:     "/v1/ckhttp",
 									Backend: networkingv1.IngressBackend{
 										Service: &networkingv1.IngressServiceBackend{
 											Name: common.GetQueryServiceName(tenant.Name, wh.Name),
@@ -53,7 +53,7 @@ func BuildIngress(tenant *v1alpha1.Tenant, wh *v1alpha1.Warehouse) *networkingv1
 								},
 								{
 									PathType: ptr.To(networkingv1.PathTypePrefix),
-									Path:    "/v1/flight",
+									Path:     "/v1/flight",
 									Backend: networkingv1.IngressBackend{
 										Service: &networkingv1.IngressServiceBackend{
 											Name: common.GetQueryServiceName(tenant.Name, wh.Name),
@@ -65,7 +65,7 @@ func BuildIngress(tenant *v1alpha1.Tenant, wh *v1alpha1.Warehouse) *networkingv1
 								},
 								{
 									PathType: ptr.To(networkingv1.PathTypePrefix),
-									Path:    "/v1/flightsql",
+									Path:     "/v1/flightsql",
 									Backend: networkingv1.IngressBackend{
 										Service: &networkingv1.IngressServiceBackend{
 											Name: common.GetQueryServiceName(tenant.Name, wh.Name),
@@ -77,7 +77,7 @@ func BuildIngress(tenant *v1alpha1.Tenant, wh *v1alpha1.Warehouse) *networkingv1
 								},
 								{
 									PathType: ptr.To(networkingv1.PathTypePrefix),
-									Path:    "/v1/metrics",
+									Path:     "/v1/metrics",
 									Backend: networkingv1.IngressBackend{
 										Service: &networkingv1.IngressServiceBackend{
 											Name: common.GetQueryServiceName(tenant.Name, wh.Name),
@@ -89,7 +89,7 @@ func BuildIngress(tenant *v1alpha1.Tenant, wh *v1alpha1.Warehouse) *networkingv1
 								},
 								{
 									PathType: ptr.To(networkingv1.PathTypePrefix),
-									Path:    "/v1/mysql",
+									Path:     "/v1/mysql",
 									Backend: networkingv1.IngressBackend{
 										Service: &networkingv1.IngressServiceBackend{
 											Name: common.GetQueryServiceName(tenant.Name, wh.Name),
@@ -101,7 +101,7 @@ func BuildIngress(tenant *v1alpha1.Tenant, wh *v1alpha1.Warehouse) *networkingv1
 								},
 								{
 									PathType: ptr.To(networkingv1.PathTypePrefix),
-									Path:    "/v1/query",
+									Path:     "/v1/query",
 									Backend: networkingv1.IngressBackend{
 										Service: &networkingv1.IngressServiceBackend{
 											Name: common.GetQueryServiceName(tenant.Name, wh.Name),
