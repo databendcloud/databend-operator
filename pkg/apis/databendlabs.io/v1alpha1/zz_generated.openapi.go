@@ -769,6 +769,13 @@ func schema_pkg_apis_databendlabsio_v1alpha1_WarehouseIngressSpec(ref common.Ref
 							},
 						},
 					},
+					"enableLoadBalance": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Whether to enable load balance for Ingress.",
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
 					"ingressClassName": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Name of IngressClass.",

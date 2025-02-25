@@ -145,6 +145,9 @@ type WarehouseIngressSpec struct {
 	// Annotations for Ingress.
 	Annotations map[string]string `json:"annotations,omitempty"`
 
+	// Whether to enable load balance for Ingress.
+	EnableLoadBalance bool `json:"enableLoadBalance,omitempty"`
+
 	// Name of IngressClass.
 	IngressClassName string `json:"ingressClassName,omitempty"`
 

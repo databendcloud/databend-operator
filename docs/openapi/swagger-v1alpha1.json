@@ -390,6 +390,10 @@
             "default": ""
           }
         },
+        "enableLoadBalance": {
+          "description": "Whether to enable load balance for Ingress.",
+          "type": "boolean"
+        },
         "hostName": {
           "description": "Host name of ingress.",
           "type": "string"

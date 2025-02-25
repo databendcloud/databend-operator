@@ -20,9 +20,10 @@ package v1alpha1
 // WarehouseIngressSpecApplyConfiguration represents a declarative configuration of the WarehouseIngressSpec type for use
 // with apply.
 type WarehouseIngressSpecApplyConfiguration struct {
-	Annotations      map[string]string `json:"annotations,omitempty"`
-	IngressClassName *string           `json:"ingressClassName,omitempty"`
-	HostName         *string           `json:"hostName,omitempty"`
+	Annotations       map[string]string `json:"annotations,omitempty"`
+	EnableLoadBalance *bool             `json:"enableLoadBalance,omitempty"`
+	IngressClassName  *string           `json:"ingressClassName,omitempty"`
+	HostName          *string           `json:"hostName,omitempty"`
 }
 
 // WarehouseIngressSpecApplyConfiguration constructs a declarative configuration of the WarehouseIngressSpec type for use with
@@ -42,6 +43,14 @@ func (b *WarehouseIngressSpecApplyConfiguration) WithAnnotations(entries map[str
 	for k, v := range entries {
 		b.Annotations[k] = v
 	}
+	return b
+}
+
+// WithEnableLoadBalance sets the EnableLoadBalance field in the declarative configuration to the given value
+// and returns the receiver, so that objects can be built by chaining "With" function invocations.
+// If called multiple times, the EnableLoadBalance field is set to the value of the last call.
+func (b *WarehouseIngressSpecApplyConfiguration) WithEnableLoadBalance(value bool) *WarehouseIngressSpecApplyConfiguration {
+	b.EnableLoadBalance = &value
 	return b
 }
 
