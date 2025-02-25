@@ -101,10 +101,12 @@ func (r *WarehouseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	}
 
 	// Reconcile Ingress
-	ingressOpState, err := r.reconcileIngress(ctx, tenant, &warehouse)
-	setCondition(&warehouse, ingressOpState)
-	if err != nil {
-		return ctrl.Result{}, errors.Join(err, r.Status().Update(ctx, &warehouse))
+	if warehouse.Spec.Ingress.Enabled {
+		ingressOpState, err := r.reconcileIngress(ctx, tenant, &warehouse)
+		setCondition(&warehouse, ingressOpState)
+		if err != nil {
+			return ctrl.Result{}, errors.Join(err, r.Status().Update(ctx, &warehouse))
+		}
 	}
 
 	// Reconcile ConfigMap
