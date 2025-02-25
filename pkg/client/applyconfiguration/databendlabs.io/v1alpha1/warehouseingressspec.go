@@ -20,6 +20,7 @@ package v1alpha1
 // WarehouseIngressSpecApplyConfiguration represents a declarative configuration of the WarehouseIngressSpec type for use
 // with apply.
 type WarehouseIngressSpecApplyConfiguration struct {
+	Enabled           *bool             `json:"enabled,omitempty"`
 	Annotations       map[string]string `json:"annotations,omitempty"`
 	EnableLoadBalance *bool             `json:"enableLoadBalance,omitempty"`
 	IngressClassName  *string           `json:"ingressClassName,omitempty"`
@@ -30,6 +31,14 @@ type WarehouseIngressSpecApplyConfiguration struct {
 // apply.
 func WarehouseIngressSpec() *WarehouseIngressSpecApplyConfiguration {
 	return &WarehouseIngressSpecApplyConfiguration{}
+}
+
+// WithEnabled sets the Enabled field in the declarative configuration to the given value
+// and returns the receiver, so that objects can be built by chaining "With" function invocations.
+// If called multiple times, the Enabled field is set to the value of the last call.
+func (b *WarehouseIngressSpecApplyConfiguration) WithEnabled(value bool) *WarehouseIngressSpecApplyConfiguration {
+	b.Enabled = &value
+	return b
 }
 
 // WithAnnotations puts the entries into the Annotations field in the declarative configuration

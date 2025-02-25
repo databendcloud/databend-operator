@@ -142,6 +142,9 @@ type OTLPLogSpec struct {
 }
 
 type WarehouseIngressSpec struct {
+	// Whether to enable Ingress for Query.
+	Enabled bool `json:"enabled,omitempty"`
+
 	// Annotations for Ingress.
 	Annotations map[string]string `json:"annotations,omitempty"`
 
