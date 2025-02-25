@@ -100,6 +100,13 @@ func (r *WarehouseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return ctrl.Result{}, errors.Join(err, r.Status().Update(ctx, &warehouse))
 	}
 
+	// Reconcile Ingress
+	ingressOpState, err := r.reconcileIngress(ctx, tenant, &warehouse)
+	setCondition(&warehouse, ingressOpState)
+	if err != nil {
+		return ctrl.Result{}, errors.Join(err, r.Status().Update(ctx, &warehouse))
+	}
+
 	// Reconcile ConfigMap
 	cmOpState, err := r.reconcileConfigMap(ctx, tenant, &warehouse)
 	setCondition(&warehouse, cmOpState)
@@ -168,6 +175,32 @@ func (r *WarehouseReconciler) reconcileService(ctx context.Context, tenant *v1al
 			return updateFailed, err
 		}
 		log.V(5).Info("Succeeded to update Service", "namespace", svc.Namespace, "name", svc.Name)
+	}
+
+	return createSucceeded, nil
+}
+
+func (r *WarehouseReconciler) reconcileIngress(ctx context.Context, tenant *v1alpha1.Tenant, warehouse *v1alpha1.Warehouse) (opState, error) {
+	log := ctrl.LoggerFrom(ctx)
+
+	// Build and reconcile Ingress
+	ingress, err := databendruntime.BuildQueryIngress(tenant, warehouse)
+	if err != nil {
+		log.V(5).Error(err, "Failed to build Ingress", "namespace", ingress.Namespace, "name", ingress.Name)
+		return buildFailed, err
+	}
+
+	creationErr := r.Create(ctx, ingress)
+	if creationErr == nil {
+		log.V(5).Info("Succeeded to create Ingress", "namespace", ingress.Namespace, "name", ingress.Name)
+	} else if client.IgnoreAlreadyExists(creationErr) != nil {
+		log.V(5).Error(err, "Failed to create Ingress", "namespace", ingress.Namespace, "name", ingress.Name)
+		return buildFailed, creationErr
+	} else {
+		if err := r.Update(ctx, ingress); err != nil {
+			return updateFailed, err
+		}
+		log.V(5).Info("Succeeded to update Ingress", "namespace", ingress.Namespace, "name", ingress.Name)
 	}
 
 	return createSucceeded, nil
