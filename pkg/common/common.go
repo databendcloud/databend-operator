@@ -20,6 +20,10 @@ func GetQueryServiceName(tnName, whName string) string {
 	return fmt.Sprintf("query-svc-%s-%s", tnName, whName)
 }
 
+func GetQueryIngressName(tnName, whName string) string {
+	return fmt.Sprintf("query-ingress-%s-%s", tnName, whName)
+}
+
 func GetQueryImage(wh *v1alpha1.Warehouse) string {
 	if wh.Spec.QueryImage != "" {
 		return wh.Spec.QueryImage

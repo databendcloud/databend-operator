@@ -753,6 +753,13 @@ func schema_pkg_apis_databendlabsio_v1alpha1_WarehouseIngressSpec(ref common.Ref
 			SchemaProps: spec.SchemaProps{
 				Type: []string{"object"},
 				Properties: map[string]spec.Schema{
+					"enabled": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Whether to enable Ingress for Query.",
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
 					"annotations": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Annotations for Ingress.",
@@ -767,6 +774,13 @@ func schema_pkg_apis_databendlabsio_v1alpha1_WarehouseIngressSpec(ref common.Ref
 									},
 								},
 							},
+						},
+					},
+					"enableLoadBalance": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Whether to enable load balance for Ingress.",
+							Type:        []string{"boolean"},
+							Format:      "",
 						},
 					},
 					"ingressClassName": {

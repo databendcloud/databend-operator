@@ -88,6 +88,12 @@ spec:
                       type: string
                     description: Annotations for Ingress.
                     type: object
+                  enableLoadBalance:
+                    description: Whether to enable load balance for Ingress.
+                    type: boolean
+                  enabled:
+                    description: Whether to enable Ingress for Query.
+                    type: boolean
                   hostName:
                     description: Host name of ingress.
                     type: string
