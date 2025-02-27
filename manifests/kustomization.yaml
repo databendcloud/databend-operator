@@ -12,5 +12,6 @@ resources:
 
 # Update the Databend Operator controller manager image tag.
 images:
-  - name: electronicwaste/databend-operator
-    newTag: latest
+  - name: datafuselabs/databend-operator
+    newName: electronicwaste/databend-operator
+    newTag: v0.1.0

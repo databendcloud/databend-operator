@@ -61,7 +61,7 @@ type WarehouseReconciler struct {
 // +kubebuilder:rbac:groups=databendlabs.io,resources=warehouses/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=databendlabs.io,resources=warehouses/finalizers,verbs=update
 // +kubebuilder:rbac:groups=databendlabs.io,resources=tenants,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=core,resources=secrets,verbs=get;list
+// +kubebuilder:rbac:groups=core,resources=secrets,verbs=get;list;watch
 // +kubebuilder:rbac:groups=core,resources=services,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=core,resources=persistentvolumeclaims,verbs=get;list;watch;create;update;patch;delete
