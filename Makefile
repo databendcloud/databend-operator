@@ -1,5 +1,5 @@
 # Image URL to use all building/pushing image targets
-IMG ?= controller:latest
+IMG ?= databend-operator:latest
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION = 1.31.0
 
@@ -44,9 +44,11 @@ help: ## Display this help.
 ##@ Development
 
 .PHONY: manifests
-manifests: controller-gen ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
-	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./..." \
-	output:crd:artifacts:config=config/crd/bases
+manifests: controller-gen ## Generate manifests.
+	$(CONTROLLER_GEN) rbac:roleName=databend-operator-controller-manager crd webhook paths="./..." \
+	output:crd:artifacts:config=manifests/crds \
+	output:rbac:artifacts:config=manifests/rbac \
+	output:webhook:artifacts:config=manifests/webhook
 
 .PHONY: generate
 generate: controller-gen go-mod-tidy manifests ## Generate client and code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.

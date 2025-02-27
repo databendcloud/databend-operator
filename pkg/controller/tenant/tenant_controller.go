@@ -63,7 +63,8 @@ type TenantReconciler struct {
 // +kubebuilder:rbac:groups=databendlabs.io,resources=tenants,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=databendlabs.io,resources=tenants/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=databendlabs.io,resources=tenants/finalizers,verbs=update
-// +kubebuilder:rbac:groups=core,resources=secrets,verbs=get;list
+// +kubebuilder:rbac:groups=core,resources=secrets,verbs=get;list;watch
+// +kubebuilder:rbac:groups=core,resources=serviceaccounts,verbs=get;list;watch;create;update;patch;delete
 
 func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := ctrl.LoggerFrom(ctx)

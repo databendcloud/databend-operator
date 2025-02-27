@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Namespace where all resources are deployed.
+namespace: databend-system
+
+resources:
+  - namespace.yaml
+  - ./crds
+  - ./manager
+  - ./rbac
+
+# Update the Databend Operator controller manager image tag.
+images:
+  - name: datafuselabs/databend-operator
+    newName: electronicwaste/databend-operator
+    newTag: v0.1.0
