@@ -14,4 +14,8 @@ resources:
 images:
   - name: datafuselabs/databend-operator
     newName: electronicwaste/databend-operator
+<<<<<<< HEAD
     newTag: test-v0.0.2
+=======
+    newTag: test-v0.0.1
+>>>>>>> 1029157 (fix(tenant): re-add meta endpoint checking logic.)
