@@ -317,13 +317,15 @@ func patchQueryPodWithCache(tpl *corev1.PodTemplateSpec, sts *appsv1.StatefulSet
 				AccessModes: []corev1.PersistentVolumeAccessMode{
 					corev1.ReadWriteOnce,
 				},
-				StorageClassName: &wh.Spec.Cache.StorageClass,
 				Resources: corev1.VolumeResourceRequirements{
 					Requests: corev1.ResourceList{
 						corev1.ResourceStorage: sizeLimit,
 					},
 				},
 			},
+		}
+		if wh.Spec.Cache.StorageClass != "" {
+			pvcVolume.Spec.StorageClassName = &wh.Spec.Cache.StorageClass
 		}
 		sts.VolumeClaimTemplates = append(sts.VolumeClaimTemplates, pvcVolume)
 	}
