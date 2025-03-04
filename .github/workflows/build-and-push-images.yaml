@@ -49,7 +49,7 @@ jobs:
         # if: steps.publish.outcome == 'skipped'
         uses: ./.github/workflows/template-publish-image
         with:
-          image: docker.io/kubeflow/${{ matrix.component-name }}
+          image: docker.io/datafuselabs/${{ matrix.component-name }}
           dockerfile: ${{ matrix.dockerfile }}
           platforms: ${{ matrix.platforms }}
           context: ${{ matrix.context }}
