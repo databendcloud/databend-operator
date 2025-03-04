@@ -68,14 +68,14 @@ runs:
     - name: Build Databend Operator
       shell: bash
       run: |
-        ./hack/build-image.sh
+        ./scripts/gha/build-image.sh
       env:
         OPERATOR_CI_IMAGE: datafuselabs/databend-operator:test
 
     - name: Deploy Databend Operator
       shell: bash
       run: |
-        ./hack/setup-databend-operator.sh
+        ./scripts/gha/setup-databend-operator.sh
         docker system prune -a -f
         docker system df
         df -h
