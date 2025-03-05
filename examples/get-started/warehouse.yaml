@@ -1,0 +1,14 @@
+apiVersion: databendlabs.io/v1alpha1
+kind: Warehouse
+metadata:
+  name: test
+  namespace: databend-system
+spec:
+  replicas: 2
+  queryImage: datafuselabs/databend-query:v1.2.680
+  tenant:
+    name: test
+  resourcesPerNode:
+    limits:
+      cpu: 100m
+      memory: 100Mi

@@ -1,0 +1,21 @@
+apiVersion: databendlabs.io/v1alpha1
+kind: Tenant
+metadata:
+  name: test
+  namespace: databend-system
+spec:
+  s3:
+    bucketName: test
+    region: us-east-1
+    endpoint: minio-0.minio.databend-system.svc.cluster.local:9000
+    accessKey: admin12345
+    secretKey: admin12345
+  meta:
+    user: root
+    password: root
+    endpoints:
+      - meta-databend-meta-0.meta-databend-meta.databend-system.svc.cluster.local:9191
+  users:
+    - name: root
+      authType: sha256_password
+      authString: cm9vdA==
