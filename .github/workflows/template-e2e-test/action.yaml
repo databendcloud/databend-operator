@@ -27,6 +27,11 @@ runs:
         ./scripts/gha/build-image.sh
       env:
         OPERATOR_CI_IMAGE: datafuselabs/databend-operator:test
+    
+    - name: Install Helm
+      uses: azure/setup-helm@v4
+      with:
+        version: v3.14.0
 
     - name: Setup Cluster
       shell: bash

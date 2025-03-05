@@ -21,3 +21,7 @@ jobs:
         uses: ./.github/workflows/template-e2e-test
         with:
           kubernetes-version: ${{ matrix.kubernetes-version }}
+      
+      - name: Run E2E Tests
+        run: |
+          make test-e2e
