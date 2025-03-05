@@ -29,7 +29,7 @@ print_cluster_info
 
 echo "Creating Tenant"
 kubectl apply -f ./examples/get-started/tenant.yaml
-(kubectl wait tenant/test --for=condition=Created  -n ${NAMESPACE} --timeout ${TIMEOUT}) ||
+(kubectl wait tenant/test --for=condition=created  -n ${NAMESPACE} --timeout ${TIMEOUT}) ||
   (
     echo "Failed to wait until Tenant is created" &&
       kubectl get tenants -n ${NAMESPACE} &&
