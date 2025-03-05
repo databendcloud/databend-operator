@@ -72,10 +72,10 @@ runs:
       env:
         OPERATOR_CI_IMAGE: datafuselabs/databend-operator:test
 
-    - name: Deploy Databend Operator
+    - name: Setup Cluster
       shell: bash
       run: |
-        ./scripts/gha/setup-databend-operator.sh
+        ./scripts/gha/setup-cluster.sh
         docker system prune -a -f
         docker system df
         df -h
