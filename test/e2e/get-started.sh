@@ -49,4 +49,3 @@ kubectl apply -f ./examples/get-started/warehouse.yaml
       exit 1
   )
 print_cluster_info
-
