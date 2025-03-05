@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: minio
+  namespace: databend-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: minio
+  serviceName: minio
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: minio
+    spec:
+      initContainers:
+        - name: create-buckets
+          image: busybox:stable-musl
+          command:
+            - "sh"
+            - "-c"
+            - "mkdir -p /data/test"
+          volumeMounts:
+            - name: databend-minio-storage
+              mountPath: "/data"
+      containers:
+      - name: minio
+        image: minio/minio:RELEASE.2022-10-15T19-57-03Z
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/sh
+        - -c
+        - minio server /data --console-address ":5000"
+        ports:
+        - name: data
+          containerPort: 9000
+          protocol: "TCP"
+        - name: console
+          containerPort: 5000
+          protocol: "TCP"
+        env:
+        - name: MINIO_ROOT_USER
+          value: admin12345
+        - name: MINIO_ROOT_PASSWORD
+          value: admin12345
+        volumeMounts:
+        - name: databend-minio-storage
+          mountPath: /data
+      volumes:
+        - name: databend-minio-storage
+          emptyDir:
+            sizeLimit: 100Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio
+  namespace: databend-system
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: minio
+  ports:
+  - name: data
+    port: 9000
+    protocol: TCP
+  - name: console
+    port: 5000
+    protocol: TCP
