@@ -27,7 +27,7 @@ kubectl apply -f ./examples/get-started/minio.yaml
   )
 print_cluster_info
 
-echo "Creating Tenant"
+echo "Creating Tenant and wait it to be created"
 kubectl apply -f ./examples/get-started/tenant.yaml
 (kubectl wait tenant/test --for=condition=created  -n ${NAMESPACE} --timeout ${TIMEOUT}) ||
   (
@@ -38,7 +38,7 @@ kubectl apply -f ./examples/get-started/tenant.yaml
   )
 print_cluster_info
 
-echo "Creating Warehouse"
+echo "Creating Warehouse and wait it to be ready"
 kubectl apply -f ./examples/get-started/warehouse.yaml
 (kubectl wait pods --for=condition=ready -n ${NAMESPACE} --timeout ${TIMEOUT} --all) ||
   (
