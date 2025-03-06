@@ -14,7 +14,7 @@ runs:
       with:
         go-version-file: go.mod
 
-    - name: Create k8s Kind Cluster
+    - name: Create Kind Cluster
       uses: helm/kind-action@v1.11.0
       with:
         node_image: kindest/node:${{ inputs.kubernetes-version }}
@@ -33,10 +33,10 @@ runs:
       with:
         version: v3.14.0
 
-    - name: Setup Cluster
+    - name: Setup Kind Cluster
       shell: bash
       run: |
-        ./scripts/gha/setup-cluster.sh
+        ./scripts/gha/setup-kind-cluster.sh
       env:
         KIND_CLUSTER: databend-operator-cluster
         OPERATOR_CI_IMAGE: datafuselabs/databend-operator:test

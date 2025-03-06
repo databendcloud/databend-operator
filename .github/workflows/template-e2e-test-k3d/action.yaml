@@ -1,0 +1,42 @@
+name: Setup E2E test template
+description: A composite action to setup e2e tests
+
+inputs:
+  k3d-version:
+    required: true
+    description: K3d version
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Go
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: go.mod
+
+    - name: Install K3d
+      shell: bash
+      run: |
+        curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | TAG=${{ inputs.k3d-version }} bash
+
+    - name: Install Helm
+      uses: azure/setup-helm@v4
+      with:
+        version: v3.14.0
+
+    - name: Install kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'latest'
+
+    - name: Build Databend Operator
+      shell: bash
+      run: |
+        ./scripts/gha/build-image.sh
+      env:
+        OPERATOR_CI_IMAGE: datafuselabs/databend-operator:test
+    
+    - name: Setup K3d Cluster
+      shell: bash
+      run: |
+        ./scripts/gha/setup-k3d-cluster.sh

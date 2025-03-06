@@ -1,0 +1,13 @@
+name: E2E Test with on Kind Cluster
+on:
+  - pull_request
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false

@@ -1,4 +1,4 @@
-name: E2E Test with Deploying Tenant and Warehouse
+name: E2E Test with on Kind Cluster
 on:
   - pull_request
 
@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup E2E Tests
-        uses: ./.github/workflows/template-e2e-test
+        uses: ./.github/workflows/template-e2e-test-kind
         with:
           kubernetes-version: ${{ matrix.kubernetes-version }}
       
