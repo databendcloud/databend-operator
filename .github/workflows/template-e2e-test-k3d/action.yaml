@@ -40,3 +40,8 @@ runs:
       shell: bash
       run: |
         ./scripts/gha/setup-k3d-cluster.sh
+      env:
+        K3D_CLUSTER: databend-operator-cluster
+        OPERATOR_CI_IMAGE: datafuselabs/databend-operator:test
+        REGISTRY_NAME: registry.localhost
+        REGISTRY_PORT: 5000
