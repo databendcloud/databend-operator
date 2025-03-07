@@ -1,4 +1,4 @@
-name: E2E Test with on Kind Cluster
+name: E2E Test with on K3d Cluster
 on:
   - pull_request
 
