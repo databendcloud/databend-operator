@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        k3d-version: ["v5.6.0", "v5.7.0", "v5.8.0"]
+        k3d-version: ["v5.6.0", "v5.7.0", "v5.8.1"]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
