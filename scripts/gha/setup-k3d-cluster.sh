@@ -7,12 +7,23 @@ set -o pipefail
 # Configure variables.
 NAMESPACE="databend-system"
 TIMEOUT="5m"
+REGISTRY_HUB=k3d-${REGISTRY_NAME}:${REGISTRY_PORT}
 
+# Create a k3d cluster.
+echo "Creating k3d registry and cluster"
+k3d registry create ${REGISTRY_NAME} --port 0.0.0.0:${REGISTRY_PORT} -i registry:latest
+k3d cluster create --config ./scripts/gha/k3d.yaml ${K3D_CLUSTER}
+kubectl config use-context k3d-${K3D_CLUSTER}
 
+# Push the databend-operator image to the k3d registry.
+echo "Pushing databend-operator image to k3d registry"
+echo -n "password" | docker login ${REGISTRY_HUB} --username admin --password-stdin
+docker tag ${OPERATOR_CI_IMAGE} ${REGISTRY_HUB}/${OPERATOR_CI_IMAGE}
+docker push ${REGISTRY_HUB}/${OPERATOR_CI_IMAGE}
 
 echo "Update databend operator manifest with newly built image"
 cd manifests
-kustomize edit set image datafuselabs/databend-operator=${OPERATOR_CI_IMAGE}
+kustomize edit set image datafuselabs/databend-operator=${REGISTRY_HUB}/${OPERATOR_CI_IMAGE}
 
 echo "Installing databend operator manifests"
 kustomize build . | kubectl apply -f -
