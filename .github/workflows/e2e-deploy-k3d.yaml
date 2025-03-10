@@ -1,4 +1,4 @@
-name: E2E Test with Deploying Tenant and Warehouse
+name: E2E Test with on K3d Cluster
 on:
   - pull_request
 
@@ -12,15 +12,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        kubernetes-version: ["v1.29.2", "v1.30.0", "v1.31.0"]
+        k3d-version: ["v5.6.0", "v5.7.0", "v5.8.1"]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup E2E Tests
-        uses: ./.github/workflows/template-e2e-test
+        uses: ./.github/workflows/template-e2e-test-k3d
         with:
-          kubernetes-version: ${{ matrix.kubernetes-version }}
+          k3d-version: ${{ matrix.k3d-version }}
       
       - name: Run E2E Tests
         run: |

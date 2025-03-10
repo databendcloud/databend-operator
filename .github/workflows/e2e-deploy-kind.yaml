@@ -1,0 +1,27 @@
+name: E2E Test with on Kind Cluster
+on:
+  - pull_request
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        kubernetes-version: ["v1.29.2", "v1.30.0", "v1.31.0"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup E2E Tests
+        uses: ./.github/workflows/template-e2e-test-kind
+        with:
+          kubernetes-version: ${{ matrix.kubernetes-version }}
+      
+      - name: Run E2E Tests
+        run: |
+          make test-e2e

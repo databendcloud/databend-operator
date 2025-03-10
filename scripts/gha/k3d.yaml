@@ -1,0 +1,26 @@
+apiVersion: k3d.io/v1alpha4
+kind: Simple
+metadata:
+  name: single
+servers: 1
+image: rancher/k3s:v1.29.5-k3s1
+ports:
+  - port: 8888:80
+    nodeFilters:
+      - loadbalancer
+registries:
+  use:
+    - k3d-registry.localhost:5000
+  config: |
+    mirrors:
+      "docker.io":
+        endpoint:
+          - http://host.k3d.internal:5000
+options:
+  k3d:
+    wait: true
+    timeout: "60s"
+    disableLoadbalancer: false
+  kubeconfig:
+    updateDefaultKubeconfig: true
+    switchCurrentContext: true
