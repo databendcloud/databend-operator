@@ -30,6 +30,36 @@ kubectl apply -k "github.com/databendcloud/databend-operator/manifests"
 
 ## Get Started
 
+You can get started by deploying [this example](./examples/get-started/) from `examples/get-started`!
+
+Learn more about Databend deployments from [this guide](https://docs.databend.com/guides/deploy/deploy/understanding-deployment-modes).
+
+Step1: Deploy Databend Meta Cluster
+
+```shell
+helm repo add databend https://charts.databend.com
+helm install meta databend/databend-meta --namespace databend-system
+```
+
+Step2: Prepare Object Storage
+
+We'll use [Minio](https://github.com/minio/minio) as the object storage for our example.
+
+```shell
+kubectl apply -f "github.com/databendcloud/databend-operator/examples/get-started/minio.yaml"
+```
+
+Step3: Define Tenant
+
+```shell
+kubectl apply -f "github.com/databendcloud/databend-operator/examples/get-started/tenant.yaml"
+```
+
+Step4: Deploy Dataebend Query Cluster(Warehouse)
+
+```shell
+kubectl apply -f "github.com/databendcloud/databend-operator/examples/get-started/warehouse.yaml"
+```
 
 ## License
 
