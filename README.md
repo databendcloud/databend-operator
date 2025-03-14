@@ -1,100 +1,67 @@
-# databend-operator
-// TODO(user): Add simple overview of use/purpose
+# Databend Operator
 
-## Description
-// TODO(user): An in-depth paragraph about your project and overview of use
+<img src="https://github.com/databendlabs/databend/assets/172204/9997d8bc-6462-4dbd-90e3-527cf50a709c" alt="databend" />
 
-## Getting Started
+<div align="center">
 
-### Prerequisites
-- go version v1.22.0+
-- docker version 17.03+.
-- kubectl version v1.11.3+.
-- Access to a Kubernetes v1.11.3+ cluster.
+<div>
+<a href="https://link.databend.com/join-slack">
+<img src="https://img.shields.io/badge/slack-databend-0abd59?logo=slack" alt="slack" />
+</a>
 
-### To Deploy on the cluster
-**Build and push your image to the location specified by `IMG`:**
+<a href="https://link.databend.com/join-feishu">
+<img src="https://img.shields.io/badge/feishu-databend-0abd59" alt="feishu" />
+</a>
 
-```sh
-make docker-build docker-push IMG=<some-registry>/databend-operator:tag
+<br>
+
+</div>
+</div>
+
+[Kubernetes](https://kubernetes.io/docs/home/) is an open source container orchestration engine for automating deployment, scaling, and management of containerized applications. [Operators](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) are software extensions to Kubernetes that make use of custom resources to manage applications and their components. Operators follow Kubernetes principles, notably the control loop.
+
+Use this operator to manage [Databend](https://github.com/databendlabs/databend) clusters which are deployed as custom resources. In short, the task of configuring, creating, managing, automatically scaling up and scaling-in of Databend cluster(s) in a Kubernetes environment has been made simple, easy and quick.
+
+## Deploying Operator
+
+Run the following command to install the latest changes of the Databend Operator:
+
+```shell
+kubectl apply -k "github.com/databendcloud/databend-operator/manifests"
 ```
 
-**NOTE:** This image ought to be published in the personal registry you specified.
-And it is required to have access to pull the image from the working environment.
-Make sure you have the proper permission to the registry if the above commands don’t work.
+## Get Started
 
-**Install the CRDs into the cluster:**
+You can get started by deploying [this example](./examples/get-started/) from `examples/get-started`!
 
-```sh
-make install
+Learn more about Databend deployments from [this guide](https://docs.databend.com/guides/deploy/deploy/understanding-deployment-modes).
+
+Step1: Deploy Databend Meta Cluster
+
+```shell
+helm repo add databend https://charts.databend.com
+helm install meta databend/databend-meta --namespace databend-system
 ```
 
-**Deploy the Manager to the cluster with the image specified by `IMG`:**
+Step2: Prepare Object Storage
 
-```sh
-make deploy IMG=<some-registry>/databend-operator:tag
+We'll use [Minio](https://github.com/minio/minio) as the object storage for our example.
+
+```shell
+kubectl apply -f "github.com/databendcloud/databend-operator/examples/get-started/minio.yaml"
 ```
 
-> **NOTE**: If you encounter RBAC errors, you may need to grant yourself cluster-admin
-privileges or be logged in as admin.
+Step3: Define Tenant
 
-**Create instances of your solution**
-You can apply the samples (examples) from the config/sample:
-
-```sh
-kubectl apply -k config/samples/
+```shell
+kubectl apply -f "github.com/databendcloud/databend-operator/examples/get-started/tenant.yaml"
 ```
 
->**NOTE**: Ensure that the samples has default values to test it out.
+Step4: Deploy Dataebend Query Cluster(Warehouse)
 
-### To Uninstall
-**Delete the instances (CRs) from the cluster:**
-
-```sh
-kubectl delete -k config/samples/
+```shell
+kubectl apply -f "github.com/databendcloud/databend-operator/examples/get-started/warehouse.yaml"
 ```
-
-**Delete the APIs(CRDs) from the cluster:**
-
-```sh
-make uninstall
-```
-
-**UnDeploy the controller from the cluster:**
-
-```sh
-make undeploy
-```
-
-## Project Distribution
-
-Following are the steps to build the installer and distribute this project to users.
-
-1. Build the installer for the image built and published in the registry:
-
-```sh
-make build-installer IMG=<some-registry>/databend-operator:tag
-```
-
-NOTE: The makefile target mentioned above generates an 'install.yaml'
-file in the dist directory. This file contains all the resources built
-with Kustomize, which are necessary to install this project without
-its dependencies.
-
-2. Using the installer
-
-Users can just run kubectl apply -f <URL for YAML BUNDLE> to install the project, i.e.:
-
-```sh
-kubectl apply -f https://raw.githubusercontent.com/<org>/databend-operator/<tag or branch>/dist/install.yaml
-```
-
-## Contributing
-// TODO(user): Add detailed information on how you would like others to contribute to this project
-
-**NOTE:** Run `make help` for more information on all potential `make` targets
-
-More information can be found via the [Kubebuilder Documentation](https://book.kubebuilder.io/introduction.html)
 
 ## License
 
