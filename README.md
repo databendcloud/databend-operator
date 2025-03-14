@@ -25,7 +25,7 @@ Use this operator to manage [Databend](https://github.com/databendlabs/databend)
 Run the following command to install the latest changes of the Databend Operator:
 
 ```shell
-kubectl apply -k 
+kubectl apply -k "github.com/databendcloud/databend-operator/manifests"
 ```
 
 ## Get Started
