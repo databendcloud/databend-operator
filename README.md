@@ -1,5 +1,7 @@
 # Databend Operator
 
+<img src="https://github.com/databendlabs/databend/assets/172204/9997d8bc-6462-4dbd-90e3-527cf50a709c" alt="databend" />
+
 <div align="center">
 
 <div>
@@ -11,10 +13,10 @@
 <img src="https://img.shields.io/badge/feishu-databend-0abd59" alt="feishu" />
 </a>
 
-</div>
-</div>
+<br>
 
-<img src="https://github.com/databendlabs/databend/assets/172204/9997d8bc-6462-4dbd-90e3-527cf50a709c" alt="databend" />
+</div>
+</div>
 
 [Kubernetes](https://kubernetes.io/docs/home/) is an open source container orchestration engine for automating deployment, scaling, and management of containerized applications. [Operators](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) are software extensions to Kubernetes that make use of custom resources to manage applications and their components. Operators follow Kubernetes principles, notably the control loop.
 
