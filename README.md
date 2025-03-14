@@ -22,8 +22,13 @@ Use this operator to manage [Databend](https://github.com/databendlabs/databend)
 
 ## Deploying Operator
 
-## Get Started
+Run the following command to install the latest changes of the Databend Operator:
 
+```shell
+kubectl apply -k 
+```
+
+## Get Started
 
 
 ## License
