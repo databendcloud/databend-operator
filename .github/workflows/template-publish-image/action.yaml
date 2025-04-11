@@ -22,6 +22,10 @@ inputs:
   github_token:
     required: true
     description: GitHub token used for authentication with GHCR
+  build_args:
+    required: false
+    default: ''
+    description: Additional build arguments for Docker build
 
 runs:
   using: composite
@@ -70,6 +74,20 @@ runs:
         echo "Docker service status:"
         sudo systemctl --no-pager -l -o short status docker
 
+    - name: Configure Go Build Cache
+      shell: bash
+      run: |
+        export GOPATH=/tmp/go
+        export GOCACHE=/tmp/go-cache
+        export GOMODCACHE=/tmp/go-mod-cache
+        mkdir -p $GOPATH $GOCACHE $GOMODCACHE
+        echo "GOPATH=$GOPATH" >> $GITHUB_ENV
+        echo "GOCACHE=$GOCACHE" >> $GITHUB_ENV
+        echo "GOMODCACHE=$GOMODCACHE" >> $GITHUB_ENV
+        CORES=$(nproc)
+        GOMAXPROCS=$((CORES-1))
+        echo "GOMAXPROCS=$GOMAXPROCS" >> $GITHUB_ENV
+
     - name: Setup QEMU
       uses: docker/setup-qemu-action@v3
       with:
@@ -77,6 +95,8 @@ runs:
 
     - name: Set Up Docker Buildx
       uses: docker/setup-buildx-action@v3
+      with:
+        buildkitd-flags: --debug
 
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
@@ -92,13 +112,27 @@ runs:
         REPO_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')
         echo "repo_name=${REPO_NAME}" >> $GITHUB_OUTPUT
 
+    - name: Prepare Build Args
+      id: build-args
+      shell: bash
+      run: |
+        BUILD_ARGS="GOPROXY=https://proxy.golang.org,direct"
+        BUILD_ARGS="${BUILD_ARGS} GOMAXPROCS=${GOMAXPROCS}"
+        
+        if [[ -n "${{ inputs.build_args }}" ]]; then
+          BUILD_ARGS="${BUILD_ARGS} ${{ inputs.build_args }}"
+        fi
+        
+        echo "args=${BUILD_ARGS}" >> $GITHUB_OUTPUT
+        echo "Prepared build args: ${BUILD_ARGS}"
+
     - name: Add Docker Tags
       id: meta
       uses: docker/metadata-action@v5
       with:
         images: ghcr.io/${{ steps.repo-info.outputs.repo_name }}/${{ inputs.image }}
         tags: |
-          type=raw,latest
+          type=raw,value=latest
           type=sha
 
     - name: Build and Push
@@ -109,5 +143,8 @@ runs:
         file: ${{ inputs.dockerfile }}
         push: ${{ inputs.push }}
         tags: ${{ steps.meta.outputs.tags }}
-        cache-from: type=gha
-        cache-to: type=gha,ignore-error=true
+        cache-from: type=gha,scope=${{ inputs.image }}-${{ github.workflow }}
+        cache-to: type=gha,mode=max,scope=${{ inputs.image }}-${{ github.workflow }},ignore-error=true
+        build-args: ${{ steps.build-args.outputs.args }}
+        pull: true
+        outputs: type=registry,compression=zstd,compression-level=3,force-compression=true
