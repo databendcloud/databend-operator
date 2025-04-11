@@ -1,8 +1,12 @@
 name: Build and Publish Images
 
 on:
-  - push
-  - pull_request
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  pull_request:
 
 jobs:
   build-and-publish:
@@ -16,41 +20,31 @@ jobs:
           - component-name: databend-operator
             dockerfile: ./Dockerfile
             platforms: linux/amd64,linux/arm64,linux/ppc64le
+
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # TODO(Electronic-Waste): Uncomment the following steps when 
-      # - name: Docker Login
-      #   # Trigger workflow only for databendcloud/databend-operator repository with specific branch (master, release-*) or tag (v.*).
-      #   if: >-
-      #     github.repository == 'databendcloud/databend-operator' &&
-      #     (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release-') || startsWith(github.ref, 'refs/tags/v'))
-      #   uses: docker/login-action@v3
-      #   with:
-      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
-      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set Push Flag
+        id: set-push
+        run: |
+          # 仅在推送到主分支或标签时才推送镜像
+          if [[ "${{ github.event_name }}" == "push" && (${{ github.ref == 'refs/heads/main' }} || ${{ startsWith(github.ref, 'refs/tags/') }})]]; then
+            echo "push=true" >> $GITHUB_OUTPUT
+          else
+            echo "push=false" >> $GITHUB_OUTPUT
+          fi
 
-      # - name: Publish Component ${{ matrix.component-name }}
-      #   # Trigger workflow only for databendcloud/databend-operator repository with specific branch (master, release-*) or tag (v.*).
-      #   if: >-
-      #     github.repository == 'databendcloud/databend-operator' &&
-      #     (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release-') || startsWith(github.ref, 'refs/tags/v'))
-      #   id: publish
-      #   uses: ./.github/workflows/template-publish-image
-      #   with:
-      #     image: docker.io/datafuselabs/${{ matrix.component-name }}
-      #     dockerfile: ${{ matrix.dockerfile }}
-      #     platforms: ${{ matrix.platforms }}
-      #     context: ${{ matrix.context }}
-      #     push: true
-
-      - name: Test Build For Component ${{ matrix.component-name }}
-        # if: steps.publish.outcome == 'skipped'
+      - name: Build And Publish Component ${{ matrix.component-name }}
         uses: ./.github/workflows/template-publish-image
         with:
-          image: docker.io/datafuselabs/${{ matrix.component-name }}
+          image: ${{ matrix.component-name }}
           dockerfile: ${{ matrix.dockerfile }}
           platforms: ${{ matrix.platforms }}
-          context: ${{ matrix.context }}
-          push: false
+          context: ${{ matrix.context || '.' }}
+          push: ${{ steps.set-push.outputs.push }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
