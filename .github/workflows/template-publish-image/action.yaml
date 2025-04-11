@@ -141,7 +141,7 @@ runs:
         platforms: ${{ inputs.platforms }}
         context: ${{ inputs.context }}
         file: ${{ inputs.dockerfile }}
-        push: ${{ inputs.push }}
+        push: ${{ inputs.push == 'true' }}
         tags: ${{ steps.meta.outputs.tags }}
         cache-from: type=gha,scope=${{ inputs.image }}-${{ github.workflow }}
         cache-to: type=gha,mode=max,scope=${{ inputs.image }}-${{ github.workflow }},ignore-error=true
