@@ -10,5 +10,5 @@ spec:
     name: test
   resourcesPerNode:
     limits:
-      cpu: 100m
-      memory: 100Mi
+      cpu: 500m
+      memory: 1Gi

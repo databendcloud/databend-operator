@@ -1,0 +1,13 @@
+apiVersion: v1
+name: databend-operator
+description: Helm chart for databend-operator components
+version: 0.1.0
+keywords:
+  - kubernetes
+  - databend
+  - databend-operator
+  - statefulset
+  - deployment
+home: https://www.databend.com/
+sources:
+  - https://github.com/databendcloud/databend-operator

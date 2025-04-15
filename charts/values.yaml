@@ -1,0 +1,23 @@
+installation:
+  namespace: databend-system
+
+manager:
+  replicas: 2
+  image:
+    repository: datafuselabs/databend-operator
+    tag: v0.1.0
+  healthProbe:
+    port: 8081
+
+  # resources of databend-operator-manager container
+  resources:
+    limits:
+      cpu: 100m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+  nodeAffinity: {}
+  nodeSelector: {}
+  tolerations: []
