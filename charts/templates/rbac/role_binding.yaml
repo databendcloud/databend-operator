@@ -11,4 +11,5 @@ roleRef:
   name: databend-operator-controller-manager
 subjects:
 - kind: ServiceAccount
+  namespace: {{ .Values.namespace }}
   name: databend-operator
