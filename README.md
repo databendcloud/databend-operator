@@ -22,6 +22,8 @@
 
 Use this operator to manage [Databend](https://github.com/databendlabs/databend) clusters which are deployed as custom resources. In short, the task of configuring, creating, managing, automatically scaling up and scaling-in of Databend cluster(s) in a Kubernetes environment has been made simple, easy and quick.
 
+![](docs/images/databend-operator.png)
+
 ## Deploying Operator
 
 Run the following command to install the latest changes of the Databend Operator:
